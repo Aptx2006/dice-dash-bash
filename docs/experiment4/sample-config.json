@@ -1,0 +1,8 @@
+{
+  "mapId": "tutorial",
+  "mechanisms": { "airdrop": false, "turnTimer": false },
+  "players": [
+    { "name": "小骰", "isAI": false, "characterId": "villager", "pieceColor": "#f2a75c", "isHost": true },
+    { "name": "教学机器人", "isAI": true, "characterId": "robot", "pieceColor": "#5f8d95", "isHost": false }
+  ]
+}

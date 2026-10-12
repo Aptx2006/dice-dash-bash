@@ -38,6 +38,7 @@ import {
 import { aiStep } from '../game/ai.ts'
 import { isDiceReveal } from '../rendering/presentation.ts'
 import { characterById } from '../game/characters.ts'
+import { readPreference, writePreference } from '../storage/preferences.ts'
 
 interface BoardViewApi {
   fitToView: () => void
@@ -71,10 +72,12 @@ const speedOptions = [
   { value: 1.75, label: '快速 1.75×' },
   { value: 3, label: '极速 3×' },
 ] as const
-const savedSpeed = Number(localStorage.getItem('dice-animation-speed'))
+const savedSpeedPreference = readPreference('dice-animation-speed', '0.6')
+const storageNotice = ref(savedSpeedPreference.warning)
+const savedSpeed = Number(savedSpeedPreference.value)
 const animationSpeed = ref(speedOptions.some((option) => option.value === savedSpeed) ? savedSpeed : 0.6)
 watch(animationSpeed, (speed) => {
-  localStorage.setItem('dice-animation-speed', String(speed))
+  storageNotice.value = writePreference('dice-animation-speed', String(speed))
   scheduleAI()
 })
 
@@ -574,6 +577,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
 
 <template>
   <main class="game-shell">
+    <p v-if="storageNotice" role="alert" class="app-notice">{{ storageNotice }} <button type="button" @click="storageNotice = ''">关闭提示</button></p>
     <div class="board-wrap" :class="{ 'tutorial-board': isTutorial }">
       <BoardView
         ref="boardView"

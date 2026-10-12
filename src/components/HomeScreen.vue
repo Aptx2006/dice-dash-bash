@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 import { MAPS, MAP_LEGEND } from '../game/maps.ts'
 import { TERRAINS } from '../game/terrains.ts'
 import type { TerrainKind } from '../game/types.ts'
+import { validateNickname } from '../game/configValidation.ts'
+import { readPreference } from '../storage/preferences.ts'
 
 const emit = defineEmits<{
   create: [payload: { name: string; mapId: string }]
@@ -10,11 +12,12 @@ const emit = defineEmits<{
   tutorial: [payload: { name: string }]
 }>()
 
-const playerName = ref(localStorage.getItem('dice-player-name') || '')
+const savedName = readPreference('dice-player-name', '')
+const playerName = ref(savedName.value.slice(0, 12))
 const joinCode = ref('')
 const mode = ref<'race' | 'battle' | 'prank'>('race')
 const mapIndex = ref(0)
-const joinHint = ref('')
+const joinHint = ref(savedName.warning)
 
 const map = computed(() => MAPS[mapIndex.value])
 
@@ -53,21 +56,17 @@ function nextMap() {
 }
 
 function submitCreate() {
-  const name = playerName.value.trim() || '玩家'
-  localStorage.setItem('dice-player-name', name)
-  joinHint.value = ''
-  emit('create', { name, mapId: map.value.id })
+  try {
+    const name = validateNickname(playerName.value)
+    joinHint.value = ''
+    emit('create', { name, mapId: map.value.id })
+  } catch (error) {
+    joinHint.value = error instanceof Error ? error.message : '输入有误，请检查昵称。'
+  }
 }
 
 function submitJoin() {
-  const name = playerName.value.trim() || '玩家'
-  const code = joinCode.value.trim().toUpperCase()
-  if (code.length < 4) {
-    joinHint.value = '请输入完整的房间码。'
-    return
-  }
-  localStorage.setItem('dice-player-name', name)
-  emit('join', { name, code })
+  joinHint.value = '联机房间尚未开放，请创建本地房间或体验教学。'
 }
 
 function startTutorial() {
@@ -117,9 +116,9 @@ function startTutorial() {
       <button type="button" class="pill-button primary" @click="submitCreate">创建房间</button>
       <div class="home-field">
         <label for="home-join">加入房间</label>
-        <input id="home-join" v-model="joinCode" class="join-code" maxlength="6" placeholder="房间码" @keyup.enter="submitJoin" />
+        <input id="home-join" v-model="joinCode" class="join-code" maxlength="6" placeholder="联机功能尚未开放" disabled />
       </div>
-      <button type="button" class="pill-button" @click="submitJoin">加入</button>
+      <button type="button" class="pill-button" @click="submitJoin">联机说明</button>
     </form>
     <p v-if="joinHint" class="home-note" role="alert">{{ joinHint }}</p>
   </main>

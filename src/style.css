@@ -302,6 +302,8 @@ ul { margin: 0; padding: 0; list-style: none; }
 .piece-dot.selected { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(44, 53, 80, 0.18); }
 
 /* ============ 对局 ============ */
+.app-notice { position: fixed; z-index: 200; left: 50%; top: 0.5rem; transform: translateX(-50%); width: min(620px, calc(100% - 2rem)); padding: 0.8rem 1rem; border-radius: 12px; background: #fff1cd; color: #342d23; box-shadow: 0 4px 18px #0002; }
+.app-notice button { margin-left: 0.6rem; }
 .game-shell { height: 100vh; display: grid; grid-template-rows: minmax(0, 1fr) auto; overflow: hidden; position: relative; }
 .game-shell .phase-banner { top: 3.7rem; }
 .game-shell .order-chips { top: 6.5rem; }

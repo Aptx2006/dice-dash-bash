@@ -13,6 +13,7 @@ import { TERRAINS } from './terrains.ts'
 import { mapById, parseMap } from './maps.ts'
 import { characterById } from './characters.ts'
 import { TOOLS, TOOL_DIE_POOL } from './tools.ts'
+import { validateGameConfig } from './configValidation.ts'
 
 let toolSerial = 1
 let entitySerial = 1
@@ -45,12 +46,13 @@ export function pushEffect(
 }
 
 export function createGame(config: GameConfig): GameState {
+  validateGameConfig(config)
   const mapDef = mapById(config.mapId)
   const { tiles, width, height } = parseMap(mapDef)
   const startCell = findStart(tiles)
   const players: PlayerState[] = config.players.map((entry, index) => ({
     id: index === 0 ? 'human' : `ai-${index}`,
-    name: entry.name,
+    name: entry.name.trim(),
     isAI: entry.isAI,
     characterId: entry.characterId,
     pieceColor: entry.pieceColor,

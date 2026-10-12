@@ -1,0 +1,136 @@
+TAP version 13
+# Subtest: E4-01 正常初始化：双人教学局读取地图并生成独立状态
+ok 1 - E4-01 正常初始化：双人教学局读取地图并生成独立状态
+  ---
+  duration_ms: 1.3325
+  type: 'test'
+  ...
+# Subtest: E4-02 空玩家：返回明确错误而不是内部空对象异常
+not ok 2 - E4-02 空玩家：返回明确错误而不是内部空对象异常
+  ---
+  duration_ms: 0.9576
+  type: 'test'
+  location: 'D:\\CODE\\软件开发\\当骰一棒\\tests\\basicFlow.test.ts:22:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /玩家人数必须为2至8人/. Input:
+    
+    "TypeError: Cannot read properties of undefined (reading 'hand')"
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: "Cannot read properties of undefined (reading 'hand')"
+  name: 'TypeError'
+  stack: |-
+    setSystemCards (file:///D:/CODE/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BD%93%E9%AA%B0%E4%B8%80%E6%A3%92/src/game/engine.ts:204:24)
+    beginTurn (file:///D:/CODE/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BD%93%E9%AA%B0%E4%B8%80%E6%A3%92/src/game/engine.ts:239:3)
+    createGame (file:///D:/CODE/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BD%93%E9%AA%B0%E4%B8%80%E6%A3%92/src/game/engine.ts:93:3)
+    file:///D:/CODE/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BD%93%E9%AA%B0%E4%B8%80%E6%A3%92/tests/basicFlow.test.ts:23:21
+    getActual (node:assert:609:5)
+    Function.throws (node:assert:757:24)
+    TestContext.<anonymous> (file:///D:/CODE/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BD%93%E9%AA%B0%E4%B8%80%E6%A3%92/tests/basicFlow.test.ts:23:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/CODE/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BD%93%E9%AA%B0%E4%B8%80%E6%A3%92/tests/basicFlow.test.ts:23:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: E4-03 不存在的地图：拒绝静默替换
+not ok 3 - E4-03 不存在的地图：拒绝静默替换
+  ---
+  duration_ms: 0.1901
+  type: 'test'
+  location: 'D:\\CODE\\软件开发\\当骰一棒\\tests\\basicFlow.test.ts:25:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/CODE/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BD%93%E9%AA%B0%E4%B8%80%E6%A3%92/tests/basicFlow.test.ts:26:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: E4-04 超额玩家：拒绝第9名玩家
+not ok 4 - E4-04 超额玩家：拒绝第9名玩家
+  ---
+  duration_ms: 0.2003
+  type: 'test'
+  location: 'D:\\CODE\\软件开发\\当骰一棒\\tests\\basicFlow.test.ts:28:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/CODE/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BD%93%E9%AA%B0%E4%B8%80%E6%A3%92/tests/basicFlow.test.ts:30:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: E4-05 空昵称：拒绝纯空白配置
+not ok 5 - E4-05 空昵称：拒绝纯空白配置
+  ---
+  duration_ms: 0.2127
+  type: 'test'
+  location: 'D:\\CODE\\软件开发\\当骰一棒\\tests\\basicFlow.test.ts:32:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/CODE/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BD%93%E9%AA%B0%E4%B8%80%E6%A3%92/tests/basicFlow.test.ts:34:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: E4-06 重复投骰：第二次调用不得重复发牌或改变结果
+ok 6 - E4-06 重复投骰：第二次调用不得重复发牌或改变结果
+  ---
+  duration_ms: 0.3096
+  type: 'test'
+  ...
+# Subtest: E4-07 缺少移动牌：不改变局面
+ok 7 - E4-07 缺少移动牌：不改变局面
+  ---
+  duration_ms: 0.1755
+  type: 'test'
+  ...
+# Subtest: E4-08 真实规则执行到终点并锁定后续行动
+ok 8 - E4-08 真实规则执行到终点并锁定后续行动
+  ---
+  duration_ms: 0.849
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 4
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 160.9549

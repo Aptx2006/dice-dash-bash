@@ -649,6 +649,9 @@ function syncEffects() {
       spawnAnimation(effect)
     }
   }
+  // 有界历史滚动后释放旧标识，长局不会让去重集合持续增长。
+  const retained = new Set(props.state.effects.map(effect => effect.id))
+  for (const id of seenEffectIds) if (!retained.has(id)) seenEffectIds.delete(id)
 }
 
 function updateHighlights() {
@@ -808,6 +811,8 @@ function assignCellUserData() {
 
 onMounted(() => {
   if (!host.value) return
+  // 恢复对局只展示已提交的局面，历史特效不重新播放。
+  for (const effect of props.state.effects) seenEffectIds.add(effect.id)
   scene = new THREE.Scene()
   scene.background = new THREE.Color(0xf4edda)
   scene.fog = new THREE.Fog(0xf4edda, 24, 44)
@@ -901,7 +906,8 @@ watch(
 )
 
 watch(
-  () => props.state.effects.length,
+  // 引擎只保留最近30条；达到上限后长度不变，但最新事件标识仍会变化。
+  () => props.state.effects.at(-1)?.id,
   () => syncEffects(),
 )
 

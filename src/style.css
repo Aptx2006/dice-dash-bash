@@ -159,6 +159,34 @@ ul { margin: 0; padding: 0; list-style: none; }
 .join-code { width: 100%; min-width: 190px; text-transform: uppercase; letter-spacing: 0.15em; }
 .home-note { color: var(--ink-faint); font-size: 0.74rem; text-align: center; padding-bottom: 1.2rem; }
 
+.resume-match {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  width: min(860px, 96vw); margin: 1rem auto 0; padding: 0.85rem 1.1rem;
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-md);
+}
+.resume-match p { color: var(--ink-dim); font-size: 0.8rem; margin: 0.25rem 0; }
+.resume-match small { color: var(--ink-dim); font-size: 0.7rem; }
+.resume-match button { flex-shrink: 0; }
+.resume-match, .map-stage, .home-form { max-width: 100%; }
+.confirm-dialog {
+  width: min(480px, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); overflow: auto;
+  padding: 1.7rem; border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
+  background: var(--panel); color: var(--ink); box-shadow: var(--shadow-card);
+}
+.confirm-dialog::backdrop { background: rgba(44, 53, 80, 0.4); backdrop-filter: blur(4px); }
+.confirm-dialog p { margin: 1rem 0 1.4rem; color: var(--ink-dim); line-height: 1.7; }
+.confirm-dialog .settlement-actions { flex-wrap: wrap; }
+.save-status {
+  position: absolute; bottom: 3.3rem; right: 0.9rem; z-index: 3;
+  padding: 0.35rem 0.6rem; max-width: calc(100% - 1.8rem); border-radius: var(--radius-sm);
+  background: rgba(255, 250, 240, 0.9); color: var(--good); font-size: 0.7rem; pointer-events: none;
+}
+.save-status.save-failed { color: var(--bad); }
+@media (max-width: 600px) {
+  .resume-match { flex-direction: column; align-items: stretch; }
+  .resume-match button { width: 100%; }
+}
+
 /* ============ 大厅 ============ */
 .lobby-shell { min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto; }
 .lobby-header {

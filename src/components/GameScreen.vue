@@ -48,11 +48,14 @@ const props = defineProps<{
   state: GameState
   myId: string
   tutorial?: boolean
+  initialProgress?: { tutorialStep: number; timeLeft: number }
+  saveStatus?: string
 }>()
 
 const emit = defineEmits<{
   exit: []
   restart: []
+  checkpoint: [progress: { tutorialStep: number; timeLeft: number }]
 }>()
 
 type TargetMode = 'none' | 'slide' | 'direction' | 'cell' | 'anywhere' | 'adjacent' | 'storm' | 'player-pick' | 'player-dir'
@@ -60,11 +63,14 @@ type TargetMode = 'none' | 'slide' | 'direction' | 'cell' | 'anywhere' | 'adjace
 const selectedUid = ref<number | null>(null)
 const targetMode = ref<TargetMode>('none')
 const towTargetId = ref<string | null>(null)
-const timeLeft = ref(75)
+const timeLeft = ref(props.initialProgress?.timeLeft ?? 75)
 const boardView = ref<BoardViewApi | null>(null)
 // 地图标识是教学模式的稳定判据，同时保留 prop 便于后续复用其他教学地图。
 const isTutorial = computed(() => props.tutorial === true || props.state.mapId === 'tutorial')
-const tutorialStep = ref(isTutorial.value ? 0 : -1)
+const tutorialStep = ref(isTutorial.value ? props.initialProgress?.tutorialStep ?? 0 : -1)
+watch([tutorialStep, timeLeft], ([step, seconds]) => {
+  emit('checkpoint', { tutorialStep: step, timeLeft: seconds })
+}, { immediate: true, flush: 'post' })
 
 const speedOptions = [
   { value: 0.6, label: '慢速 0.6×' },
@@ -528,9 +534,9 @@ watch(
 // ====== 回合计时：仅真人回合 ======
 let tickTimer: number | undefined
 
-function armTimer() {
+function armTimer(remaining = TURN_SECONDS) {
   window.clearInterval(tickTimer)
-  timeLeft.value = TURN_SECONDS
+  timeLeft.value = remaining
   if (!props.state.mechanisms.turnTimer || props.state.finished) return
   const current = activePlayer(props.state)
   if (current.isAI || current.id !== props.myId) return
@@ -557,7 +563,7 @@ watch(
 
 onMounted(() => {
   scheduleAI()
-  armTimer()
+  armTimer(props.initialProgress?.timeLeft ?? TURN_SECONDS)
 })
 
 onBeforeUnmount(() => {
@@ -605,8 +611,9 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
           </select>
         </label>
         <button type="button" class="camera-fit" @click="boardView?.fitToView()">最佳屏幕大小</button>
-        <button type="button" class="game-exit" @click="emit('exit')">退出对局</button>
+        <button type="button" class="game-exit" @click="emit('exit')">返回首页</button>
       </div>
+      <p v-if="saveStatus" class="save-status" role="status" :class="{ 'save-failed': saveStatus !== '本局已自动保存' }">{{ saveStatus }}</p>
       <p class="camera-help">拖动平移棋盘 · 滚轮缩放 · 视角固定</p>
 
       <aside v-if="isTutorial && tutorialStep >= 0" class="tutorial-panel" aria-live="polite">
@@ -745,7 +752,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
         </div>
         <div class="settlement-actions">
           <button type="button" class="pill-button primary" @click="emit('restart')">再来一局</button>
-          <button type="button" class="pill-button" @click="emit('exit')">返回大厅</button>
+          <button type="button" class="pill-button" @click="emit('exit')">返回首页</button>
         </div>
       </section>
     </div>

@@ -20,6 +20,19 @@ let entitySerial = 1
 let logSerial = 1
 let effectSerial = 1
 
+/** 从已校验的存档恢复，不重走开局逻辑，也不再次投骰或发牌。 */
+export function restoreGame(snapshot: GameState): GameState {
+  const state: GameState = JSON.parse(JSON.stringify(snapshot))
+  const cards = [...state.players.flatMap(player => player.hand), ...(state.pendingReward?.options ?? [])]
+  for (const card of cards) toolSerial = Math.max(toolSerial, card.uid + 1)
+  for (const entity of [...state.bombs, ...state.pigs, ...state.wallets, ...(state.storm ? [state.storm] : [])]) {
+    entitySerial = Math.max(entitySerial, entity.id + 1)
+  }
+  for (const entry of state.logs) logSerial = Math.max(logSerial, entry.id + 1)
+  for (const effect of state.effects) effectSerial = Math.max(effectSerial, effect.id + 1)
+  return state
+}
+
 function nextToolSerial() {
   return toolSerial++
 }

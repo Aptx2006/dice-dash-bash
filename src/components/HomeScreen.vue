@@ -5,11 +5,15 @@ import { TERRAINS } from '../game/terrains.ts'
 import type { TerrainKind } from '../game/types.ts'
 import { validateNickname } from '../game/configValidation.ts'
 import { readPreference } from '../storage/preferences.ts'
+import type { SavedMatch } from '../storage/savedMatch.ts'
+
+defineProps<{ savedMatch?: SavedMatch | null }>()
 
 const emit = defineEmits<{
   create: [payload: { name: string; mapId: string }]
   join: [payload: { name: string; code: string }]
   tutorial: [payload: { name: string }]
+  resume: []
 }>()
 
 const savedName = readPreference('dice-player-name', '')
@@ -90,6 +94,15 @@ function startTutorial() {
         <span>?</span>
         <strong>第一次游玩？进入基础教学</strong>
       </button>
+    </section>
+
+    <section v-if="savedMatch" class="resume-match" aria-label="最近对局">
+      <div>
+        <strong>{{ savedMatch.state.finished ? '上局已结束' : '你的冒险还在继续' }}</strong>
+        <p>{{ savedMatch.state.mapLabel }} · {{ savedMatch.state.players.length }}人 · 第{{ savedMatch.state.turnNumber }}回合</p>
+        <small>保存于 {{ new Date(savedMatch.savedAt).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) }} · 仅保存在此浏览器</small>
+      </div>
+      <button type="button" class="pill-button mint" @click="emit('resume')">{{ savedMatch.state.finished ? '查看上局结果' : '继续对局' }}</button>
     </section>
 
     <section class="map-stage" aria-label="地图预览">

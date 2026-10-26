@@ -620,3 +620,64 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent-soft
   .speed-control > span { display: none; }
   .speed-control { padding-left: 0.34rem; }
 }
+
+/* ============ 规则教练 ============ */
+.rules-coach {
+  width: min(860px, 100%); margin: 1rem auto 0;
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-md);
+  color: var(--ink); font-size: 0.85rem;
+}
+.rules-coach__summary {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1.1rem; cursor: pointer;
+  list-style: none; border-radius: inherit;
+}
+.rules-coach__summary::-webkit-details-marker { display: none; }
+.rules-coach__summary > span:nth-child(2) { min-width: 0; }
+.rules-coach__summary strong { display: block; font-size: 0.95rem; }
+.rules-coach__summary small { display: block; margin-top: 0.2rem; color: var(--ink-dim); line-height: 1.5; }
+.rules-coach__badge { display: grid; place-items: center; flex: 0 0 29px; height: 29px; border-radius: 50%; background: var(--mint); color: #215941; font-weight: 800; font-size: 1rem; }
+.rules-coach__expand { margin-left: auto; flex-shrink: 0; color: var(--ink-dim); font-size: 0.75rem; }
+.rules-coach[open] .rules-coach__expand { font-size: 0; }
+.rules-coach[open] .rules-coach__expand::after { content: '收起'; font-size: 0.75rem; }
+.rules-coach__content { padding: 0 1.1rem 1.1rem; }
+.rules-coach__form { display: grid; gap: 0.6rem; }
+.rules-coach__form label { color: var(--ink-dim); font-size: 0.8rem; }
+.rules-coach__form textarea {
+  width: 100%; min-width: 0; resize: vertical; min-height: 80px; max-height: 240px;
+  padding: 0.75rem 0.85rem; border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  background: #fffdf6; color: var(--ink); font: inherit; line-height: 1.6;
+}
+.rules-coach__form textarea:focus-visible, .rules-coach summary:focus-visible {
+  outline: 3px solid var(--accent-soft); outline-offset: 2px;
+}
+.rules-coach__suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.rules-coach__suggestions button {
+  padding: 0.4rem 0.65rem; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--panel-deep); color: var(--ink-dim); font-size: 0.73rem; text-align: left; line-height: 1.5;
+}
+.rules-coach__suggestions button:hover:not(:disabled) { color: var(--ink); border-color: var(--line-strong); }
+.rules-coach__actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 0.55rem; }
+.rules-coach__actions > small { margin-right: auto; color: var(--ink-faint); }
+.rules-coach__feedback { margin-top: 0.9rem; color: var(--ink-dim); line-height: 1.7; }
+.rules-coach__answer { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.rules-coach__answer-title { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem; }
+.rules-coach__answer-title small { color: var(--ink-faint); font-size: 0.7rem; }
+.rules-coach__asked { margin: 0.7rem 0; color: var(--ink-dim); font-size: 0.76rem; overflow-wrap: anywhere; }
+.rules-coach__answer-text { line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.rules-coach__answer > button { margin-top: 0.75rem; }
+.rules-coach__sources { display: grid; gap: 0.5rem; margin-top: 1rem; }
+.rules-coach__sources > p { font-size: 0.75rem; color: var(--ink-dim); }
+.rules-coach__source { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-deep); }
+.rules-coach__source summary { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem; padding: 0.65rem 0.75rem; cursor: pointer; list-style: none; }
+.rules-coach__source summary::-webkit-details-marker { display: none; }
+.rules-coach__source summary strong { font-size: 0.78rem; }
+.rules-coach__source summary span { color: var(--good); font-size: 0.68rem; }
+.rules-coach__source summary code { margin-left: auto; color: var(--ink-dim); font-size: 0.68rem; overflow-wrap: anywhere; }
+.rules-coach__source > p { padding: 0 0.75rem 0.75rem; white-space: pre-wrap; font-size: 0.78rem; line-height: 1.8; overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+  .rules-coach__summary { padding: 0.8rem; gap: 0.55rem; }
+  .rules-coach__summary small { font-size: 0.7rem; }
+  .rules-coach__content { padding: 0 0.8rem 0.8rem; }
+  .rules-coach__source summary code { flex-basis: 100%; margin-left: 0; }
+  .rules-coach__actions .pill-button { padding: 0.6rem 1rem; }
+}

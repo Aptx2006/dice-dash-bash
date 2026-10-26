@@ -1,0 +1,10 @@
+{
+  "recordedAt": "2026-10-26T15:28:10.010Z",
+  "kind": "real-cloud-error-observation",
+  "requestedModel": "qwen-flash",
+  "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+  "httpStatus": 400,
+  "errorCode": "Arrearage",
+  "usage": null,
+  "notes": "本次实验前置连接测试实际观察到的HTTP状态与错误码；非完整上游响应。后续依用户要求切换qwen3.8-flash并成功，不据此推断账户充值状态。"
+}

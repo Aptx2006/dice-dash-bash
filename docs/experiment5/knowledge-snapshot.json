@@ -1,0 +1,393 @@
+{
+  "sourceFiles": 1,
+  "format": "Markdown",
+  "rulesVersion": "local-v1",
+  "sha256": "9a2c1bd987376dd44668940feaea18f9f71b6798015f0f7222730b0287445ed7",
+  "chunkCount": 20,
+  "minCharacters": 150,
+  "maxCharacters": 261,
+  "totalCharacters": 4036,
+  "chunks": [
+    {
+      "id": "phase.roll",
+      "title": "正常投骰与两枚骰子",
+      "text": "普通角色在回合开始阶段使用“投骰”牌：掷移动骰，得到1至6点，并加入此前“制衡”储存的移动点数；同时抽取一张工具骰对应工具。系统发放一张具有该点数的移动牌和一张工具牌，随后进入行动阶段。角色技能可能改变投骰流程或点数，所以实际局面的骰值与合法动作应以引擎为准。已经进入行动阶段后再次调用投骰不会重新发牌或重掷。\n源码: src/game/engine.ts#playRollCard、moveDieValue、rollToolDie",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        8,
+        12
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "投骰",
+        "掷骰",
+        "摇骰",
+        "移动骰",
+        "工具骰",
+        "骰子结果",
+        "roll"
+      ]
+    },
+    {
+      "id": "phase.end",
+      "title": "两次结束与回合交接",
+      "text": "行动阶段使用一次“结束”只会进入回合结束阶段，不会立即轮到下一位玩家；回合结束阶段仍可能有角色专属操作。再次使用“结束”才交出行动权，并开始下一名玩家的回合。系统阶段牌会在阶段切换时重新发放，进入新回合时上一阶段的系统牌作废；非系统库存工具可以跨回合保留。\n源码: src/game/engine.ts#playEndCard、nextTurn、setSystemCards",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        14,
+        18
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "结束",
+        "结束牌",
+        "结束行动",
+        "结束回合",
+        "交出回合",
+        "行动阶段",
+        "回合结束阶段"
+      ]
+    },
+    {
+      "id": "phase.timer",
+      "title": "真人回合计时与动画",
+      "text": "开启回合计时后，真人回合默认75秒；机器人不使用这份真人倒计时。正在播放骰子或出牌演出时倒计时暂停。动画速度可选0.6、1、1.75和3倍，只改变演出节奏，不重掷骰子或改写规则结果。超时会由引擎推进回合；若有待领奖励，先选择第一个奖励；若处于回合开始阶段，先执行投骰，再交出回合。\n源码: src/components/GameScreen.vue#armTimer、scaledDelay；src/game/engine.ts#timeoutTurn",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        20,
+        24
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "计时",
+        "倒计时",
+        "75秒",
+        "超时",
+        "动画速度",
+        "倍速"
+      ]
+    },
+    {
+      "id": "move.basic",
+      "title": "方向移动与移动牌消耗",
+      "text": "行动阶段选择一张移动牌，再选择上、右、下、左中的一个方向，棋子沿该方向移动，消耗这张移动牌。普通地板每前进一步消耗1点；途中遇到阻挡、棋盘边界或其他玩家会停下，特殊地形还可能改变路径结果。普通角色不能随意在中途选择停点；只有具有制动能力的罗素可以提前停止。移动牌使用后被消耗，不能用同一张牌再次移动。\n源码: src/game/engine.ts#resolveMoveCard、slidePlayer",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        26,
+        30
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "移动",
+        "走格",
+        "移动牌",
+        "方向",
+        "直线",
+        "上下左右",
+        "剩余点数"
+      ]
+    },
+    {
+      "id": "move.blocked",
+      "title": "墙壁、土墙与阻挡",
+      "text": "普通墙壁和高墙阻挡地面移动与投射物；普通墙壁可以被合法飞跃越过，高墙还阻挡飞跃。土墙初始耐久为2，地面移动碰到仍有耐久的土墙时，只有剩余至少2点才可花费2点进入该格，并使耐久减少1；耐久降至0后变为地板。其余阻挡、风暴封锁或棋盘外不能作为普通移动的穿越路径。\n源码: src/game/engine.ts#slidePlayer、blocksMove；src/game/terrains.ts#TERRAINS",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        32,
+        36
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "墙",
+        "墙壁",
+        "高墙",
+        "土墙",
+        "耐久",
+        "阻挡",
+        "碰墙",
+        "穿墙"
+      ]
+    },
+    {
+      "id": "tool.sprint",
+      "title": "冲刺增加移动点数",
+      "text": "冲刺需要当前手中仍有移动牌。使用后给本回合手中的一张移动牌增加2点移动，同时更新显示的移动骰数值，并消耗冲刺牌。没有移动牌时不能使用冲刺。冲刺不是重新投骰，也不是额外获得一个回合；例如3点移动牌用冲刺后成为5点。\n源码: src/game/engine.ts#canUseTool、playSimpleTool；src/game/tools.ts#TOOLS.sprint",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        38,
+        42
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "冲刺",
+        "增加移动",
+        "加速",
+        "多走",
+        "加2",
+        "移动点数加"
+      ]
+    },
+    {
+      "id": "tool.teleport",
+      "title": "瞬移的合法落点",
+      "text": "瞬移可选择全棋盘内的合法落点，不受附近3×3范围限制。落点不能阻挡地面移动，不能有其他玩家，也不能是坑洞；需要先选择瞬移牌，再点击可落脚格。执行后改变玩家位置、消耗瞬移牌，并触发落点结算。终点是可落脚且无人占据时，可以作为瞬移目标；落到终点会立即完成竞速，具体终点判定见result.finish。\n源码: src/game/engine.ts#teleportCells、playTeleportTool、onStopCell",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        44,
+        48
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "瞬移",
+        "全场",
+        "任意落点",
+        "传送",
+        "teleport"
+      ]
+    },
+    {
+      "id": "tool.blink",
+      "title": "瞬步与瞬移的区别",
+      "text": "瞬步只能选择自身周围3×3范围内的一格，不含自己当前格；落点必须在棋盘内、没有阻挡且无人占据。执行后消耗瞬步牌，并触发落点结算。瞬步与全场瞬移是两种不同工具，不能把瞬步解释为可以到全场任意位置。\n源码: src/game/engine.ts#blinkCells、playBlinkTool；src/game/tools.ts#TOOLS.blink",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        50,
+        54
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "瞬步",
+        "3×3",
+        "3x3",
+        "附近一格",
+        "blink"
+      ]
+    },
+    {
+      "id": "tool.bomb",
+      "title": "炸药的放置与爆炸",
+      "text": "使用炸药会在自己的脚下布置一枚炸药，并消耗该牌；同一玩家不能在自己当前格重复布置尚未爆炸的炸药。该玩家后续回合开始时，先前布置的炸药会爆炸，对四邻玩家造成2格击退。炸药不是使用瞬间就爆炸，也不能在任意远处直接放置。\n源码: src/game/engine.ts#playSimpleTool、detonateBombs；src/game/tools.ts#TOOLS.bomb",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        56,
+        60
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "炸药",
+        "炸弹",
+        "布置炸药",
+        "爆炸",
+        "击飞"
+      ]
+    },
+    {
+      "id": "terrain.lucky",
+      "title": "幸运方块奖励",
+      "text": "停在幸运方块上时，该方块变为普通地板，生成3张不同的随机工具作为候选，并进入奖励选择阶段。玩家从3张候选中选择1张加入手牌；领取后返回行动阶段。同一幸运方块被消耗后，不会每次再站上去都重复发奖。这里的三选一不是直接同时获得三张工具。\n源码: src/game/engine.ts#onStopCell、queueReward、chooseReward",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        62,
+        66
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "幸运",
+        "幸运方块",
+        "幸运格",
+        "三选一",
+        "领奖",
+        "奖励"
+      ]
+    },
+    {
+      "id": "terrain.danger",
+      "title": "坑洞与毒气的触发区别",
+      "text": "地面移动经过或停在坑洞时，会立即死亡并回到自己的当前出生点；毒气则在停留结算时触发死亡，普通移动经过毒气但最终未停在毒气上，不按同样条件判死。死亡是回到出生点，不是退出整局游戏。家园可以更新玩家的出生点，相关规则见terrain.home。\n源码: src/game/engine.ts#onEnterCell、onStopCell、killPlayer",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        68,
+        72
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "坑洞",
+        "陷阱",
+        "毒气",
+        "毒雾",
+        "死亡",
+        "复活",
+        "出生点"
+      ]
+    },
+    {
+      "id": "terrain.conveyor",
+      "title": "传送带的额外移动",
+      "text": "普通移动沿传送带箭头同向经过时，会尝试额外向当前移动方向前进一步，不额外消耗普通移动点数；前方仍须在棋盘内且没有阻挡或其他玩家。逆向或横向经过不获得这次同向额外移动。额外落点仍会检查坑洞、终点等进入格效果。\n源码: src/game/engine.ts#onEnterCell、slidePlayer",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        74,
+        78
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "传送带",
+        "顺行",
+        "额外一步",
+        "同向"
+      ]
+    },
+    {
+      "id": "terrain.home",
+      "title": "家园与出生点更新",
+      "text": "普通地面移动经过家园时（包括最后停在该格），会将自己的出生点更新为家园位置。此后因坑洞或毒气等死亡时，会回到这处新的出生点。不要把这一条推广成所有位移都更新出生点：当前瞬移的停留结算没有家园更新分支。家园不是直接获胜的终点，也不代表已经完成竞速。\n源码: src/game/engine.ts#onEnterCell、onStopCell、killPlayer",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        80,
+        84
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "家园",
+        "房屋",
+        "重生点",
+        "更新出生点"
+      ]
+    },
+    {
+      "id": "result.finish",
+      "title": "终点、胜者与结束锁定",
+      "text": "首位抵达终点的玩家立即完成竞速，引擎记录其到达回合，并把整局设为结束状态。普通移动经过终点，或瞬移、瞬步等位移落在终点，都可以触发完成，不要求把移动点数恰好用完。结算将完赛者排在前面；未完赛者显示距终点距离，不冒充已完赛。结束后不能继续投骰、移动或推进回合。\n源码: src/game/engine.ts#onEnterCell、onStopCell、finishPlayer、settlementRanking",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        86,
+        90
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "终点",
+        "获胜",
+        "胜利",
+        "赢",
+        "结算",
+        "排名",
+        "完赛",
+        "抵达终点"
+      ]
+    },
+    {
+      "id": "save.local",
+      "title": "自动存档与继续对局",
+      "text": "本地模式自动保存最近一局的配置、棋盘、玩家、手牌、骰值、阶段、奖励、日志、教学进度和剩余计时。刷新后在首页点击“继续对局”恢复，不会重新投骰或再次发牌；已结束的局面可用“查看上局结果”打开。存档仅保存在当前浏览器，不是账号云同步或历史战绩。覆盖未完成存档前会确认；浏览器不能保存时会警告。离线期间计时暂停，未提交的目标选择和中断动画不恢复。\n源码: src/storage/savedMatch.ts#saveMatch、loadMatch；src/App.vue#onResume、persistCurrentMatch",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        92,
+        96
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "存档",
+        "保存",
+        "刷新",
+        "继续对局",
+        "恢复",
+        "读档",
+        "关闭页面"
+      ]
+    },
+    {
+      "id": "lobby.local",
+      "title": "本地房间与人数",
+      "text": "当前版本提供一名真人加1至7名规则机器人的本地练习房间，开局总人数为2至8人，只有一名成员时不能开局。首页房间码加入功能尚未开放，房间码不是已经实现远端联机的证明。规则机器人按现有策略推进回合；真实多人联网和模型对手属于后续功能，不能当作本版本已提供的能力。\n源码: src/game/configValidation.ts#validateGameConfig；src/components/LobbyScreen.vue#addAI；src/App.vue#onJoin",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        98,
+        102
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "房间",
+        "联机",
+        "联网",
+        "人数",
+        "真人",
+        "机器人",
+        "ai玩家",
+        "创建房间"
+      ]
+    },
+    {
+      "id": "character.russell",
+      "title": "罗素的提前制动",
+      "text": "罗素的能力是普通移动过程中可以提前停止。选择移动方向后，可以选择允许路径上的中途停点；引擎将这个停步上限交给移动执行。普通角色没有这项制动能力，不能把罗素规则推广到所有角色；遇阻停下仍受普通阻挡规则约束。\n源码: src/game/characters.ts#CHARACTERS.russell；src/game/engine.ts#resolveMoveCard",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        104,
+        108
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "罗素",
+        "制动",
+        "提前停止",
+        "中途停止",
+        "刹车",
+        "russell"
+      ]
+    },
+    {
+      "id": "character.jean",
+      "title": "让的移动与瞬步",
+      "text": "角色“让”每次移动骰的原始结果减2，但最低保留1点。其行动阶段会获得瞬步；结束行动时若手中仍有正移动点数的移动牌，再获得一张瞬步。瞬步的落点仍受自身附近3×3范围约束，不等同于全场瞬移。\n源码: src/game/characters.ts#CHARACTERS.jean；src/game/engine.ts#moveDieValue、setSystemCards、playEndCard",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        110,
+        114
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "让角色",
+        "让的技能",
+        "jean",
+        "减2点",
+        "让怎么玩"
+      ]
+    },
+    {
+      "id": "tutorial.basic",
+      "title": "基础教学入口",
+      "text": "首页“第一次游玩？进入基础教学”直接创建7×7教学局，包含一名真人和固定的教学机器人，关闭空投和回合计时。引导依次认识投骰、移动牌、方向选择、结束行动、再次结束交出回合及观察机器人行动。重新开局会重置教学引导；教学机器人是规则策略，不代表已接入云端模型。\n源码: src/App.vue#onTutorial；src/game/maps.ts#TUTORIAL_MAP；src/components/GameScreen.vue#tutorialCopy",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        116,
+        120
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "教学",
+        "教程",
+        "新手",
+        "教学机器人",
+        "基础教学"
+      ]
+    },
+    {
+      "id": "tool.hook",
+      "title": "钩锁与角色常",
+      "text": "钩锁向指定方向发射，在工具记录的长度内遇到墙等投射物阻挡时，可以把自己拉到墙前；遇到其他玩家时，若身前空格合法，可以把目标拉到自己身前。普通角色初始钩锁长度为4；角色“常”初始为1，每使用一张工具牌时成长1，最多5。钩锁不是必定把自己拉到目标所在格，具体效果由遇到的对象和合法落点决定。\n源码: src/game/engine.ts#createGame、playDirectionTool、consumeTool；src/game/characters.ts#CHARACTERS.chang",
+      "source": "knowledge/rules-v1.md",
+      "sourceLines": [
+        122,
+        126
+      ],
+      "rulesVersion": "local-v1",
+      "keywords": [
+        "钩锁",
+        "钩爪",
+        "拉到身前",
+        "常角色",
+        "钩锁长度"
+      ]
+    }
+  ]
+}

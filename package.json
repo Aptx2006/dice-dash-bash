@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vue-tsc -b && tsc -p tsconfig.server.json && vite build",
     "test": "node --test tests/*.test.ts",
+    "coach": "node --env-file-if-exists=.env server/index.ts",
+    "coach:ask": "node --env-file-if-exists=.env scripts/ask-rules.ts",
+    "eval:rules": "node --env-file-if-exists=.env scripts/eval-rules.ts",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -14,6 +17,7 @@
     "vue": "^3.5.21"
   },
   "devDependencies": {
+    "@types/node": "^22.20.5",
     "@types/three": "^0.180.0",
     "@vitejs/plugin-vue": "^6.0.1",
     "typescript": "~5.9.2",

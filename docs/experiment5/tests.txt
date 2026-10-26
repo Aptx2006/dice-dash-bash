@@ -1,0 +1,344 @@
+
+> dang-tou-yi-bang@0.1.0 test
+> node --test tests/*.test.ts
+
+TAP version 13
+# Subtest: E4-01 正常初始化：双人教学局读取地图并生成独立状态
+ok 1 - E4-01 正常初始化：双人教学局读取地图并生成独立状态
+  ---
+  duration_ms: 1.7841
+  type: 'test'
+  ...
+# Subtest: E4-02 空玩家：返回明确错误而不是内部空对象异常
+ok 2 - E4-02 空玩家：返回明确错误而不是内部空对象异常
+  ---
+  duration_ms: 0.4181
+  type: 'test'
+  ...
+# Subtest: E4-03 不存在的地图：拒绝静默替换
+ok 3 - E4-03 不存在的地图：拒绝静默替换
+  ---
+  duration_ms: 0.2398
+  type: 'test'
+  ...
+# Subtest: E4-04 超额玩家：拒绝第9名玩家
+ok 4 - E4-04 超额玩家：拒绝第9名玩家
+  ---
+  duration_ms: 0.2059
+  type: 'test'
+  ...
+# Subtest: E4-05 空昵称：拒绝纯空白配置
+ok 5 - E4-05 空昵称：拒绝纯空白配置
+  ---
+  duration_ms: 0.1562
+  type: 'test'
+  ...
+# Subtest: E4-06 重复投骰：第二次调用不得重复发牌或改变结果
+ok 6 - E4-06 重复投骰：第二次调用不得重复发牌或改变结果
+  ---
+  duration_ms: 0.512
+  type: 'test'
+  ...
+# Subtest: E4-07 缺少移动牌：不改变局面
+ok 7 - E4-07 缺少移动牌：不改变局面
+  ---
+  duration_ms: 0.3041
+  type: 'test'
+  ...
+# Subtest: E4-08 真实规则执行到终点并锁定后续行动
+ok 8 - E4-08 真实规则执行到终点并锁定后续行动
+  ---
+  duration_ms: 1.1796
+  type: 'test'
+  ...
+# Subtest: 相机适配：窄屏需要比宽屏拉得更远
+ok 9 - 相机适配：窄屏需要比宽屏拉得更远
+  ---
+  duration_ms: 1.0117
+  type: 'test'
+  ...
+# Subtest: 相机适配：更大的棋盘需要更远的镜头距离
+ok 10 - 相机适配：更大的棋盘需要更远的镜头距离
+  ---
+  duration_ms: 0.1352
+  type: 'test'
+  ...
+# Subtest: 相机适配：计算距离能够容纳水平和纵向投影
+ok 11 - 相机适配：计算距离能够容纳水平和纵向投影
+  ---
+  duration_ms: 0.131
+  type: 'test'
+  ...
+# Subtest: 方向滑行：直线前进指定格数
+ok 12 - 方向滑行：直线前进指定格数
+  ---
+  duration_ms: 3.8905
+  type: 'test'
+  ...
+# Subtest: 滑行被墙阻挡后停在墙前
+ok 13 - 滑行被墙阻挡后停在墙前
+  ---
+  duration_ms: 0.3569
+  type: 'test'
+  ...
+# Subtest: 罗素制动：可以在中途停下
+ok 14 - 罗素制动：可以在中途停下
+  ---
+  duration_ms: 0.3959
+  type: 'test'
+  ...
+# Subtest: 掉进坑洞：回到出生点
+ok 15 - 掉进坑洞：回到出生点
+  ---
+  duration_ms: 0.3819
+  type: 'test'
+  ...
+# Subtest: 传送带顺行：同向移动额外前进一格
+ok 16 - 传送带顺行：同向移动额外前进一格
+  ---
+  duration_ms: 0.4354
+  type: 'test'
+  ...
+# Subtest: 土墙：撞击消耗耐久并可穿过
+ok 17 - 土墙：撞击消耗耐久并可穿过
+  ---
+  duration_ms: 0.2999
+  type: 'test'
+  ...
+# Subtest: 幸运方块：停下触发三选一奖励
+ok 18 - 幸运方块：停下触发三选一奖励
+  ---
+  duration_ms: 0.3856
+  type: 'test'
+  ...
+# Subtest: 炸药：下回合开始爆炸并击退邻居
+ok 19 - 炸药：下回合开始爆炸并击退邻居
+  ---
+  duration_ms: 0.7064
+  type: 'test'
+  ...
+# Subtest: 击退入坑：knockback 直接判死回出生点
+ok 20 - 击退入坑：knockback 直接判死回出生点
+  ---
+  duration_ms: 0.5285
+  type: 'test'
+  ...
+# Subtest: 抵达终点：对局结束并排名第一
+ok 21 - 抵达终点：对局结束并排名第一
+  ---
+  duration_ms: 1.8164
+  type: 'test'
+  ...
+# Subtest: 瞬移落在终点：立即结束对局
+ok 22 - 瞬移落在终点：立即结束对局
+  ---
+  duration_ms: 0.5208
+  type: 'test'
+  ...
+# Subtest: 系统卡生命周期：回合结束卡跨回合作废，move 库存保留
+ok 23 - 系统卡生命周期：回合结束卡跨回合作废，move 库存保留
+  ---
+  duration_ms: 0.4055
+  type: 'test'
+  ...
+# Subtest: AI 全自动对局：三张图均能完赛且状态自洽
+ok 24 - AI 全自动对局：三张图均能完赛且状态自洽
+  ---
+  duration_ms: 24.4909
+  type: 'test'
+  ...
+# Subtest: E4-09 偏好不存在使用默认值，写入后可读取
+ok 25 - E4-09 偏好不存在使用默认值，写入后可读取
+  ---
+  duration_ms: 0.8333
+  type: 'test'
+  ...
+# Subtest: E4-10 存储属性访问被禁止：读取降级、写入不抛异常并提示
+ok 26 - E4-10 存储属性访问被禁止：读取降级、写入不抛异常并提示
+  ---
+  duration_ms: 0.2369
+  type: 'test'
+  ...
+# Subtest: E4-11 容量不足：写入失败仍返回可展示提示
+ok 27 - E4-11 容量不足：写入失败仍返回可展示提示
+  ---
+  duration_ms: 0.1293
+  type: 'test'
+  ...
+# Subtest: E4-12 昵称去空白并拒绝超长、非字符串输入
+ok 28 - E4-12 昵称去空白并拒绝超长、非字符串输入
+  ---
+  duration_ms: 0.3904
+  type: 'test'
+  ...
+# Subtest: 仅真正投骰进入行动阶段展示双骰，冲刺和回合切换不重播
+ok 29 - 仅真正投骰进入行动阶段展示双骰，冲刺和回合切换不重播
+  ---
+  duration_ms: 1.1127
+  type: 'test'
+  ...
+# Subtest: 棋子移动在60Hz与144Hz下经过相同时间进度一致
+ok 30 - 棋子移动在60Hz与144Hz下经过相同时间进度一致
+  ---
+  duration_ms: 0.2005
+  type: 'test'
+  ...
+# Subtest: 模拟模型HTTP成功：保留JSON内容、Token用量和请求编号
+ok 31 - 模拟模型HTTP成功：保留JSON内容、Token用量和请求编号
+  ---
+  duration_ms: 6.1454
+  type: 'test'
+  ...
+# Subtest: RAG模块成功：检索、模型JSON、有效引用和上下文轨迹形成闭环
+ok 32 - RAG模块成功：检索、模型JSON、有效引用和上下文轨迹形成闭环
+  ---
+  duration_ms: 3.7382
+  type: 'test'
+  ...
+# Subtest: 输出验证拒绝错误JSON、缺失字段和过长回答
+ok 33 - 输出验证拒绝错误JSON、缺失字段和过长回答
+  ---
+  duration_ms: 0.8003
+  type: 'test'
+  ...
+# Subtest: 输出验证拒绝缺引用、伪造引用，以及非回答状态或直接模型组附带引用
+ok 34 - 输出验证拒绝缺引用、伪造引用，以及非回答状态或直接模型组附带引用
+  ---
+  duration_ms: 0.474
+  type: 'test'
+  ...
+# Subtest: RAG模块把模型伪造引用转为可展示失败，不放行无效答案
+ok 35 - RAG模块把模型伪造引用转为可展示失败，不放行无效答案
+  ---
+  duration_ms: 0.9532
+  type: 'test'
+  ...
+# Subtest: 缺少模型密钥时在发起HTTP前返回NOT_CONFIGURED
+ok 36 - 缺少模型密钥时在发起HTTP前返回NOT_CONFIGURED
+  ---
+  duration_ms: 0.4064
+  type: 'test'
+  ...
+# Subtest: 模拟上游HTTP429：返回限流错误码，不泄露原始错误体
+ok 37 - 模拟上游HTTP429：返回限流错误码，不泄露原始错误体
+  ---
+  duration_ms: 0.7253
+  type: 'test'
+  ...
+# Subtest: 模拟上游返回无法解析的HTTP数据或截断输出时拒绝使用
+ok 38 - 模拟上游返回无法解析的HTTP数据或截断输出时拒绝使用
+  ---
+  duration_ms: 0.9629
+  type: 'test'
+  ...
+# Subtest: 模拟挂起的模型请求达到超时预算后返回TIMEOUT
+ok 39 - 模拟挂起的模型请求达到超时预算后返回TIMEOUT
+  ---
+  duration_ms: 25.8684
+  type: 'test'
+  ...
+# Subtest: 用户取消请求返回CANCELLED，区别于超时
+ok 40 - 用户取消请求返回CANCELLED，区别于超时
+  ---
+  duration_ms: 20.6135
+  type: 'test'
+  ...
+# Subtest: 真实回环连接失败：已关闭端口返回CONNECTION_FAILED，不访问云端
+ok 41 - 真实回环连接失败：已关闭端口返回CONNECTION_FAILED，不访问云端
+  ---
+  duration_ms: 28.0203
+  type: 'test'
+  ...
+# Subtest: 本地HTTP接口验证健康状态、JSON输入限制和外部Origin拒绝
+ok 42 - 本地HTTP接口验证健康状态、JSON输入限制和外部Origin拒绝
+  ---
+  duration_ms: 31.9874
+  type: 'test'
+  ...
+# Subtest: 知识库按完整标题切分，编号唯一，来源行号与正文对应
+ok 43 - 知识库按完整标题切分，编号唯一，来源行号与正文对应
+  ---
+  duration_ms: 7.1561
+  type: 'test'
+  ...
+# Subtest: 三条抽检规则保持完整条件和例外，没有被长度切断
+ok 44 - 三条抽检规则保持完整条件和例外，没有被长度切断
+  ---
+  duration_ms: 1.6033
+  type: 'test'
+  ...
+# Subtest: 单规则问题检索正确，分数与命中词可检查
+ok 45 - 单规则问题检索正确，分数与命中词可检查
+  ---
+  duration_ms: 1.9448
+  type: 'test'
+  ...
+# Subtest: 多规则问题Top-3包含冲刺、瞬移和终点结算
+ok 46 - 多规则问题Top-3包含冲刺、瞬移和终点结算
+  ---
+  duration_ms: 10.3036
+  type: 'test'
+  ...
+# Subtest: 无依据、含糊指代、空问题和非法k不返回伪相关片段
+ok 47 - 无依据、含糊指代、空问题和非法k不返回伪相关片段
+  ---
+  duration_ms: 1.5028
+  type: 'test'
+  ...
+# Subtest: 知识库版本、乱码、重复编号与缺元数据会被拒绝
+ok 48 - 知识库版本、乱码、重复编号与缺元数据会被拒绝
+  ---
+  duration_ms: 0.9162
+  type: 'test'
+  ...
+# Subtest: 没有存档时首页正常显示，不产生警告
+ok 49 - 没有存档时首页正常显示，不产生警告
+  ---
+  duration_ms: 1.3112
+  type: 'test'
+  ...
+# Subtest: 已投骰的局面持久化后保持骰值、手牌、位置和计时，不重复发牌
+ok 50 - 已投骰的局面持久化后保持骰值、手牌、位置和计时，不重复发牌
+  ---
+  duration_ms: 2.105
+  type: 'test'
+  ...
+# Subtest: 奖励选择中恢复后能正确领取一次
+ok 51 - 奖励选择中恢复后能正确领取一次
+  ---
+  duration_ms: 0.6136
+  type: 'test'
+  ...
+# Subtest: 损坏JSON、旧格式及错误嵌套状态不进入引擎，原存档仍保留
+ok 52 - 损坏JSON、旧格式及错误嵌套状态不进入引擎，原存档仍保留
+  ---
+  duration_ms: 1.7731
+  type: 'test'
+  ...
+# Subtest: 容量不足不覆盖旧存档，禁用存储不让页面崩溃
+ok 53 - 容量不足不覆盖旧存档，禁用存储不让页面崩溃
+  ---
+  duration_ms: 0.892
+  type: 'test'
+  ...
+# Subtest: 恢复后新牌、实体、日志和特效序号预留到存档最大值之后
+ok 54 - 恢复后新牌、实体、日志和特效序号预留到存档最大值之后
+  ---
+  duration_ms: 0.6375
+  type: 'test'
+  ...
+# Subtest: 三张正式地图在每步操作后均能保存恢复，结算状态也可以重新查看
+ok 55 - 三张正式地图在每步操作后均能保存恢复，结算状态也可以重新查看
+  ---
+  duration_ms: 65.5566
+  type: 'test'
+  ...
+1..55
+# tests 55
+# suites 0
+# pass 55
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 590.6678

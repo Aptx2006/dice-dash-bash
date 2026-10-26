@@ -1,0 +1,66 @@
+[
+  {
+    "id": "Q1",
+    "question": "普通角色在回合开始正常投骰后，移动骰和工具骰分别给我什么？能在行动阶段再次投骰吗？",
+    "kind": "single",
+    "expectedStatus": "answered",
+    "expectedSources": ["phase.roll"],
+    "requiredPoints": ["移动骰产生移动牌", "工具骰产生工具牌", "进入行动阶段", "不能再次投骰"]
+  },
+  {
+    "id": "Q2",
+    "question": "行动阶段按一次结束牌会立刻轮到下一个玩家吗？还要做什么才能交出回合？",
+    "kind": "single",
+    "expectedStatus": "answered",
+    "expectedSources": ["phase.end"],
+    "requiredPoints": ["第一次进入回合结束阶段", "再次结束才交出回合"]
+  },
+  {
+    "id": "Q3",
+    "question": "今天北京天气如何？请告诉我实时温度。",
+    "kind": "unknown",
+    "expectedStatus": "out_of_scope",
+    "expectedSources": [],
+    "requiredPoints": ["天气不是游戏规则任务", "不编造实时天气"]
+  },
+  {
+    "id": "Q4",
+    "question": "停在幸运方块后，是同时得到三张工具吗？再次站上同一个幸运格还能领奖吗？",
+    "kind": "single",
+    "expectedStatus": "answered",
+    "expectedSources": ["terrain.lucky"],
+    "requiredPoints": ["三张不同随机工具中选择一张", "幸运方块变为地板", "同一格不重复发奖"]
+  },
+  {
+    "id": "Q5",
+    "question": "坑洞和毒气有什么区别？经过但不停在毒气上也会像坑洞一样死亡吗？",
+    "kind": "single",
+    "expectedStatus": "answered",
+    "expectedSources": ["terrain.danger"],
+    "requiredPoints": ["坑洞经过或停留触发", "毒气停留触发", "回到当前出生点"]
+  },
+  {
+    "id": "Q6",
+    "question": "我有3点移动牌，先用冲刺能变成几点？如果最后用瞬移落到终点，能在本回合获胜吗？",
+    "kind": "multi",
+    "expectedStatus": "answered",
+    "expectedSources": ["tool.sprint", "tool.teleport", "result.finish"],
+    "requiredPoints": ["冲刺加2点成为5点", "有移动牌才能用冲刺", "合法瞬移终点立即结算"]
+  },
+  {
+    "id": "Q7",
+    "question": "本游戏排行榜每周前十名能获得多少赛季积分？",
+    "kind": "unknown",
+    "expectedStatus": "insufficient",
+    "expectedSources": [],
+    "requiredPoints": ["资料没有排行榜赛季积分规则", "不编造积分数值"]
+  },
+  {
+    "id": "Q8",
+    "question": "这个道具怎么用？",
+    "kind": "clarify",
+    "expectedStatus": "clarify",
+    "expectedSources": [],
+    "requiredPoints": ["请补充具体道具名称", "不猜测所指道具"]
+  }
+]

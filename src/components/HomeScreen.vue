@@ -6,6 +6,7 @@ import type { TerrainKind } from '../game/types.ts'
 import { validateNickname } from '../game/configValidation.ts'
 import { readPreference } from '../storage/preferences.ts'
 import type { SavedMatch } from '../storage/savedMatch.ts'
+import RulesCoach from './RulesCoach.vue'
 
 defineProps<{ savedMatch?: SavedMatch | null }>()
 
@@ -95,6 +96,8 @@ function startTutorial() {
         <strong>第一次游玩？进入基础教学</strong>
       </button>
     </section>
+
+    <RulesCoach />
 
     <section v-if="savedMatch" class="resume-match" aria-label="最近对局">
       <div>

@@ -1,0 +1,279 @@
+{
+  "metadata": {
+    "date": "2026-10-26",
+    "reviewMethod": "AI辅助逐项核对；依据当前源码与固定判据。不是用户本人已完成的人工评分。",
+    "comparison": "docs/experiment5/compare-results.json",
+    "comparisonSha256": "d2d0cb73c2edcd35a50a9d07f5ffc26a852f85b56c596b2abfb44125cbb81d47",
+    "rubric": "eval/rules-questions.json",
+    "model": "qwen3.8-flash",
+    "scope": "单次固定8题，每组8次调用；样本小，结论只适用于此次任务、模型、提示词与规则版本。",
+    "criteria": "按整体语义核对状态、固定要点、规则事实与引用支持；缺失答案与编造内容分开。无检索组诚实拒答不计编造，但没有完成可回答问题。引用为空的拒答按格式验证通过，不计入有引用答案的质量分母。"
+  },
+  "records": [
+    {
+      "id": "Q1",
+      "expectedStatus": "answered",
+      "requiredPoints": [
+        "移动骰产生移动牌",
+        "工具骰产生工具牌",
+        "进入行动阶段",
+        "不能再次投骰"
+      ],
+      "direct": {
+        "statusCorrect": false,
+        "pointsHit": 0,
+        "missingPoints": [
+          "移动骰产生移动牌",
+          "工具骰产生工具牌",
+          "进入行动阶段",
+          "不能再次投骰"
+        ],
+        "unsupportedAssertions": [],
+        "notes": "诚实声明缺少游戏资料，没有编造骰子机制；但未完成本题可由当前规则回答的4个要点。insufficient符合其自述知识边界，却不等于完成固定题的answered目标。泛化的规则书建议不计作已核验来源。",
+        "pointsTotal": 4
+      },
+      "rag": {
+        "statusCorrect": true,
+        "pointsHit": 4,
+        "missingPoints": [],
+        "unsupportedAssertions": [],
+        "notes": "明确说明移动点数与移动牌、工具骰与工具牌及行动阶段不能重掷。叙述发牌后“进入行动阶段后”的限制，按整体语义判定阶段要点已覆盖，而不是只按词出现计分。phase.roll可支持全部具体规则。",
+        "citationIdsValid": true,
+        "citationsSupported": true,
+        "pointsTotal": 4
+      }
+    },
+    {
+      "id": "Q2",
+      "expectedStatus": "answered",
+      "requiredPoints": [
+        "第一次进入回合结束阶段",
+        "再次结束才交出回合"
+      ],
+      "direct": {
+        "statusCorrect": false,
+        "pointsHit": 0,
+        "missingPoints": [
+          "第一次进入回合结束阶段",
+          "再次结束才交出回合"
+        ],
+        "unsupportedAssertions": [],
+        "notes": "没有错误宣称一次结束就换人，而是诚实拒答；两项所需操作均未给出。",
+        "pointsTotal": 2
+      },
+      "rag": {
+        "statusCorrect": true,
+        "pointsHit": 2,
+        "missingPoints": [],
+        "unsupportedAssertions": [],
+        "notes": "一次结束只转换到回合结束阶段，第二次结束才交出行动权，均与playEndCard一致；附带系统牌与库存工具说明也受phase.end支持。",
+        "citationIdsValid": true,
+        "citationsSupported": true,
+        "pointsTotal": 2
+      }
+    },
+    {
+      "id": "Q3",
+      "expectedStatus": "out_of_scope",
+      "requiredPoints": [
+        "天气不是游戏规则任务",
+        "不编造实时天气"
+      ],
+      "direct": {
+        "statusCorrect": true,
+        "pointsHit": 2,
+        "missingPoints": [],
+        "unsupportedAssertions": [],
+        "notes": "明确限制为游戏规则，不提供天气或实时数据，且没有编造温度；这是正确的越范围处理。",
+        "pointsTotal": 2
+      },
+      "rag": {
+        "statusCorrect": true,
+        "pointsHit": 2,
+        "missingPoints": [],
+        "unsupportedAssertions": [],
+        "notes": "空检索时仍正确识别天气越范围，不把空资料误判成一般知识不足；无引用符合拒答格式，不纳入有来源答案的引用质量分母。",
+        "citationIdsValid": true,
+        "citationsSupported": true,
+        "pointsTotal": 2
+      }
+    },
+    {
+      "id": "Q4",
+      "expectedStatus": "answered",
+      "requiredPoints": [
+        "三张不同随机工具中选择一张",
+        "幸运方块变为地板",
+        "同一格不重复发奖"
+      ],
+      "direct": {
+        "statusCorrect": false,
+        "pointsHit": 0,
+        "missingPoints": [
+          "三张不同随机工具中选择一张",
+          "幸运方块变为地板",
+          "同一格不重复发奖"
+        ],
+        "unsupportedAssertions": [],
+        "notes": "拒绝猜测幸运方块机制，未编造具体工具数量或重复领奖规则，但三个业务要点均未覆盖。回答建议查阅“实体说明书中的特殊格章节”，项目未提供该文档/章节存在性证据；该建议不可作为来源证据，本次不把泛化查阅建议计为游戏机制编造。",
+        "pointsTotal": 3
+      },
+      "rag": {
+        "statusCorrect": true,
+        "pointsHit": 3,
+        "missingPoints": [],
+        "unsupportedAssertions": [],
+        "notes": "说明3个不同随机候选选1、消耗后变地板和不可重复领奖，与onStopCell、queueReward、chooseReward相符。",
+        "citationIdsValid": true,
+        "citationsSupported": true,
+        "pointsTotal": 3
+      }
+    },
+    {
+      "id": "Q5",
+      "expectedStatus": "answered",
+      "requiredPoints": [
+        "坑洞经过或停留触发",
+        "毒气停留触发",
+        "回到当前出生点"
+      ],
+      "direct": {
+        "statusCorrect": false,
+        "pointsHit": 0,
+        "missingPoints": [
+          "坑洞经过或停留触发",
+          "毒气停留触发",
+          "回到当前出生点"
+        ],
+        "unsupportedAssertions": [],
+        "notes": "问题已明确给出坑洞和毒气两个对象，实际缺的是模型对规则的知识，而不是对象指代；clarify分类不符合判据。虽未捏造机制，仍没有完成触发条件区别和死亡结果的回答。",
+        "pointsTotal": 3
+      },
+      "rag": {
+        "statusCorrect": true,
+        "pointsHit": 3,
+        "missingPoints": [],
+        "unsupportedAssertions": [],
+        "notes": "准确区分坑洞经过/停留与毒气停留，明确经过毒气未停留不判死，并给出回到当前出生点的结果。terrain.danger与引擎onEnterCell、onStopCell、killPlayer均支持。",
+        "citationIdsValid": true,
+        "citationsSupported": true,
+        "pointsTotal": 3
+      }
+    },
+    {
+      "id": "Q6",
+      "expectedStatus": "answered",
+      "requiredPoints": [
+        "冲刺加2点成为5点",
+        "有移动牌才能用冲刺",
+        "合法瞬移终点立即结算"
+      ],
+      "direct": {
+        "statusCorrect": false,
+        "pointsHit": 0,
+        "missingPoints": [
+          "冲刺加2点成为5点",
+          "有移动牌才能用冲刺",
+          "合法瞬移终点立即结算"
+        ],
+        "unsupportedAssertions": [],
+        "notes": "用户已经给出3点移动牌、冲刺、瞬移和终点，要求用户补充所有机制定义实质上是模型知识不足；clarify未完成固定题的answered目标。没有编造数值或胜负结果。",
+        "pointsTotal": 3
+      },
+      "rag": {
+        "statusCorrect": true,
+        "pointsHit": 2,
+        "missingPoints": [
+          "有移动牌才能用冲刺"
+        ],
+        "unsupportedAssertions": [],
+        "notes": "正确给出3变5和合法瞬移终点立即获胜，但没有明确解释“手中必须仍有移动牌”这一前置条件。问题已说持有3点牌，并不等于回答完成了固定判据的必要条件说明，因此严格扣除这一要点。附带“非坑洞”在终点场景中冗余，却受teleportCells规则支持，不算捏造；点数无需用完、结束后停止行动也有result.finish依据。",
+        "citationIdsValid": true,
+        "citationsSupported": true,
+        "pointsTotal": 3
+      }
+    },
+    {
+      "id": "Q7",
+      "expectedStatus": "insufficient",
+      "requiredPoints": [
+        "资料没有排行榜赛季积分规则",
+        "不编造积分数值"
+      ],
+      "direct": {
+        "statusCorrect": true,
+        "pointsHit": 2,
+        "missingPoints": [],
+        "unsupportedAssertions": [],
+        "notes": "明确本次没有相关积分奖励资料，无法确认数值，没有猜测积分；未证明游戏实际已提供排行榜。查阅官方手册/公告是一般建议，不是已取得的游戏规则来源。",
+        "pointsTotal": 2
+      },
+      "rag": {
+        "statusCorrect": true,
+        "pointsHit": 2,
+        "missingPoints": [],
+        "unsupportedAssertions": [],
+        "notes": "明确资料未包含排行榜或赛季积分，且不编造积分。空引用是本题预期行为，不纳入有来源答案的引用质量分母。",
+        "citationIdsValid": true,
+        "citationsSupported": true,
+        "pointsTotal": 2
+      }
+    },
+    {
+      "id": "Q8",
+      "expectedStatus": "clarify",
+      "requiredPoints": [
+        "请补充具体道具名称",
+        "不猜测所指道具"
+      ],
+      "direct": {
+        "statusCorrect": true,
+        "pointsHit": 2,
+        "missingPoints": [],
+        "unsupportedAssertions": [],
+        "notes": "具体追问道具名称，不猜测“这个”指哪一件道具；给出补充信息的方向，两个处理要点均覆盖。",
+        "pointsTotal": 2
+      },
+      "rag": {
+        "statusCorrect": true,
+        "pointsHit": 2,
+        "missingPoints": [],
+        "unsupportedAssertions": [],
+        "notes": "具体追问道具名称，解释缺少所指对象；空资料并未导致错误的insufficient状态。没有引用是预期行为，不纳入有来源答案的引用质量分母。",
+        "citationIdsValid": true,
+        "citationsSupported": true,
+        "pointsTotal": 2
+      }
+    }
+  ],
+  "summary": {
+    "direct": {
+      "statusCorrect": 3,
+      "questions": 8,
+      "pointsHit": 6,
+      "pointsTotal": 21,
+      "fullyCoveredQuestions": 3,
+      "unsupportedGameRuleAssertions": 0
+    },
+    "rag": {
+      "statusCorrect": 8,
+      "questions": 8,
+      "pointsHit": 20,
+      "pointsTotal": 21,
+      "fullyCoveredQuestions": 7,
+      "unsupportedGameRuleAssertions": 0,
+      "citationEvaluableAnswers": 5,
+      "citationIdsValidAnswers": 5,
+      "citationsSupportedAnswers": 5,
+      "citationReferences": 7,
+      "validCitationReferences": 7,
+      "supportedCitationReferences": 7
+    },
+    "notes": [
+      "直接组没有捏造具体游戏机制，5道可回答题均没有给出所需答案；其中Q5、Q6将模型知识不足处理成clarify。",
+      "RAG组状态8/8符合固定判据、要点20/21，Q6遗漏冲刺必须有移动牌的前置条件，故不能称为全部要点正确。",
+      "RAG五个有依据答案使用7个引用，均属于本次检索片段，逐项支持其实际游戏结论；这不证明所有未来回答都可信。",
+      "Q4直接组提及未核验的实体说明书/章节，属于泛化查阅建议，不作为来源证据；本次机制编造计数不包含此类建议。"
+    ]
+  }
+}

@@ -1,0 +1,283 @@
+{
+  "recordedAt": "2026-10-26T15:24:57.257Z",
+  "records": [
+    {
+      "id": "Q6",
+      "requestId": "18c7c43f-fcd4-49ce-9574-c92ce170c0c8",
+      "mode": "rag",
+      "promptVersion": "v1",
+      "requestedModel": "qwen3.8-flash",
+      "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "httpStatus": 200,
+      "retrieval": [
+        {
+          "chunk": {
+            "id": "result.finish",
+            "title": "终点、胜者与结束锁定",
+            "text": "首位抵达终点的玩家立即完成竞速，引擎记录其到达回合，并把整局设为结束状态。普通移动经过终点，或瞬移、瞬步等位移落在终点，都可以触发完成，不要求把移动点数恰好用完。结算将完赛者排在前面；未完赛者显示距终点距离，不冒充已完赛。结束后不能继续投骰、移动或推进回合。\n源码: src/game/engine.ts#onEnterCell、onStopCell、finishPlayer、settlementRanking",
+            "source": "knowledge/rules-v1.md",
+            "sourceLines": [
+              86,
+              90
+            ],
+            "rulesVersion": "local-v1",
+            "keywords": [
+              "终点",
+              "获胜",
+              "胜利",
+              "赢",
+              "结算",
+              "排名",
+              "完赛",
+              "抵达终点"
+            ]
+          },
+          "score": 8,
+          "matchedTerms": [
+            "终点",
+            "获胜"
+          ]
+        },
+        {
+          "chunk": {
+            "id": "tool.sprint",
+            "title": "冲刺增加移动点数",
+            "text": "冲刺需要当前手中仍有移动牌。使用后给本回合手中的一张移动牌增加2点移动，同时更新显示的移动骰数值，并消耗冲刺牌。没有移动牌时不能使用冲刺。冲刺不是重新投骰，也不是额外获得一个回合；例如3点移动牌用冲刺后成为5点。\n源码: src/game/engine.ts#canUseTool、playSimpleTool；src/game/tools.ts#TOOLS.sprint",
+            "source": "knowledge/rules-v1.md",
+            "sourceLines": [
+              38,
+              42
+            ],
+            "rulesVersion": "local-v1",
+            "keywords": [
+              "冲刺",
+              "增加移动",
+              "加速",
+              "多走",
+              "加2",
+              "移动点数加"
+            ]
+          },
+          "score": 6,
+          "matchedTerms": [
+            "冲刺"
+          ]
+        },
+        {
+          "chunk": {
+            "id": "tool.teleport",
+            "title": "瞬移的合法落点",
+            "text": "瞬移可选择全棋盘内的合法落点，不受附近3×3范围限制。落点不能阻挡地面移动，不能有其他玩家，也不能是坑洞；需要先选择瞬移牌，再点击可落脚格。执行后改变玩家位置、消耗瞬移牌，并触发落点结算。终点是可落脚且无人占据时，可以作为瞬移目标；落到终点会立即完成竞速，具体终点判定见result.finish。\n源码: src/game/engine.ts#teleportCells、playTeleportTool、onStopCell",
+            "source": "knowledge/rules-v1.md",
+            "sourceLines": [
+              44,
+              48
+            ],
+            "rulesVersion": "local-v1",
+            "keywords": [
+              "瞬移",
+              "全场",
+              "任意落点",
+              "传送",
+              "teleport"
+            ]
+          },
+          "score": 6,
+          "matchedTerms": [
+            "瞬移"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是《当骰一棒》的规则助手，请根据问题与提供的参考资料回答。只输出JSON对象：{\"status\":\"answered|clarify|insufficient|out_of_scope\",\"answer\":\"中文答案\",\"citations\":[\"来源ID\"]}。answer最多260字，citations去重。\n可参考给出的资料。"
+        },
+        {
+          "role": "user",
+          "content": "【资料JSON】\n[{\"id\":\"result.finish\",\"title\":\"终点、胜者与结束锁定\",\"text\":\"首位抵达终点的玩家立即完成竞速，引擎记录其到达回合，并把整局设为结束状态。普通移动经过终点，或瞬移、瞬步等位移落在终点，都可以触发完成，不要求把移动点数恰好用完。结算将完赛者排在前面；未完赛者显示距终点距离，不冒充已完赛。结束后不能继续投骰、移动或推进回合。\\n源码: src/game/engine.ts#onEnterCell、onStopCell、finishPlayer、settlementRanking\",\"source\":\"knowledge/rules-v1.md\",\"rulesVersion\":\"local-v1\"},{\"id\":\"tool.sprint\",\"title\":\"冲刺增加移动点数\",\"text\":\"冲刺需要当前手中仍有移动牌。使用后给本回合手中的一张移动牌增加2点移动，同时更新显示的移动骰数值，并消耗冲刺牌。没有移动牌时不能使用冲刺。冲刺不是重新投骰，也不是额外获得一个回合；例如3点移动牌用冲刺后成为5点。\\n源码: src/game/engine.ts#canUseTool、playSimpleTool；src/game/tools.ts#TOOLS.sprint\",\"source\":\"knowledge/rules-v1.md\",\"rulesVersion\":\"local-v1\"},{\"id\":\"tool.teleport\",\"title\":\"瞬移的合法落点\",\"text\":\"瞬移可选择全棋盘内的合法落点，不受附近3×3范围限制。落点不能阻挡地面移动，不能有其他玩家，也不能是坑洞；需要先选择瞬移牌，再点击可落脚格。执行后改变玩家位置、消耗瞬移牌，并触发落点结算。终点是可落脚且无人占据时，可以作为瞬移目标；落到终点会立即完成竞速，具体终点判定见result.finish。\\n源码: src/game/engine.ts#teleportCells、playTeleportTool、onStopCell\",\"source\":\"knowledge/rules-v1.md\",\"rulesVersion\":\"local-v1\"}]\n【用户问题】\n我有3点移动牌，先用冲刺能变成几点？如果最后用瞬移落到终点，能在本回合获胜吗？"
+        }
+      ],
+      "request": {
+        "model": "qwen3.8-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你是《当骰一棒》的规则助手，请根据问题与提供的参考资料回答。只输出JSON对象：{\"status\":\"answered|clarify|insufficient|out_of_scope\",\"answer\":\"中文答案\",\"citations\":[\"来源ID\"]}。answer最多260字，citations去重。\n可参考给出的资料。"
+          },
+          {
+            "role": "user",
+            "content": "【资料JSON】\n[{\"id\":\"result.finish\",\"title\":\"终点、胜者与结束锁定\",\"text\":\"首位抵达终点的玩家立即完成竞速，引擎记录其到达回合，并把整局设为结束状态。普通移动经过终点，或瞬移、瞬步等位移落在终点，都可以触发完成，不要求把移动点数恰好用完。结算将完赛者排在前面；未完赛者显示距终点距离，不冒充已完赛。结束后不能继续投骰、移动或推进回合。\\n源码: src/game/engine.ts#onEnterCell、onStopCell、finishPlayer、settlementRanking\",\"source\":\"knowledge/rules-v1.md\",\"rulesVersion\":\"local-v1\"},{\"id\":\"tool.sprint\",\"title\":\"冲刺增加移动点数\",\"text\":\"冲刺需要当前手中仍有移动牌。使用后给本回合手中的一张移动牌增加2点移动，同时更新显示的移动骰数值，并消耗冲刺牌。没有移动牌时不能使用冲刺。冲刺不是重新投骰，也不是额外获得一个回合；例如3点移动牌用冲刺后成为5点。\\n源码: src/game/engine.ts#canUseTool、playSimpleTool；src/game/tools.ts#TOOLS.sprint\",\"source\":\"knowledge/rules-v1.md\",\"rulesVersion\":\"local-v1\"},{\"id\":\"tool.teleport\",\"title\":\"瞬移的合法落点\",\"text\":\"瞬移可选择全棋盘内的合法落点，不受附近3×3范围限制。落点不能阻挡地面移动，不能有其他玩家，也不能是坑洞；需要先选择瞬移牌，再点击可落脚格。执行后改变玩家位置、消耗瞬移牌，并触发落点结算。终点是可落脚且无人占据时，可以作为瞬移目标；落到终点会立即完成竞速，具体终点判定见result.finish。\\n源码: src/game/engine.ts#teleportCells、playTeleportTool、onStopCell\",\"source\":\"knowledge/rules-v1.md\",\"rulesVersion\":\"local-v1\"}]\n【用户问题】\n我有3点移动牌，先用冲刺能变成几点？如果最后用瞬移落到终点，能在本回合获胜吗？"
+          }
+        ],
+        "temperature": 0,
+        "max_tokens": 600,
+        "stream": false,
+        "response_format": {
+          "type": "json_object"
+        },
+        "enable_thinking": false
+      },
+      "rawContent": "{\"status\":\"answered\",\"answer\":\"使用冲刺后，3点移动牌变为5点。若最后用瞬移落到终点且该格无人占据，可立即完成竞速并获胜。因为普通移动、瞬移等位移落在终点均触发完成，不要求用完移动点数。但需注意：结束后不能继续投骰或推进回合；若终点被占或是坑洞则无法作为落点。\",\"citations\":[\"result.finish\",\"tool.sprint\",\"tool.teleport\"]}",
+      "upstreamId": "437f0818-624e-9640-bca7-a1066dc0e901",
+      "output": {
+        "status": "answered",
+        "answer": "使用冲刺后，3点移动牌变为5点。若最后用瞬移落到终点且该格无人占据，可立即完成竞速并获胜。因为普通移动、瞬移等位移落在终点均触发完成，不要求用完移动点数。但需注意：结束后不能继续投骰或推进回合；若终点被占或是坑洞则无法作为落点。",
+        "citations": [
+          "result.finish",
+          "tool.sprint",
+          "tool.teleport"
+        ],
+        "sources": [
+          {
+            "id": "result.finish",
+            "title": "终点、胜者与结束锁定",
+            "text": "首位抵达终点的玩家立即完成竞速，引擎记录其到达回合，并把整局设为结束状态。普通移动经过终点，或瞬移、瞬步等位移落在终点，都可以触发完成，不要求把移动点数恰好用完。结算将完赛者排在前面；未完赛者显示距终点距离，不冒充已完赛。结束后不能继续投骰、移动或推进回合。\n源码: src/game/engine.ts#onEnterCell、onStopCell、finishPlayer、settlementRanking",
+            "source": "knowledge/rules-v1.md",
+            "score": 8
+          },
+          {
+            "id": "tool.sprint",
+            "title": "冲刺增加移动点数",
+            "text": "冲刺需要当前手中仍有移动牌。使用后给本回合手中的一张移动牌增加2点移动，同时更新显示的移动骰数值，并消耗冲刺牌。没有移动牌时不能使用冲刺。冲刺不是重新投骰，也不是额外获得一个回合；例如3点移动牌用冲刺后成为5点。\n源码: src/game/engine.ts#canUseTool、playSimpleTool；src/game/tools.ts#TOOLS.sprint",
+            "source": "knowledge/rules-v1.md",
+            "score": 6
+          },
+          {
+            "id": "tool.teleport",
+            "title": "瞬移的合法落点",
+            "text": "瞬移可选择全棋盘内的合法落点，不受附近3×3范围限制。落点不能阻挡地面移动，不能有其他玩家，也不能是坑洞；需要先选择瞬移牌，再点击可落脚格。执行后改变玩家位置、消耗瞬移牌，并触发落点结算。终点是可落脚且无人占据时，可以作为瞬移目标；落到终点会立即完成竞速，具体终点判定见result.finish。\n源码: src/game/engine.ts#teleportCells、playTeleportTool、onStopCell",
+            "source": "knowledge/rules-v1.md",
+            "score": 6
+          }
+        ],
+        "model": "qwen3.8-flash",
+        "elapsedMs": 3249,
+        "usage": {
+          "prompt_tokens": 531,
+          "completion_tokens": 100,
+          "total_tokens": 631
+        },
+        "requestId": "18c7c43f-fcd4-49ce-9574-c92ce170c0c8"
+      },
+      "calls": 1,
+      "inputCharacters": 1166
+    },
+    {
+      "id": "Q7",
+      "requestId": "4874269d-14a6-41c7-9bab-1fd1e3565c84",
+      "mode": "rag",
+      "promptVersion": "v1",
+      "requestedModel": "qwen3.8-flash",
+      "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "httpStatus": 200,
+      "retrieval": [],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是《当骰一棒》的规则助手，请根据问题与提供的参考资料回答。只输出JSON对象：{\"status\":\"answered|clarify|insufficient|out_of_scope\",\"answer\":\"中文答案\",\"citations\":[\"来源ID\"]}。answer最多260字，citations去重。\n可参考给出的资料。"
+        },
+        {
+          "role": "user",
+          "content": "【资料JSON】\n[]\n【用户问题】\n本游戏排行榜每周前十名能获得多少赛季积分？"
+        }
+      ],
+      "request": {
+        "model": "qwen3.8-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你是《当骰一棒》的规则助手，请根据问题与提供的参考资料回答。只输出JSON对象：{\"status\":\"answered|clarify|insufficient|out_of_scope\",\"answer\":\"中文答案\",\"citations\":[\"来源ID\"]}。answer最多260字，citations去重。\n可参考给出的资料。"
+          },
+          {
+            "role": "user",
+            "content": "【资料JSON】\n[]\n【用户问题】\n本游戏排行榜每周前十名能获得多少赛季积分？"
+          }
+        ],
+        "temperature": 0,
+        "max_tokens": 600,
+        "stream": false,
+        "response_format": {
+          "type": "json_object"
+        },
+        "enable_thinking": false
+      },
+      "rawContent": "{\"status\":\"insufficient\",\"answer\":\"未提供相关规则资料，无法确定排行榜前十名获得的赛季积分数量。\",\"citations\":[]}",
+      "upstreamId": "56557794-275a-95cb-b214-94afaa8fce76",
+      "output": {
+        "status": "insufficient",
+        "answer": "未提供相关规则资料，无法确定排行榜前十名获得的赛季积分数量。",
+        "citations": [],
+        "sources": [],
+        "model": "qwen3.8-flash",
+        "elapsedMs": 1088,
+        "usage": {
+          "prompt_tokens": 110,
+          "completion_tokens": 28,
+          "total_tokens": 138
+        },
+        "requestId": "4874269d-14a6-41c7-9bab-1fd1e3565c84"
+      },
+      "calls": 1,
+      "inputCharacters": 208
+    },
+    {
+      "id": "Q8",
+      "requestId": "147afb11-70bf-4b59-868c-aa010fab160a",
+      "mode": "rag",
+      "promptVersion": "v1",
+      "requestedModel": "qwen3.8-flash",
+      "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "httpStatus": 200,
+      "retrieval": [],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是《当骰一棒》的规则助手，请根据问题与提供的参考资料回答。只输出JSON对象：{\"status\":\"answered|clarify|insufficient|out_of_scope\",\"answer\":\"中文答案\",\"citations\":[\"来源ID\"]}。answer最多260字，citations去重。\n可参考给出的资料。"
+        },
+        {
+          "role": "user",
+          "content": "【资料JSON】\n[]\n【用户问题】\n这个道具怎么用？"
+        }
+      ],
+      "request": {
+        "model": "qwen3.8-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你是《当骰一棒》的规则助手，请根据问题与提供的参考资料回答。只输出JSON对象：{\"status\":\"answered|clarify|insufficient|out_of_scope\",\"answer\":\"中文答案\",\"citations\":[\"来源ID\"]}。answer最多260字，citations去重。\n可参考给出的资料。"
+          },
+          {
+            "role": "user",
+            "content": "【资料JSON】\n[]\n【用户问题】\n这个道具怎么用？"
+          }
+        ],
+        "temperature": 0,
+        "max_tokens": 600,
+        "stream": false,
+        "response_format": {
+          "type": "json_object"
+        },
+        "enable_thinking": false
+      },
+      "rawContent": "{\"status\":\"insufficient\",\"answer\":\"未提供关于该道具的具体信息或规则资料，无法确定其使用方法。请补充道具名称、所属游戏模块或相关规则文本，以便提供准确指导。\",\"citations\":[]}",
+      "upstreamId": "8eadcea2-08f5-98f0-b5d1-50e4c01acbb5",
+      "output": {
+        "status": "insufficient",
+        "answer": "未提供关于该道具的具体信息或规则资料，无法确定其使用方法。请补充道具名称、所属游戏模块或相关规则文本，以便提供准确指导。",
+        "citations": [],
+        "sources": [],
+        "model": "qwen3.8-flash",
+        "elapsedMs": 1207,
+        "usage": {
+          "prompt_tokens": 104,
+          "completion_tokens": 47,
+          "total_tokens": 151
+        },
+        "requestId": "147afb11-70bf-4b59-868c-aa010fab160a"
+      },
+      "calls": 1,
+      "inputCharacters": 195
+    }
+  ]
+}

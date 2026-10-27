@@ -19,6 +19,26 @@ let toolSerial = 1
 let entitySerial = 1
 let logSerial = 1
 let effectSerial = 1
+let simulationRandom: (() => number) | undefined
+const random = () => simulationRandom ? simulationRandom() : Math.random()
+
+/** 同步隔离推演：调用者只修改副本；随机流和全局编号不影响真实对局。 */
+export function isolatedSimulation<T>(run: () => T, seed = 1): T {
+  const previous = { toolSerial, entitySerial, logSerial, effectSerial, simulationRandom }
+  let value = seed >>> 0
+  simulationRandom = () => {
+    value = (Math.imul(value, 1664525) + 1013904223) >>> 0
+    return value / 4294967296
+  }
+  try { return run() }
+  finally {
+    toolSerial = previous.toolSerial
+    entitySerial = previous.entitySerial
+    logSerial = previous.logSerial
+    effectSerial = previous.effectSerial
+    simulationRandom = previous.simulationRandom
+  }
+}
 
 /** 从已校验的存档恢复，不重走开局逻辑，也不再次投骰或发牌。 */
 export function restoreGame(snapshot: GameState): GameState {
@@ -169,7 +189,7 @@ function randomFreeCell(state: GameState): Cell | null {
     }
   }
   if (!candidates.length) return null
-  return candidates[Math.floor(Math.random() * candidates.length)]
+  return candidates[Math.floor(random() * candidates.length)]
 }
 
 export function pigAt(state: GameState, cell: Cell) {
@@ -198,7 +218,7 @@ function grantTool(state: GameState, player: PlayerState, toolId: ToolInstance['
 }
 
 function rollToolDie(state: GameState, player: PlayerState): ToolInstance {
-  const toolId = TOOL_DIE_POOL[Math.floor(Math.random() * TOOL_DIE_POOL.length)]
+  const toolId = TOOL_DIE_POOL[Math.floor(random() * TOOL_DIE_POOL.length)]
   const params: { points?: number; length?: number } = {}
   if (toolId === 'hook') params.length = player.hookLevel
   const instance = grantTool(state, player, toolId, params)
@@ -209,7 +229,7 @@ function rollToolDie(state: GameState, player: PlayerState): ToolInstance {
 }
 
 function moveDieValue(player: PlayerState): number {
-  const raw = Math.floor(Math.random() * 6) + 1
+  const raw = Math.floor(random() * 6) + 1
   const isJean = player.characterId === 'jean'
   return Math.max(1, raw - (isJean ? 2 : 0))
 }
@@ -549,7 +569,7 @@ function onEnterCell(
   const wallet = walletAt(state, cell)
   if (wallet) {
     state.wallets = state.wallets.filter((w) => w.id !== wallet.id)
-    const toolId = TOOL_DIE_POOL[Math.floor(Math.random() * TOOL_DIE_POOL.length)]
+    const toolId = TOOL_DIE_POOL[Math.floor(random() * TOOL_DIE_POOL.length)]
     const params: { points?: number; length?: number } = {}
     if (toolId === 'hook') params.length = player.hookLevel
     grantTool(state, player, toolId, params)
@@ -601,7 +621,7 @@ function queueReward(state: GameState, player: PlayerState, reason: string) {
   const options: ToolInstance[] = []
   const pool = [...TOOL_DIE_POOL]
   for (let i = 0; i < 3 && pool.length; i++) {
-    const idx = Math.floor(Math.random() * pool.length)
+    const idx = Math.floor(random() * pool.length)
     const toolId = pool.splice(idx, 1)[0]
     const params: { points?: number; length?: number } = {}
     if (toolId === 'hook') params.length = player.hookLevel
@@ -993,7 +1013,7 @@ export function teleportCells(state: GameState): Cell[] {
   for (const row of state.tiles) {
     for (const tile of row) {
       const cell = { x: tile.x, y: tile.y }
-      if (!TERRAINS[tile.kind].blocksMove && !playerAt(state, cell) && tile.kind !== 'pit') cells.push(cell)
+      if (!blocksMove(state, cell) && !playerAt(state, cell) && tile.kind !== 'pit') cells.push(cell)
     }
   }
   return cells

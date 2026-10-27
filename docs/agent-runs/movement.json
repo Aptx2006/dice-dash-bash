@@ -1,0 +1,664 @@
+{
+  "scenario": "movement",
+  "synthetic": true,
+  "goal": "尽量接近终点，避开危险地形。",
+  "snapshot": {
+    "mapId": "tutorial",
+    "mapLabel": "基础教学关",
+    "width": 7,
+    "height": 7,
+    "tiles": [
+      [
+        {
+          "x": 0,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 0,
+          "kind": "goal"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 1,
+          "kind": "floor"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 2,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 2,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "kind": "wall"
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 2,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 2,
+          "kind": "floor"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 3,
+          "kind": "floor"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 4,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 4,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 4,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 4,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 4,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 4,
+          "kind": "home"
+        },
+        {
+          "x": 6,
+          "y": 4,
+          "kind": "floor"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 5,
+          "kind": "floor"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 6,
+          "kind": "start"
+        },
+        {
+          "x": 1,
+          "y": 6,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 6,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 6,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 6,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 6,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 6,
+          "kind": "floor"
+        }
+      ]
+    ],
+    "players": [
+      {
+        "id": "human",
+        "name": "当前玩家",
+        "isAI": false,
+        "characterId": "villager",
+        "pieceColor": "#f2a75c",
+        "ready": true,
+        "isHost": true,
+        "cell": {
+          "x": 0,
+          "y": 6
+        },
+        "spawn": {
+          "x": 0,
+          "y": 6
+        },
+        "hookLevel": 4,
+        "savedMove": 0,
+        "hand": [
+          {
+            "uid": 90001,
+            "toolId": "move",
+            "points": 3
+          }
+        ]
+      },
+      {
+        "id": "ai-1",
+        "name": "对手2",
+        "isAI": true,
+        "characterId": "robot",
+        "pieceColor": "#5f8d95",
+        "ready": true,
+        "isHost": false,
+        "cell": {
+          "x": 3,
+          "y": 4
+        },
+        "spawn": {
+          "x": 0,
+          "y": 6
+        },
+        "hookLevel": 4,
+        "savedMove": 0,
+        "hand": []
+      }
+    ],
+    "activeIndex": 0,
+    "turnNumber": 1,
+    "phase": "action",
+    "dice": {
+      "move": 3,
+      "toolName": null
+    },
+    "bombs": [],
+    "pigs": [],
+    "wallets": [],
+    "effects": [],
+    "logs": [],
+    "mechanisms": {
+      "airdrop": false,
+      "turnTimer": false
+    },
+    "finished": false
+  },
+  "result": {
+    "runId": "913d6118-7f37-4236-8645-06efcfd96e69",
+    "status": "awaiting_confirmation",
+    "reason": "建议已准备好，确认后才会消耗卡牌并执行这一步。",
+    "sources": [
+      {
+        "id": "move.basic",
+        "title": "方向移动与移动牌消耗",
+        "text": "行动阶段选择一张移动牌，再选择上、右、下、左中的一个方向，棋子沿该方向移动，消耗这张移动牌。普通地板每前进一步消耗1点；途中遇到阻挡、棋盘边界或其他玩家会停下，特殊地形还可能改变路径结果。普通角色不能随意在中途选择停点；只有具有制动能力的罗素可以提前停止。移动牌使用后被消耗，不能用同一张牌再次移动。\n源码: src/game/engine.ts#resolveMoveCard、slidePlayer",
+        "source": "knowledge/rules-v1.md",
+        "sourceLines": [
+          26,
+          30
+        ]
+      },
+      {
+        "id": "terrain.danger",
+        "title": "坑洞与毒气的触发区别",
+        "text": "地面移动经过或停在坑洞时，会立即死亡并回到自己的当前出生点；毒气则在停留结算时触发死亡，普通移动经过毒气但最终未停在毒气上，不按同样条件判死。死亡是回到出生点，不是退出整局游戏。家园可以更新玩家的出生点，相关规则见terrain.home。\n源码: src/game/engine.ts#onEnterCell、onStopCell、killPlayer",
+        "source": "knowledge/rules-v1.md",
+        "sourceLines": [
+          68,
+          72
+        ]
+      }
+    ],
+    "events": [
+      {
+        "id": 1,
+        "time": "2026-10-27T01:28:24.236Z",
+        "step": 1,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 3048
+      },
+      {
+        "id": 2,
+        "time": "2026-10-27T01:28:24.247Z",
+        "step": 1,
+        "kind": "tool",
+        "status": "ok",
+        "title": "工具：list_actions",
+        "detail": "已查询合法行动，共2个候选。",
+        "result": {
+          "total": 2,
+          "offset": 0,
+          "hasMore": false,
+          "ordering": "先按本步是否完赛、再按规则引擎计算的剩余距离排序；不代表保证最优路线。",
+          "actions": [
+            {
+              "actionId": "move:90001:right",
+              "kind": "move",
+              "uid": 90001,
+              "dir": "right",
+              "label": "使用移动牌，向右滑行",
+              "preview": {
+                "to": {
+                  "x": 3,
+                  "y": 6
+                },
+                "distanceAfter": 9,
+                "finished": false,
+                "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "move:90001:up",
+              "kind": "move",
+              "uid": 90001,
+              "dir": "up",
+              "label": "使用移动牌，向上滑行",
+              "preview": {
+                "to": {
+                  "x": 0,
+                  "y": 3
+                },
+                "distanceAfter": 9,
+                "finished": false,
+                "summary": "消耗移动牌，结算后位于 (0, 3)。到终点的静态最短路径估计为 9 格。",
+                "warnings": []
+              }
+            }
+          ]
+        },
+        "toolName": "list_actions",
+        "args": {
+          "offset": 0,
+          "limit": 20
+        },
+        "durationMs": 10
+      },
+      {
+        "id": 3,
+        "time": "2026-10-27T01:28:26.862Z",
+        "step": 2,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 2615
+      },
+      {
+        "id": 4,
+        "time": "2026-10-27T01:28:26.863Z",
+        "step": 2,
+        "kind": "tool",
+        "status": "ok",
+        "title": "工具：inspect_action",
+        "detail": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+        "result": {
+          "action": {
+            "actionId": "move:90001:right",
+            "kind": "move",
+            "uid": 90001,
+            "dir": "right",
+            "label": "使用移动牌，向右滑行"
+          },
+          "from": {
+            "x": 0,
+            "y": 6
+          },
+          "to": {
+            "x": 3,
+            "y": 6
+          },
+          "distanceBefore": 12,
+          "distanceAfter": 9,
+          "finished": false,
+          "requiresReward": false,
+          "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+          "warnings": []
+        },
+        "toolName": "inspect_action",
+        "args": {
+          "actionId": "move:90001:right"
+        },
+        "durationMs": 1
+      },
+      {
+        "id": 5,
+        "time": "2026-10-27T01:28:28.464Z",
+        "step": 3,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 1601
+      },
+      {
+        "id": 6,
+        "time": "2026-10-27T01:28:28.466Z",
+        "step": 3,
+        "kind": "tool",
+        "status": "ok",
+        "title": "工具：lookup_rules",
+        "detail": "已查询1条规则来源。",
+        "result": {
+          "rulesVersion": "local-v1",
+          "sources": [
+            {
+              "id": "move.basic",
+              "title": "方向移动与移动牌消耗",
+              "text": "行动阶段选择一张移动牌，再选择上、右、下、左中的一个方向，棋子沿该方向移动，消耗这张移动牌。普通地板每前进一步消耗1点；途中遇到阻挡、棋盘边界或其他玩家会停下，特殊地形还可能改变路径结果。普通角色不能随意在中途选择停点；只有具有制动能力的罗素可以提前停止。移动牌使用后被消耗，不能用同一张牌再次移动。\n源码: src/game/engine.ts#resolveMoveCard、slidePlayer",
+              "source": "knowledge/rules-v1.md",
+              "sourceLines": [
+                26,
+                30
+              ]
+            }
+          ]
+        },
+        "toolName": "lookup_rules",
+        "args": {
+          "query": "move.basic 移动规则"
+        },
+        "durationMs": 2
+      },
+      {
+        "id": 7,
+        "time": "2026-10-27T01:28:29.428Z",
+        "step": 4,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 961
+      },
+      {
+        "id": 8,
+        "time": "2026-10-27T01:28:29.429Z",
+        "step": 4,
+        "kind": "tool",
+        "status": "ok",
+        "title": "工具：lookup_rules",
+        "detail": "已查询1条规则来源。",
+        "result": {
+          "rulesVersion": "local-v1",
+          "sources": [
+            {
+              "id": "terrain.danger",
+              "title": "坑洞与毒气的触发区别",
+              "text": "地面移动经过或停在坑洞时，会立即死亡并回到自己的当前出生点；毒气则在停留结算时触发死亡，普通移动经过毒气但最终未停在毒气上，不按同样条件判死。死亡是回到出生点，不是退出整局游戏。家园可以更新玩家的出生点，相关规则见terrain.home。\n源码: src/game/engine.ts#onEnterCell、onStopCell、killPlayer",
+              "source": "knowledge/rules-v1.md",
+              "sourceLines": [
+                68,
+                72
+              ]
+            }
+          ]
+        },
+        "toolName": "lookup_rules",
+        "args": {
+          "query": "危险地形 坑洞 毒气"
+        },
+        "durationMs": 1
+      },
+      {
+        "id": 9,
+        "time": "2026-10-27T01:28:32.436Z",
+        "step": 5,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 3007
+      },
+      {
+        "id": 10,
+        "time": "2026-10-27T01:28:32.436Z",
+        "step": 5,
+        "kind": "tool",
+        "status": "ok",
+        "title": "工具：observe_board",
+        "detail": "已读取公开棋盘、本方手牌和对手坐标。",
+        "result": {
+          "phase": "action",
+          "turnNumber": 1,
+          "position": {
+            "x": 0,
+            "y": 6
+          },
+          "goal": {
+            "x": 6,
+            "y": 0
+          },
+          "distanceToGoal": 12
+        },
+        "toolName": "observe_board",
+        "args": {},
+        "durationMs": 0
+      },
+      {
+        "id": 11,
+        "time": "2026-10-27T01:28:34.122Z",
+        "step": 6,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 1686
+      },
+      {
+        "id": 12,
+        "time": "2026-10-27T01:28:34.123Z",
+        "step": 6,
+        "kind": "validation",
+        "status": "ok",
+        "title": "建议已通过检查",
+        "detail": "已复核行动合法性、检查记录和规则来源；等待玩家明确确认。",
+        "durationMs": 1
+      },
+      {
+        "id": 13,
+        "time": "2026-10-27T01:28:34.123Z",
+        "step": 6,
+        "kind": "stop",
+        "status": "ok",
+        "title": "分析结束",
+        "detail": "建议已准备好，确认后才会消耗卡牌并执行这一步。",
+        "durationMs": 12936
+      }
+    ],
+    "steps": 6,
+    "elapsedMs": 12936,
+    "model": "qwen3.8-flash",
+    "usage": {
+      "prompt_tokens": 6136,
+      "completion_tokens": 166,
+      "total_tokens": 6302
+    },
+    "proposal": {
+      "actionId": "move:90001:right",
+      "label": "使用移动牌，向右滑行",
+      "reason": "向右移动至(3,6)，剩余距离缩短至9格。该路径避开墙壁，且终点方向更近，符合接近终点并规避危险的目标。",
+      "sourceIds": [
+        "move.basic",
+        "terrain.danger"
+      ],
+      "expiresAt": 1793064574123
+    }
+  },
+  "inspection": {
+    "action": {
+      "actionId": "move:90001:right",
+      "kind": "move",
+      "uid": 90001,
+      "dir": "right",
+      "label": "使用移动牌，向右滑行"
+    },
+    "from": {
+      "x": 0,
+      "y": 6
+    },
+    "to": {
+      "x": 3,
+      "y": 6
+    },
+    "distanceBefore": 12,
+    "distanceAfter": 9,
+    "finished": false,
+    "requiresReward": false,
+    "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+    "warnings": []
+  }
+}

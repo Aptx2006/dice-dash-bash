@@ -10,6 +10,7 @@
     "coach": "node --env-file-if-exists=.env server/index.ts",
     "coach:ask": "node --env-file-if-exists=.env scripts/ask-rules.ts",
     "eval:rules": "node --env-file-if-exists=.env scripts/eval-rules.ts",
+    "agent:demo": "node --env-file-if-exists=.env scripts/demo-tactics.ts",
     "preview": "vite preview"
   },
   "dependencies": {

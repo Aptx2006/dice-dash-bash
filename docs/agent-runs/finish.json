@@ -1,0 +1,1005 @@
+{
+  "scenario": "finish",
+  "synthetic": true,
+  "goal": "选择本步能直接获胜的行动；若没有则接近终点。",
+  "snapshot": {
+    "mapId": "tutorial",
+    "mapLabel": "基础教学关",
+    "width": 7,
+    "height": 7,
+    "tiles": [
+      [
+        {
+          "x": 0,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 0,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 0,
+          "kind": "goal"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 1,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 1,
+          "kind": "floor"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 2,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 2,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "kind": "wall"
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 2,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 2,
+          "kind": "floor"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 3,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 3,
+          "kind": "floor"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 4,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 4,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 4,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 4,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 4,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 4,
+          "kind": "home"
+        },
+        {
+          "x": 6,
+          "y": 4,
+          "kind": "floor"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 1,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 5,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 5,
+          "kind": "floor"
+        }
+      ],
+      [
+        {
+          "x": 0,
+          "y": 6,
+          "kind": "start"
+        },
+        {
+          "x": 1,
+          "y": 6,
+          "kind": "floor"
+        },
+        {
+          "x": 2,
+          "y": 6,
+          "kind": "floor"
+        },
+        {
+          "x": 3,
+          "y": 6,
+          "kind": "floor"
+        },
+        {
+          "x": 4,
+          "y": 6,
+          "kind": "floor"
+        },
+        {
+          "x": 5,
+          "y": 6,
+          "kind": "floor"
+        },
+        {
+          "x": 6,
+          "y": 6,
+          "kind": "floor"
+        }
+      ]
+    ],
+    "players": [
+      {
+        "id": "human",
+        "name": "当前玩家",
+        "isAI": false,
+        "characterId": "villager",
+        "pieceColor": "#f2a75c",
+        "ready": true,
+        "isHost": true,
+        "cell": {
+          "x": 0,
+          "y": 6
+        },
+        "spawn": {
+          "x": 0,
+          "y": 6
+        },
+        "hookLevel": 4,
+        "savedMove": 0,
+        "hand": [
+          {
+            "uid": 90001,
+            "toolId": "move",
+            "points": 3
+          },
+          {
+            "uid": 90003,
+            "toolId": "teleport"
+          }
+        ]
+      },
+      {
+        "id": "ai-1",
+        "name": "对手2",
+        "isAI": true,
+        "characterId": "robot",
+        "pieceColor": "#5f8d95",
+        "ready": true,
+        "isHost": false,
+        "cell": {
+          "x": 3,
+          "y": 4
+        },
+        "spawn": {
+          "x": 0,
+          "y": 6
+        },
+        "hookLevel": 4,
+        "savedMove": 0,
+        "hand": []
+      }
+    ],
+    "activeIndex": 0,
+    "turnNumber": 1,
+    "phase": "action",
+    "dice": {
+      "move": 3,
+      "toolName": null
+    },
+    "bombs": [],
+    "pigs": [],
+    "wallets": [],
+    "effects": [],
+    "logs": [],
+    "mechanisms": {
+      "airdrop": false,
+      "turnTimer": false
+    },
+    "finished": false
+  },
+  "result": {
+    "runId": "d46b8cd0-a22a-4a1a-b394-5e22c068101c",
+    "status": "awaiting_confirmation",
+    "reason": "建议已准备好，确认后才会消耗卡牌并执行这一步。",
+    "sources": [
+      {
+        "id": "tool.teleport",
+        "title": "瞬移的合法落点",
+        "text": "瞬移可选择全棋盘内的合法落点，不受附近3×3范围限制。落点不能阻挡地面移动，不能有其他玩家，也不能是坑洞；需要先选择瞬移牌，再点击可落脚格。执行后改变玩家位置、消耗瞬移牌，并触发落点结算。终点是可落脚且无人占据时，可以作为瞬移目标；落到终点会立即完成竞速，具体终点判定见result.finish。\n源码: src/game/engine.ts#teleportCells、playTeleportTool、onStopCell",
+        "source": "knowledge/rules-v1.md",
+        "sourceLines": [
+          44,
+          48
+        ]
+      },
+      {
+        "id": "result.finish",
+        "title": "终点、胜者与结束锁定",
+        "text": "首位抵达终点的玩家立即完成竞速，引擎记录其到达回合，并把整局设为结束状态。普通移动经过终点，或瞬移、瞬步等位移落在终点，都可以触发完成，不要求把移动点数恰好用完。结算将完赛者排在前面；未完赛者显示距终点距离，不冒充已完赛。结束后不能继续投骰、移动或推进回合。\n源码: src/game/engine.ts#onEnterCell、onStopCell、finishPlayer、settlementRanking",
+        "source": "knowledge/rules-v1.md",
+        "sourceLines": [
+          86,
+          90
+        ]
+      }
+    ],
+    "events": [
+      {
+        "id": 1,
+        "time": "2026-10-27T01:22:17.945Z",
+        "step": 1,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 1138
+      },
+      {
+        "id": 2,
+        "time": "2026-10-27T01:22:17.972Z",
+        "step": 1,
+        "kind": "tool",
+        "status": "ok",
+        "title": "工具：list_actions",
+        "detail": "已查询合法行动，共48个候选。",
+        "result": {
+          "total": 48,
+          "offset": 0,
+          "hasMore": true,
+          "ordering": "先按本步是否完赛、再按规则引擎计算的剩余距离排序；不代表保证最优路线。",
+          "actions": [
+            {
+              "actionId": "teleport:90003:6:0",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 6,
+                "y": 0
+              },
+              "label": "使用瞬移到 (6, 0)",
+              "preview": {
+                "to": {
+                  "x": 6,
+                  "y": 0
+                },
+                "distanceAfter": 0,
+                "finished": true,
+                "summary": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:5:0",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 5,
+                "y": 0
+              },
+              "label": "使用瞬移到 (5, 0)",
+              "preview": {
+                "to": {
+                  "x": 5,
+                  "y": 0
+                },
+                "distanceAfter": 1,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (5, 0)。到终点的静态最短路径估计为 1 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:6:1",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 6,
+                "y": 1
+              },
+              "label": "使用瞬移到 (6, 1)",
+              "preview": {
+                "to": {
+                  "x": 6,
+                  "y": 1
+                },
+                "distanceAfter": 1,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (6, 1)。到终点的静态最短路径估计为 1 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:4:0",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 4,
+                "y": 0
+              },
+              "label": "使用瞬移到 (4, 0)",
+              "preview": {
+                "to": {
+                  "x": 4,
+                  "y": 0
+                },
+                "distanceAfter": 2,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (4, 0)。到终点的静态最短路径估计为 2 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:5:1",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 5,
+                "y": 1
+              },
+              "label": "使用瞬移到 (5, 1)",
+              "preview": {
+                "to": {
+                  "x": 5,
+                  "y": 1
+                },
+                "distanceAfter": 2,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (5, 1)。到终点的静态最短路径估计为 2 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:6:2",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 6,
+                "y": 2
+              },
+              "label": "使用瞬移到 (6, 2)",
+              "preview": {
+                "to": {
+                  "x": 6,
+                  "y": 2
+                },
+                "distanceAfter": 2,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (6, 2)。到终点的静态最短路径估计为 2 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:3:0",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 3,
+                "y": 0
+              },
+              "label": "使用瞬移到 (3, 0)",
+              "preview": {
+                "to": {
+                  "x": 3,
+                  "y": 0
+                },
+                "distanceAfter": 3,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (3, 0)。到终点的静态最短路径估计为 3 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:4:1",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 4,
+                "y": 1
+              },
+              "label": "使用瞬移到 (4, 1)",
+              "preview": {
+                "to": {
+                  "x": 4,
+                  "y": 1
+                },
+                "distanceAfter": 3,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (4, 1)。到终点的静态最短路径估计为 3 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:5:2",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 5,
+                "y": 2
+              },
+              "label": "使用瞬移到 (5, 2)",
+              "preview": {
+                "to": {
+                  "x": 5,
+                  "y": 2
+                },
+                "distanceAfter": 3,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (5, 2)。到终点的静态最短路径估计为 3 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:6:3",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 6,
+                "y": 3
+              },
+              "label": "使用瞬移到 (6, 3)",
+              "preview": {
+                "to": {
+                  "x": 6,
+                  "y": 3
+                },
+                "distanceAfter": 3,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (6, 3)。到终点的静态最短路径估计为 3 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:2:0",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 2,
+                "y": 0
+              },
+              "label": "使用瞬移到 (2, 0)",
+              "preview": {
+                "to": {
+                  "x": 2,
+                  "y": 0
+                },
+                "distanceAfter": 4,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (2, 0)。到终点的静态最短路径估计为 4 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:3:1",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 3,
+                "y": 1
+              },
+              "label": "使用瞬移到 (3, 1)",
+              "preview": {
+                "to": {
+                  "x": 3,
+                  "y": 1
+                },
+                "distanceAfter": 4,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (3, 1)。到终点的静态最短路径估计为 4 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:4:2",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 4,
+                "y": 2
+              },
+              "label": "使用瞬移到 (4, 2)",
+              "preview": {
+                "to": {
+                  "x": 4,
+                  "y": 2
+                },
+                "distanceAfter": 4,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (4, 2)。到终点的静态最短路径估计为 4 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:5:3",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 5,
+                "y": 3
+              },
+              "label": "使用瞬移到 (5, 3)",
+              "preview": {
+                "to": {
+                  "x": 5,
+                  "y": 3
+                },
+                "distanceAfter": 4,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (5, 3)。到终点的静态最短路径估计为 4 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:6:4",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 6,
+                "y": 4
+              },
+              "label": "使用瞬移到 (6, 4)",
+              "preview": {
+                "to": {
+                  "x": 6,
+                  "y": 4
+                },
+                "distanceAfter": 4,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (6, 4)。到终点的静态最短路径估计为 4 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:1:0",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 1,
+                "y": 0
+              },
+              "label": "使用瞬移到 (1, 0)",
+              "preview": {
+                "to": {
+                  "x": 1,
+                  "y": 0
+                },
+                "distanceAfter": 5,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (1, 0)。到终点的静态最短路径估计为 5 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:2:1",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 2,
+                "y": 1
+              },
+              "label": "使用瞬移到 (2, 1)",
+              "preview": {
+                "to": {
+                  "x": 2,
+                  "y": 1
+                },
+                "distanceAfter": 5,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (2, 1)。到终点的静态最短路径估计为 5 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:4:3",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 4,
+                "y": 3
+              },
+              "label": "使用瞬移到 (4, 3)",
+              "preview": {
+                "to": {
+                  "x": 4,
+                  "y": 3
+                },
+                "distanceAfter": 5,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (4, 3)。到终点的静态最短路径估计为 5 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:5:4",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 5,
+                "y": 4
+              },
+              "label": "使用瞬移到 (5, 4)",
+              "preview": {
+                "to": {
+                  "x": 5,
+                  "y": 4
+                },
+                "distanceAfter": 5,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (5, 4)。到终点的静态最短路径估计为 5 格。",
+                "warnings": []
+              }
+            },
+            {
+              "actionId": "teleport:90003:6:5",
+              "kind": "teleport",
+              "uid": 90003,
+              "target": {
+                "x": 6,
+                "y": 5
+              },
+              "label": "使用瞬移到 (6, 5)",
+              "preview": {
+                "to": {
+                  "x": 6,
+                  "y": 5
+                },
+                "distanceAfter": 5,
+                "finished": false,
+                "summary": "消耗瞬移牌，结算后位于 (6, 5)。到终点的静态最短路径估计为 5 格。",
+                "warnings": []
+              }
+            }
+          ]
+        },
+        "toolName": "list_actions",
+        "args": {
+          "offset": 0,
+          "limit": 20
+        },
+        "durationMs": 26
+      },
+      {
+        "id": 3,
+        "time": "2026-10-27T01:22:19.550Z",
+        "step": 2,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 1578
+      },
+      {
+        "id": 4,
+        "time": "2026-10-27T01:22:19.550Z",
+        "step": 2,
+        "kind": "tool",
+        "status": "ok",
+        "title": "工具：inspect_action",
+        "detail": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+        "result": {
+          "action": {
+            "actionId": "teleport:90003:6:0",
+            "kind": "teleport",
+            "uid": 90003,
+            "target": {
+              "x": 6,
+              "y": 0
+            },
+            "label": "使用瞬移到 (6, 0)"
+          },
+          "from": {
+            "x": 0,
+            "y": 6
+          },
+          "to": {
+            "x": 6,
+            "y": 0
+          },
+          "distanceBefore": 12,
+          "distanceAfter": 0,
+          "finished": true,
+          "requiresReward": false,
+          "summary": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+          "warnings": []
+        },
+        "toolName": "inspect_action",
+        "args": {
+          "actionId": "teleport:90003:6:0"
+        },
+        "durationMs": 0
+      },
+      {
+        "id": 5,
+        "time": "2026-10-27T01:22:21.522Z",
+        "step": 3,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 1972
+      },
+      {
+        "id": 6,
+        "time": "2026-10-27T01:22:21.525Z",
+        "step": 3,
+        "kind": "tool",
+        "status": "ok",
+        "title": "工具：lookup_rules",
+        "detail": "已查询1条规则来源。",
+        "result": {
+          "rulesVersion": "local-v1",
+          "sources": [
+            {
+              "id": "tool.teleport",
+              "title": "瞬移的合法落点",
+              "text": "瞬移可选择全棋盘内的合法落点，不受附近3×3范围限制。落点不能阻挡地面移动，不能有其他玩家，也不能是坑洞；需要先选择瞬移牌，再点击可落脚格。执行后改变玩家位置、消耗瞬移牌，并触发落点结算。终点是可落脚且无人占据时，可以作为瞬移目标；落到终点会立即完成竞速，具体终点判定见result.finish。\n源码: src/game/engine.ts#teleportCells、playTeleportTool、onStopCell",
+              "source": "knowledge/rules-v1.md",
+              "sourceLines": [
+                44,
+                48
+              ]
+            }
+          ]
+        },
+        "toolName": "lookup_rules",
+        "args": {
+          "query": "teleport 瞬移规则"
+        },
+        "durationMs": 3
+      },
+      {
+        "id": 7,
+        "time": "2026-10-27T01:22:22.587Z",
+        "step": 4,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 1062
+      },
+      {
+        "id": 8,
+        "time": "2026-10-27T01:22:22.589Z",
+        "step": 4,
+        "kind": "tool",
+        "status": "ok",
+        "title": "工具：lookup_rules",
+        "detail": "已查询1条规则来源。",
+        "result": {
+          "rulesVersion": "local-v1",
+          "sources": [
+            {
+              "id": "result.finish",
+              "title": "终点、胜者与结束锁定",
+              "text": "首位抵达终点的玩家立即完成竞速，引擎记录其到达回合，并把整局设为结束状态。普通移动经过终点，或瞬移、瞬步等位移落在终点，都可以触发完成，不要求把移动点数恰好用完。结算将完赛者排在前面；未完赛者显示距终点距离，不冒充已完赛。结束后不能继续投骰、移动或推进回合。\n源码: src/game/engine.ts#onEnterCell、onStopCell、finishPlayer、settlementRanking",
+              "source": "knowledge/rules-v1.md",
+              "sourceLines": [
+                86,
+                90
+              ]
+            }
+          ]
+        },
+        "toolName": "lookup_rules",
+        "args": {
+          "query": "finish 终点判定规则"
+        },
+        "durationMs": 2
+      },
+      {
+        "id": 9,
+        "time": "2026-10-27T01:22:25.162Z",
+        "step": 5,
+        "kind": "model",
+        "status": "ok",
+        "title": "模型完成一步决策",
+        "detail": "已收到结构化决策，正在验证。",
+        "durationMs": 2573
+      },
+      {
+        "id": 10,
+        "time": "2026-10-27T01:22:25.163Z",
+        "step": 5,
+        "kind": "validation",
+        "status": "ok",
+        "title": "建议已通过检查",
+        "detail": "已复核行动合法性、检查记录和规则来源；等待玩家明确确认。",
+        "durationMs": 1
+      },
+      {
+        "id": 11,
+        "time": "2026-10-27T01:22:25.163Z",
+        "step": 5,
+        "kind": "stop",
+        "status": "ok",
+        "title": "分析结束",
+        "detail": "建议已准备好，确认后才会消耗卡牌并执行这一步。",
+        "durationMs": 8357
+      }
+    ],
+    "steps": 5,
+    "elapsedMs": 8357,
+    "model": "qwen3.8-flash",
+    "usage": {
+      "prompt_tokens": 12308,
+      "completion_tokens": 153,
+      "total_tokens": 12461
+    },
+    "proposal": {
+      "actionId": "teleport:90003:6:0",
+      "label": "使用瞬移到 (6, 0)",
+      "reason": "该行动使用瞬移直接抵达终点(6,0)，根据规则首位抵达即完成竞速并获胜，符合玩家直接获胜的目标。",
+      "sourceIds": [
+        "tool.teleport",
+        "result.finish"
+      ],
+      "expiresAt": 1793064205163
+    }
+  },
+  "inspection": {
+    "action": {
+      "actionId": "teleport:90003:6:0",
+      "kind": "teleport",
+      "uid": 90003,
+      "target": {
+        "x": 6,
+        "y": 0
+      },
+      "label": "使用瞬移到 (6, 0)"
+    },
+    "from": {
+      "x": 0,
+      "y": 6
+    },
+    "to": {
+      "x": 6,
+      "y": 0
+    },
+    "distanceBefore": 12,
+    "distanceAfter": 0,
+    "finished": true,
+    "requiresReward": false,
+    "summary": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+    "warnings": []
+  }
+}

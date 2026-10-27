@@ -177,7 +177,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .confirm-dialog p { margin: 1rem 0 1.4rem; color: var(--ink-dim); line-height: 1.7; }
 .confirm-dialog .settlement-actions { flex-wrap: wrap; }
 .save-status {
-  position: absolute; bottom: 3.3rem; right: 0.9rem; z-index: 3;
+  position: absolute; bottom: 5.8rem; right: 0.9rem; z-index: 3;
   padding: 0.35rem 0.6rem; max-width: calc(100% - 1.8rem); border-radius: var(--radius-sm);
   background: rgba(255, 250, 240, 0.9); color: var(--good); font-size: 0.7rem; pointer-events: none;
 }

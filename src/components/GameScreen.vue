@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import BoardView from './BoardView.vue'
 import ToolHand from './ToolHand.vue'
+import TacticalAssistant from './TacticalAssistant.vue'
 import type { Cell, Dir, GameState, ToolId, ToolInstance } from '../game/types.ts'
 import { sameCell } from '../game/types.ts'
 import { TOOLS } from '../game/tools.ts'
@@ -318,6 +319,13 @@ function clearSelection() {
   towTargetId.value = null
 }
 
+function onTacticalApplied() {
+  clearSelection()
+  if (isTutorial.value && tutorialStep.value >= 2 && tutorialStep.value <= 3) {
+    if (!player.value.hand.some(card => card.toolId === 'move')) tutorialStep.value = 4
+  }
+}
+
 function beginTargeting(instance: ToolInstance, mode: TargetMode) {
   selectedUid.value = instance.uid
   targetMode.value = mode
@@ -484,6 +492,8 @@ watch(
   () => {
     if (!isTutorial.value) return
     const current = activePlayer(props.state)
+    // 机器人可能在教学首轮抵达终点；结算后不再等待一个不会到来的真人回合。
+    if (tutorialStep.value === 6 && props.state.finished) { tutorialStep.value = 7; return }
     if (tutorialStep.value === 1 && props.state.phase === 'action') tutorialStep.value = 2
     if (tutorialStep.value === 4 && props.state.phase === 'turnEnd') tutorialStep.value = 5
     if (tutorialStep.value === 5 && current.isAI) tutorialStep.value = 6
@@ -615,6 +625,8 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
       </div>
       <p v-if="saveStatus" class="save-status" role="status" :class="{ 'save-failed': saveStatus !== '本局已自动保存' }">{{ saveStatus }}</p>
       <p class="camera-help">拖动平移棋盘 · 滚轮缩放 · 视角固定</p>
+
+      <TacticalAssistant :state="state" :my-id="myId" :can-interact="canInteract" @applied="onTacticalApplied" />
 
       <aside v-if="isTutorial && tutorialStep >= 0" class="tutorial-panel" aria-live="polite">
         <span class="tutorial-progress">{{ Math.min(tutorialStep + 1, 8) }} / 8</span>

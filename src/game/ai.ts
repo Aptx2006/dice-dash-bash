@@ -7,6 +7,7 @@ import {
   canUseTool,
   chooseReward,
   distanceToGoal,
+  isolatedSimulation,
   playAdjacentTool,
   playBlinkTool,
   playDirectionTool,
@@ -40,7 +41,7 @@ function bestMoveDir(state: GameState): { dir: Dir; score: number } | null {
     const sim = clone(state)
     const simPlayer = activePlayer(sim)
     const before = sim.pigs.length + sim.wallets.length
-    resolveMoveCard(sim, dir)
+    isolatedSimulation(() => resolveMoveCard(sim, dir))
     let score = scorePosition(sim, simPlayer)
     const after = sim.pigs.length + sim.wallets.length
     if (after < before) score -= 1.5
@@ -82,7 +83,7 @@ function tryPlayDirectionTool(state: GameState, instance: ToolInstance): boolean
   let best: { dir: Dir; score: number } | null = null
   for (const dir of DIRS) {
     const sim = clone(state)
-    playDirectionTool(sim, instance.uid, dir)
+    isolatedSimulation(() => playDirectionTool(sim, instance.uid, dir))
     const score = scorePosition(sim, activePlayer(sim))
     const opponentsAdvanced = sim.players
       .filter((p) => p.id !== player.id)
@@ -145,7 +146,7 @@ function tryPlayTow(state: GameState, instance: ToolInstance): boolean {
   let best: { dir: Dir; score: number } | null = null
   for (const dir of DIRS) {
     const sim = clone(state)
-    playTow(sim, instance.uid, target.id, dir)
+    isolatedSimulation(() => playTow(sim, instance.uid, target.id, dir))
     const score = distanceToGoal(sim, target.cell)
     if (!best || score > best.score) best = { dir, score }
   }

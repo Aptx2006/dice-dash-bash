@@ -621,6 +621,23 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent-soft
   .speed-control { padding-left: 0.34rem; }
 }
 
+.opponent-mode-control { display: flex; align-items: center; gap: .45rem; color: var(--ink-dim); font-size: .78rem; padding: .35rem .65rem; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--panel); }
+.opponent-mode-control select { color: var(--ink); background: #f4e8cb; border: 0; border-radius: 6px; padding: .3rem .4rem; max-width: 145px; }
+.opponent-mode-hint { margin-top: .55rem; color: var(--ink-dim); font-size: .73rem; max-width: 560px; line-height: 1.6; }
+.action-notice { position: absolute; z-index: 9; bottom: .75rem; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 1.5rem); margin: 0; padding: .55rem .8rem; border-radius: 10px; background: var(--navy); color: #fffaf0; font-size: .76rem; line-height: 1.5; pointer-events: none; box-shadow: 0 4px 20px #0002; }
+@media (max-width: 960px) {
+  .cloud-match .order-chips { top: auto; bottom: .9rem; }
+  .cloud-match .camera-help { display: none; }
+  .mechanism-row { flex-wrap: wrap; }
+}
+@media (max-width: 600px) {
+  .settlement-title > span { display: block; }
+  .settlement-title > span:first-child { font-size: 1.18rem; margin-bottom: .15rem; }
+  .settlement-row { display: grid; grid-template-columns: 22px 12px minmax(0, 1fr); gap: .35rem .5rem; }
+  .settlement-row > strong { min-width: 0; overflow-wrap: anywhere; }
+  .settlement-row > span:not(.rank):not(.dot), .settlement-row > small { grid-column: 3; text-align: left; margin-left: 0; }
+}
+
 /* ============ 规则教练 ============ */
 .rules-coach {
   width: min(860px, 100%); margin: 1rem auto 0;

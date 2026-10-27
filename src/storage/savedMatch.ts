@@ -53,7 +53,7 @@ function decodeMatch(raw: string): SavedMatch {
   const config = object(saved.config) as unknown as GameConfig
   validateGameConfig(config)
   ensure(config.mapId === 'tutorial' ? (saved.tutorialStep as number) >= 0 : saved.tutorialStep === -1)
-  // 当前客户端只提供一个真人席位，其余席位由规则机器人驱动。
+  // 当前客户端只提供一个真人席位，其余席位由自动对手驱动。
   ensure(!config.players[0].isAI && config.players.slice(1).every(p => p.isAI))
   const s = object(saved.state)
   const map = mapById(config.mapId)
@@ -64,6 +64,8 @@ function decodeMatch(raw: string): SavedMatch {
   ensure(typeof s.finished === 'boolean' && s.finished === (s.phase === 'finished'))
   const mechanisms = object(s.mechanisms)
   ensure(mechanisms.airdrop === config.mechanisms.airdrop && mechanisms.turnTimer === config.mechanisms.turnTimer)
+  ensure(s.aiMode === undefined || s.aiMode === 'rules' || s.aiMode === 'cloud')
+  ensure((s.aiMode ?? 'rules') === (config.aiMode ?? 'rules'))
   const cell = (value: unknown) => {
     const c = object(value)
     ensure(integer(c.x, 0, width - 1) && integer(c.y, 0, height - 1))
@@ -111,6 +113,32 @@ function decodeMatch(raw: string): SavedMatch {
   ensure(dice.move === null || integer(dice.move))
   ensure(dice.toolName === null || text(dice.toolName, 30))
   const playerIds = new Set(players.map(p => object(p).id))
+  if (s.aiTelemetry !== undefined) {
+    const telemetry = object(s.aiTelemetry)
+    ensure(Object.keys(telemetry).every(key => ['requests', 'modelSuccess', 'fallbacks', 'lastAttempt', 'recent'].includes(key)))
+    ensure(integer(telemetry.requests) && integer(telemetry.modelSuccess) && integer(telemetry.fallbacks))
+    ensure((telemetry.modelSuccess as number) + (telemetry.fallbacks as number) <= (telemetry.requests as number))
+    const aiPlayer = (id: unknown) => players.some(value => { const p = object(value); return p.id === id && p.isAI === true })
+    if (telemetry.lastAttempt !== undefined) {
+      const attempt = object(telemetry.lastAttempt)
+      ensure(Object.keys(attempt).every(key => ['turnNumber', 'playerId'].includes(key)))
+      ensure(integer(attempt.turnNumber, 1, s.turnNumber as number) && aiPlayer(attempt.playerId))
+    }
+    const runIds = new Set<string>()
+    list(telemetry.recent, 20).forEach(value => {
+      const entry = object(value)
+      ensure(Object.keys(entry).every(key => ['runId', 'turnNumber', 'playerId', 'mode', 'actionId', 'label', 'reason', 'sourceIds', 'elapsedMs', 'fallbackReason'].includes(key)))
+      ensure(text(entry.runId, 100) && !runIds.has(entry.runId)); runIds.add(entry.runId)
+      ensure(integer(entry.turnNumber, 1, s.turnNumber as number) && aiPlayer(entry.playerId))
+      ensure(entry.mode === 'cloud' || entry.mode === 'fallback')
+      ensure(text(entry.label, 200) && text(entry.reason, 240) && integer(entry.elapsedMs, 0, 60000))
+      if (entry.actionId !== undefined) ensure(text(entry.actionId, 120))
+      if (entry.fallbackReason !== undefined) ensure(text(entry.fallbackReason, 80))
+      const sourceIds = list(entry.sourceIds, 3)
+      ensure(sourceIds.every(id => typeof id === 'string' && /^[a-z][a-z0-9.]{0,79}$/.test(id)))
+      ensure(new Set(sourceIds).size === sourceIds.length)
+    })
+  }
   const entityIds = new Set<number>()
   const entity = (value: unknown) => {
     const e = object(value)

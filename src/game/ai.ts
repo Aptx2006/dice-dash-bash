@@ -79,7 +79,9 @@ function toolScore(toolId: ToolInstance['toolId']): number {
 
 function tryPlayDirectionTool(state: GameState, instance: ToolInstance): boolean {
   const player = activePlayer(state)
-  const current = scorePosition(state, player)
+  const current = scorePosition(state, player) - state.players
+    .filter(candidate => candidate.id !== player.id)
+    .reduce((sum, candidate) => sum + scorePosition(state, candidate), 0) * 0.35
   let best: { dir: Dir; score: number } | null = null
   for (const dir of DIRS) {
     const sim = clone(state)
@@ -87,7 +89,7 @@ function tryPlayDirectionTool(state: GameState, instance: ToolInstance): boolean
     const score = scorePosition(sim, activePlayer(sim))
     const opponentsAdvanced = sim.players
       .filter((p) => p.id !== player.id)
-      .reduce((sum, p) => sum + distanceToGoal(sim, p.cell), 0)
+      .reduce((sum, p) => sum + scorePosition(sim, p), 0)
     const combined = score - opponentsAdvanced * 0.35
     if (!best || combined < best.score) best = { dir, score: combined }
   }
@@ -137,21 +139,21 @@ function tryPlayBlink(state: GameState, instance: ToolInstance): boolean {
 }
 
 function tryPlayTow(state: GameState, instance: ToolInstance): boolean {
-  const player = activePlayer(state)
   const candidates = towCandidates(state)
   if (!candidates.length) return false
-  const target = candidates.reduce((a, b) =>
-    distanceToGoal(state, a.cell) <= distanceToGoal(state, b.cell) ? a : b,
-  )
-  let best: { dir: Dir; score: number } | null = null
-  for (const dir of DIRS) {
-    const sim = clone(state)
-    isolatedSimulation(() => playTow(sim, instance.uid, target.id, dir))
-    const score = distanceToGoal(sim, target.cell)
-    if (!best || score > best.score) best = { dir, score }
+  let best: { targetId: string; dir: Dir; gain: number } | null = null
+  for (const target of candidates) {
+    const before = scorePosition(state, target)
+    for (const dir of DIRS) {
+      const sim = clone(state)
+      isolatedSimulation(() => playTow(sim, instance.uid, target.id, dir))
+      const simulatedTarget = sim.players.find(candidate => candidate.id === target.id)!
+      const gain = scorePosition(sim, simulatedTarget) - before
+      if (!best || gain > best.gain) best = { targetId: target.id, dir, gain }
+    }
   }
-  if (best && best.score > distanceToGoal(state, target.cell)) {
-    playTow(state, instance.uid, target.id, best.dir)
+  if (best && best.gain > 0) {
+    playTow(state, instance.uid, best.targetId, best.dir)
     return true
   }
   return false
@@ -225,6 +227,13 @@ export function aiStep(state: GameState): boolean {
 
   if (state.phase === 'action') {
     const moveCard = player.hand.find((t) => t.toolId === 'move')
+    // 教学机器人的首轮只示范移动与交出回合，避免随机瞬移抢先结束教学。
+    if (state.mapId === 'tutorial' && state.turnNumber <= 2) {
+      const best = moveCard ? bestMoveDir(state) : null
+      if (best && best.score < scorePosition(state, player)) resolveMoveCard(state, best.dir)
+      else playEndCard(state)
+      return true
+    }
     const tools = player.hand.filter((t) => !['move', 'end', 'roll'].includes(t.toolId))
     tools.sort((a, b) => toolScore(b.toolId) - toolScore(a.toolId))
 
@@ -287,6 +296,10 @@ export function aiStep(state: GameState): boolean {
   }
 
   if (state.phase === 'turnEnd') {
+    if (state.mapId === 'tutorial' && state.turnNumber <= 2) {
+      playEndCard(state)
+      return true
+    }
     for (const instance of player.hand.filter((t) => t.toolId !== 'end')) {
       if (!canUseTool(state, instance)) continue
       if (instance.toolId === 'wallet' || instance.toolId === 'buildwall') {

@@ -15,6 +15,7 @@ export function validateGameConfig(config: GameConfig): void {
     throw new Error('玩家人数必须为2至8人。')
   }
   if (![TUTORIAL_MAP, ...MAPS].some(map => map.id === config.mapId)) throw new Error('地图不存在，请重新选择。')
+  if (config.aiMode !== undefined && config.aiMode !== 'rules' && config.aiMode !== 'cloud') throw new Error('智能体模式无效。')
   if (!config.mechanisms || typeof config.mechanisms.airdrop !== 'boolean' || typeof config.mechanisms.turnTimer !== 'boolean') {
     throw new Error('机制设置格式错误。')
   }

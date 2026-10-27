@@ -5,12 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "node scripts/dev-all.ts",
     "build": "vue-tsc -b && tsc -p tsconfig.server.json && vite build",
     "test": "node --test tests/*.test.ts",
     "coach": "node --env-file-if-exists=.env server/index.ts",
     "coach:ask": "node --env-file-if-exists=.env scripts/ask-rules.ts",
     "eval:rules": "node --env-file-if-exists=.env scripts/eval-rules.ts",
     "agent:demo": "node --env-file-if-exists=.env scripts/demo-tactics.ts",
+    "eval:opponents": "node --env-file-if-exists=.env scripts/eval-opponents.ts",
     "preview": "vite preview"
   },
   "dependencies": {

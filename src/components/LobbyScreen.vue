@@ -46,6 +46,7 @@ const aiSlots = ref<LobbySlot[]>(
 )
 const airdrop = ref(props.initialConfig?.mechanisms.airdrop ?? true)
 const turnTimer = ref(props.initialConfig?.mechanisms.turnTimer ?? true)
+const aiMode = ref<GameConfig['aiMode']>(props.initialConfig?.aiMode ?? 'rules')
 const pickerOpen = ref(false)
 
 const mapDef = computed(() => mapById(props.mapId))
@@ -127,6 +128,7 @@ function startGame() {
     mapId: props.mapId,
     players,
     mechanisms: { airdrop: airdrop.value, turnTimer: turnTimer.value },
+    aiMode: aiMode.value,
   })
 }
 
@@ -153,13 +155,20 @@ const emptySlots = computed(() => Math.max(0, 8 - slotsView.value.length))
           <span>房主：{{ mySlot.name }}</span>
         </div>
         <div class="mechanism-row">
-          <button type="button" class="mechanism-toggle" :class="{ on: airdrop }" @click="airdrop = !airdrop">
+          <button type="button" class="mechanism-toggle" :class="{ on: airdrop }" :aria-pressed="airdrop" @click="airdrop = !airdrop">
             <span class="box">✓</span>骰子猪空投
           </button>
-          <button type="button" class="mechanism-toggle" :class="{ on: turnTimer }" @click="turnTimer = !turnTimer">
+          <button type="button" class="mechanism-toggle" :class="{ on: turnTimer }" :aria-pressed="turnTimer" @click="turnTimer = !turnTimer">
             <span class="box">✓</span>回合计时（75秒）
           </button>
+          <label class="opponent-mode-control">机器人决策
+            <select v-model="aiMode" aria-label="机器人决策">
+              <option value="rules">快速策略</option>
+              <option value="cloud">云端智能体</option>
+            </select>
+          </label>
         </div>
+        <p class="opponent-mode-hint">{{ aiMode === 'cloud' ? '每个机器人每回合最多分析一次，展示行动依据；超时自动使用本地策略。' : '本地策略立即决策，无需等待模型服务。' }}</p>
       </div>
       <div class="room-code-panel">
         <div>

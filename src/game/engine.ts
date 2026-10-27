@@ -114,6 +114,7 @@ export function createGame(config: GameConfig): GameState {
     effects: [],
     logs: [],
     mechanisms: { ...config.mechanisms },
+    aiMode: config.aiMode ?? 'rules',
     finished: false,
   }
   if (players.some((p) => characterById(p.characterId).id === 'heart')) {
@@ -152,7 +153,8 @@ export function tileAt(state: GameState, cell: Cell): Tile {
 }
 
 export function inBoard(state: GameState, cell: Cell): boolean {
-  return cell.x >= 0 && cell.y >= 0 && cell.x < state.width && cell.y < state.height
+  return Number.isInteger(cell.x) && Number.isInteger(cell.y)
+    && cell.x >= 0 && cell.y >= 0 && cell.x < state.width && cell.y < state.height
 }
 
 export function blocksMove(state: GameState, cell: Cell): boolean {
@@ -269,7 +271,9 @@ export function beginTurn(state: GameState) {
   const player = activePlayer(state)
   state.dice = { move: null, toolName: null }
   detonateBombs(state, player)
+  if (state.finished) return
   tickStorm(state)
+  if (state.finished) return
   state.phase = 'turnStart'
   setSystemCards(state, player, 'turnStart')
   log(state, `第 ${state.turnNumber} 回合 · 轮到 ${player.name}。`)
@@ -278,10 +282,12 @@ export function beginTurn(state: GameState) {
 function detonateBombs(state: GameState, owner: PlayerState) {
   const due = state.bombs.filter((b) => b.ownerId === owner.id && b.plantedTurn < state.turnNumber)
   for (const bomb of due) {
+    if (state.finished) break
     state.bombs = state.bombs.filter((b) => b.id !== bomb.id)
     pushEffect(state, 'explosion', { cell: bomb.cell })
     log(state, `炸药爆炸了！`)
     for (const target of state.players) {
+      if (state.finished) break
       const dx = target.cell.x - bomb.cell.x
       const dy = target.cell.y - bomb.cell.y
       if (Math.abs(dx) + Math.abs(dy) === 1) {
@@ -430,10 +436,12 @@ export function playEndCard(state: GameState) {
 export interface MoveTarget {
   dir: Dir
   cells: Cell[]
+  /** 每个途经格对应的已支付移动次数；传送带免费推进与前一格共用次数。 */
+  stops?: number[]
 }
 
-export function computeMoveTargets(state: GameState, player: PlayerState): MoveTarget[] {
-  const moveCard = player.hand.find((t) => t.toolId === 'move')
+export function computeMoveTargets(state: GameState, player: PlayerState, uid?: number): MoveTarget[] {
+  const moveCard = player.hand.find((t) => t.toolId === 'move' && (uid === undefined || t.uid === uid))
   if (!moveCard) return []
   return computeSlideTargets(state, player, moveCard.points ?? 0)
 }
@@ -442,41 +450,24 @@ export function computeSlideTargets(state: GameState, player: PlayerState, point
   const targets: MoveTarget[] = []
   for (const dir of DIRS) {
     const cells: Cell[] = []
-    let current = { ...player.cell }
-    let remaining = points
-    let steps = 0
-    while (remaining > 0 && steps < 32) {
-      const delta = DIR_DELTA[dir]
-      const next = { x: current.x + delta.x, y: current.y + delta.y }
-      if (!inBoard(state, next)) break
-      const tile = tileAt(state, next)
-      if (TERRAINS[tile.kind].blocksMove) {
-        if (tile.kind === 'earthwall' && (tile.durability ?? 0) > 0 && remaining >= 2) {
-          remaining -= 2
-          current = next
-          cells.push({ ...next })
-          steps++
-          continue
-        }
-        break
-      }
-      if (state.storm && sameCell(state.storm.cell, next)) break
-      const occupant = playerAt(state, next)
-      if (occupant && occupant.id !== player.id) break
-      current = next
-      remaining -= 1
-      cells.push({ ...next })
-      steps++
-    }
-    if (cells.length) targets.push({ dir, cells })
+    const stops: number[] = []
+    const simulation = JSON.parse(JSON.stringify({ ...state, logs: [], effects: [] })) as GameState
+    const simulatedPlayer = simulation.players.find(candidate => candidate.id === player.id)
+    if (!simulatedPlayer) continue
+    // 路径和实际移动共享结算代码，避免免费推进、坑洞与终点的第二份规则漂移。
+    isolatedSimulation(() => slidePlayer(simulation, simulatedPlayer, dir, points, Infinity, '', (cell, paidSteps) => {
+      cells.push({ ...cell })
+      stops.push(paidSteps)
+    }))
+    if (cells.length) targets.push({ dir, cells, stops })
   }
   return targets
 }
 
-export function resolveMoveCard(state: GameState, dir: Dir, stopAfter?: number) {
+export function resolveMoveCard(state: GameState, dir: Dir, stopAfter?: number, uid?: number) {
   const player = activePlayer(state)
-  if (state.phase !== 'action') return
-  const moveCard = player.hand.find((t) => t.toolId === 'move')
+  if (state.finished || state.pendingReward || state.phase !== 'action' || !DIRS.includes(dir)) return
+  const moveCard = player.hand.find((t) => t.toolId === 'move' && (uid === undefined || t.uid === uid))
   if (!moveCard) return
   const canBrake = characterById(player.characterId).id === 'russell'
   const cap = canBrake && stopAfter && stopAfter > 0 ? stopAfter : Infinity
@@ -491,6 +482,7 @@ function slidePlayer(
   points: number,
   cap: number,
   reason: string,
+  onStep?: (cell: Cell, paidSteps: number) => void,
 ) {
   let current = { ...player.cell }
   let remaining = points
@@ -510,6 +502,7 @@ function slidePlayer(
         log(state, `${player.name} 撞碎了土墙的砖块。`)
         if ((tile.durability ?? 0) <= 0) tile.kind = 'floor'
         player.cell = { ...current }
+        onStep?.(current, moved)
         continue
       }
       if (tile.kind === 'punchball') {
@@ -527,6 +520,7 @@ function slidePlayer(
     remaining -= 1
     moved++
     player.cell = { ...current }
+    onStep?.(current, moved)
     const enter = onEnterCell(state, player, current, dir)
     if (enter === 'died' || enter === 'finished') return
     if (enter === 'boosted') {
@@ -539,6 +533,7 @@ function slidePlayer(
       ) {
         current = beyond
         player.cell = { ...beyond }
+        onStep?.(current, moved)
         const extra = onEnterCell(state, player, current, dir)
         if (extra === 'died' || extra === 'finished') return
       }
@@ -601,6 +596,10 @@ function onStopCell(state: GameState, player: PlayerState, cell: Cell) {
     finishPlayer(state, player)
     return
   }
+  if (tile.kind === 'pit') {
+    killPlayer(state, player, '掉进了坑洞')
+    return
+  }
   if (tile.kind === 'poison') {
     killPlayer(state, player, '被毒气吞没')
     return
@@ -637,9 +636,10 @@ function queueReward(state: GameState, player: PlayerState, reason: string) {
 export function chooseReward(state: GameState, index: number) {
   if (!state.pendingReward) return
   const pending = state.pendingReward
-  state.pendingReward = undefined
   const player = state.players.find((p) => p.id === pending.playerId)
   const option = pending.options[index]
+  if (!Number.isInteger(index) || !player || !option) return
+  state.pendingReward = undefined
   if (player && option) {
     player.hand.push(option)
     log(state, `${player.name} 选择了【${TOOLS[option.toolId].name}】。`)
@@ -649,6 +649,7 @@ export function chooseReward(state: GameState, index: number) {
 }
 
 export function killPlayer(state: GameState, player: PlayerState, reason: string) {
+  if (state.finished) return
   pushEffect(state, 'swap', { cell: player.cell })
   log(state, `${player.name} ${reason}，回到出生点。`)
   player.cell = { ...player.spawn }
@@ -656,7 +657,7 @@ export function killPlayer(state: GameState, player: PlayerState, reason: string
 }
 
 export function finishPlayer(state: GameState, player: PlayerState) {
-  if (player.finishedTurn) return
+  if (state.finished || player.finishedTurn) return
   player.finishedTurn = state.turnNumber
   pushEffect(state, 'spawn', { cell: player.cell })
   log(state, `${player.name} 抵达终点！回合到达：第 ${state.turnNumber} 回合。`)
@@ -665,6 +666,7 @@ export function finishPlayer(state: GameState, player: PlayerState) {
 }
 
 export function knockback(state: GameState, target: PlayerState, dir: Dir, dist: number, reason: string) {
+  if (state.finished || !DIRS.includes(dir) || !Number.isInteger(dist) || dist <= 0) return
   if (reason) log(state, `${reason}，被击退 ${dist} 格。`)
   const delta = DIR_DELTA[dir]
   let current = { ...target.cell }
@@ -690,6 +692,7 @@ export function knockback(state: GameState, target: PlayerState, dir: Dir, dist:
 }
 
 function fireRocketPath(state: GameState, from: Cell, dir: Dir, shooter: PlayerState) {
+  if (state.finished) return
   const delta = DIR_DELTA[dir]
   let impact = { ...from }
   let target: PlayerState | undefined
@@ -711,8 +714,10 @@ function fireRocketPath(state: GameState, from: Cell, dir: Dir, shooter: PlayerS
   if (target) {
     log(state, `火箭命中 ${target.name}！`)
     knockback(state, target, dir, 2, `${target.name} 被火箭击飞`)
+    if (state.finished) return
   }
   for (const other of state.players) {
+    if (state.finished) break
     if (other.id === shooter.id || other.id === target?.id) continue
     const dx = other.cell.x - impact.x
     const dy = other.cell.y - impact.y
@@ -747,13 +752,21 @@ export function distanceToGoal(state: GameState, from: Cell): number {
 
 export function canUseTool(state: GameState, instance: ToolInstance): boolean {
   const player = activePlayer(state)
+  if (state.finished || !player.hand.some(card => card.uid === instance.uid && card.toolId === instance.toolId)) return false
   if (state.phase !== 'action' && state.phase !== 'turnEnd') return false
   if (state.pendingReward) return false
   switch (instance.toolId) {
+    case 'move':
+    case 'leap':
+      return state.phase === 'action'
+    case 'roll':
+    case 'prepareTow':
+    case 'storm':
+      return false
     case 'sprint':
       return !!player.hand.find((t) => t.toolId === 'move')
     case 'balance':
-      return (instance.points ?? 0) >= 1 && !!player.hand.find((t) => t.toolId === 'move')
+      return (instance.points ?? 0) >= 1 && (player.hand.find((t) => t.toolId === 'move')?.points ?? 0) >= 2
     case 'swapGhost':
       return !!state.ghost
     case 'recallGhost':
@@ -845,7 +858,8 @@ export function playDirectionTool(state: GameState, uid: number, dir: Dir) {
   const player = activePlayer(state)
   if (state.phase !== 'action' && state.phase !== 'turnEnd') return
   const instance = player.hand.find((t) => t.uid === uid)
-  if (!instance) return
+  if (!instance || !canUseTool(state, instance) || !DIRS.includes(dir)
+    || !['punch', 'basketball', 'hook', 'rocket'].includes(instance.toolId)) return
   const delta = DIR_DELTA[dir]
   switch (instance.toolId) {
     case 'punch': {
@@ -931,10 +945,6 @@ export function playDirectionTool(state: GameState, uid: number, dir: Dir) {
       fireRocketPath(state, player.cell, dir, player)
       break
     }
-    case 'tow': {
-      // tow uses player targeting then direction; handled by UI in two steps
-      break
-    }
     default:
       return
   }
@@ -956,7 +966,8 @@ export function playTow(state: GameState, uid: number, targetId: string, dir: Di
   if (state.phase !== 'action' && state.phase !== 'turnEnd') return
   const instance = player.hand.find((t) => t.uid === uid)
   const target = state.players.find((p) => p.id === targetId)
-  if (!instance || !target) return
+  if (!instance || instance.toolId !== 'tow' || !canUseTool(state, instance) || !DIRS.includes(dir)
+    || !target || !towCandidates(state).some(candidate => candidate.id === targetId)) return
   log(state, `${player.name} 用牵引锁链拉动了 ${target.name}。`)
   knockback(state, target, dir, 2, '')
   consumeTool(state, player, uid, instance.toolId)
@@ -968,7 +979,8 @@ export function adjacentFreeCells(state: GameState, player: PlayerState): Cell[]
     for (let dx = -1; dx <= 1; dx++) {
       if (dx === 0 && dy === 0) continue
       const cell = { x: player.cell.x + dx, y: player.cell.y + dy }
-      if (inBoard(state, cell) && !blocksMove(state, cell) && !playerAt(state, cell) && !pigAt(state, cell) && !walletAt(state, cell)) {
+      if (inBoard(state, cell) && tileAt(state, cell).kind === 'floor' && !blocksMove(state, cell)
+        && !playerAt(state, cell) && !pigAt(state, cell) && !walletAt(state, cell)) {
         cells.push(cell)
       }
     }
@@ -980,7 +992,7 @@ export function playAdjacentTool(state: GameState, uid: number, target: Cell) {
   const player = activePlayer(state)
   if (state.phase !== 'action' && state.phase !== 'turnEnd') return
   const instance = player.hand.find((t) => t.uid === uid)
-  if (!instance) return
+  if (!instance || !canUseTool(state, instance) || !['buildwall', 'wallet'].includes(instance.toolId)) return
   if (!adjacentFreeCells(state, player).some((c) => sameCell(c, target))) return
   if (instance.toolId === 'buildwall') {
     const tile = tileAt(state, target)
@@ -1048,7 +1060,7 @@ export function playLeapTool(state: GameState, uid: number, dir: Dir) {
   const player = activePlayer(state)
   if (state.phase !== 'action' && state.phase !== 'turnEnd') return
   const instance = player.hand.find((t) => t.uid === uid)
-  if (!instance) return
+  if (!instance || instance.toolId !== 'leap' || !canUseTool(state, instance) || !DIRS.includes(dir)) return
   const target = leapTargets(state, player, instance.points ?? 0).find((t) => t.dir === dir)
   if (!target) return
   pushEffect(state, 'swap', { cell: player.cell })
@@ -1063,7 +1075,7 @@ export function playBlinkTool(state: GameState, uid: number, target: Cell) {
   const player = activePlayer(state)
   if (state.phase !== 'action' && state.phase !== 'turnEnd') return
   const instance = player.hand.find((t) => t.uid === uid)
-  if (!instance) return
+  if (!instance || instance.toolId !== 'blink' || !canUseTool(state, instance)) return
   if (!blinkCells(state, player).some((c) => sameCell(c, target))) return
   pushEffect(state, 'swap', { cell: player.cell })
   player.cell = { ...target }
@@ -1077,7 +1089,7 @@ export function playTeleportTool(state: GameState, uid: number, target: Cell) {
   const player = activePlayer(state)
   if (state.phase !== 'action' && state.phase !== 'turnEnd') return
   const instance = player.hand.find((t) => t.uid === uid)
-  if (!instance) return
+  if (!instance || instance.toolId !== 'teleport' || !canUseTool(state, instance)) return
   if (!teleportCells(state).some((c) => sameCell(c, target))) return
   pushEffect(state, 'swap', { cell: player.cell })
   player.cell = { ...target }

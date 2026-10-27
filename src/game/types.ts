@@ -130,6 +130,29 @@ export interface GameConfig {
   mapId: string
   players: GamePlayerConfig[]
   mechanisms: { airdrop: boolean; turnTimer: boolean }
+  aiMode?: 'rules' | 'cloud'
+}
+
+export interface AiDecisionRecord {
+  runId: string
+  turnNumber: number
+  playerId: string
+  mode: 'cloud' | 'fallback'
+  actionId?: string
+  label: string
+  reason: string
+  sourceIds: string[]
+  elapsedMs: number
+  fallbackReason?: string
+}
+
+export interface AiTelemetry {
+  requests: number
+  modelSuccess: number
+  fallbacks: number
+  /** 保存请求占位，刷新恢复同一回合时不重复花费云端额度。 */
+  lastAttempt?: { turnNumber: number; playerId: string }
+  recent: AiDecisionRecord[]
 }
 
 export interface GameState {
@@ -154,6 +177,8 @@ export interface GameState {
   logs: LogEntry[]
   mechanisms: { airdrop: boolean; turnTimer: boolean }
   finished: boolean
+  aiMode?: 'rules' | 'cloud'
+  aiTelemetry?: AiTelemetry
 }
 
 export const DIRS: Dir[] = ['up', 'right', 'down', 'left']

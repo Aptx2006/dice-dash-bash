@@ -3,6 +3,8 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import BoardView from './BoardView.vue'
 import ToolHand from './ToolHand.vue'
 import TacticalAssistant from './TacticalAssistant.vue'
+import MovementChoices from './MovementChoices.vue'
+import OpponentInsight from './OpponentInsight.vue'
 import type { Cell, Dir, GameState, ToolId, ToolInstance } from '../game/types.ts'
 import { sameCell } from '../game/types.ts'
 import { TOOLS } from '../game/tools.ts'
@@ -37,6 +39,8 @@ import {
   type MoveTarget,
 } from '../game/engine.ts'
 import { aiStep } from '../game/ai.ts'
+import { createOpponentController } from '../agent/opponentController.ts'
+import { listTacticalActions } from '../game/tactical.ts'
 import { isDiceReveal } from '../rendering/presentation.ts'
 import { characterById } from '../game/characters.ts'
 import { readPreference, writePreference } from '../storage/preferences.ts'
@@ -66,6 +70,10 @@ const targetMode = ref<TargetMode>('none')
 const towTargetId = ref<string | null>(null)
 const timeLeft = ref(props.initialProgress?.timeLeft ?? 75)
 const boardView = ref<BoardViewApi | null>(null)
+const actionNotice = ref('')
+const aiBusy = ref(false)
+const thinkingPlayerName = ref('')
+const opponentController = createOpponentController()
 // 地图标识是教学模式的稳定判据，同时保留 prop 便于后续复用其他教学地图。
 const isTutorial = computed(() => props.tutorial === true || props.state.mapId === 'tutorial')
 const tutorialStep = ref(isTutorial.value ? props.initialProgress?.tutorialStep ?? 0 : -1)
@@ -225,6 +233,7 @@ const tutorialFocusTool = computed<ToolId | null>(() => {
 
 const bannerText = computed(() => {
   if (props.state.finished) return '比赛结束'
+  if (thinkingPlayerName.value) return `${thinkingPlayerName.value} 正在思考…`
   if (player.value.isAI) return `${player.value.name} 正在行动…`
   return `第 ${props.state.turnNumber} 回合 · ${player.value.name}`
 })
@@ -232,7 +241,7 @@ const bannerText = computed(() => {
 const slideTargets = computed<MoveTarget[]>(() => {
   if (targetMode.value !== 'slide' || !selectedInstance.value) return []
   const inst = selectedInstance.value
-  if (inst.toolId === 'move') return computeMoveTargets(props.state, player.value)
+  if (inst.toolId === 'move') return computeMoveTargets(props.state, player.value, inst.uid)
   if (inst.toolId === 'leap') return leapTargets(props.state, player.value, inst.points ?? 0)
   return []
 })
@@ -317,6 +326,7 @@ function clearSelection() {
   selectedUid.value = null
   targetMode.value = 'none'
   towTargetId.value = null
+  actionNotice.value = ''
 }
 
 function onTacticalApplied() {
@@ -339,6 +349,7 @@ function onCardActivate(uid: number) {
   const state = props.state
   const instance = player.value.hand.find((t) => t.uid === uid)
   if (!instance || !canInteract.value) return
+  actionNotice.value = ''
 
   if (state.phase === 'turnStart') {
     switch (instance.toolId) {
@@ -362,7 +373,7 @@ function onCardActivate(uid: number) {
     }
   }
 
-  if (state.phase === 'action') {
+  if (state.phase === 'action' || state.phase === 'turnEnd') {
     switch (instance.toolId) {
       case 'move':
       case 'leap':
@@ -396,20 +407,6 @@ function onCardActivate(uid: number) {
     }
   }
 
-  if (state.phase === 'turnEnd') {
-    switch (instance.toolId) {
-      case 'end':
-        playEndCard(state)
-        return
-      case 'wallet':
-      case 'buildwall':
-        beginTargeting(instance, 'adjacent')
-        return
-      default:
-        playSimpleTool(state, uid)
-        return
-    }
-  }
 }
 
 function onCellSelect(cell: Cell) {
@@ -419,28 +416,32 @@ function onCellSelect(cell: Cell) {
   switch (targetMode.value) {
     case 'slide': {
       const target = slideTargets.value.find((t) => t.cells.some((c) => sameCell(c, cell)))
-      if (!target) return
+      if (!target) { actionNotice.value = '请选择高亮路径，或从移动预览中选择方向。'; return }
       const stopIndex = target.cells.findIndex((c) => sameCell(c, cell))
       const canBrake = player.value.characterId === 'russell'
       clearSelection()
-      if (inst.toolId === 'move') resolveMoveCard(state, target.dir, canBrake ? stopIndex + 1 : undefined)
+      if (inst.toolId === 'move') resolveMoveCard(state, target.dir, canBrake ? target.stops?.[stopIndex] ?? stopIndex + 1 : undefined, inst.uid)
       else playLeapTool(state, inst.uid, target.dir)
       if (isTutorial.value && tutorialStep.value === 3) tutorialStep.value = 4
       return
     }
     case 'cell':
+      if (!blinkCells(state, player.value).some(c => sameCell(c, cell))) { actionNotice.value = '瞬步需要选择附近的高亮落点。'; return }
       clearSelection()
       playBlinkTool(state, inst.uid, cell)
       return
     case 'anywhere':
+      if (!teleportCells(state).some(c => sameCell(c, cell))) { actionNotice.value = '该格不能作为瞬移落点，请选择高亮地块。'; return }
       clearSelection()
       playTeleportTool(state, inst.uid, cell)
       return
     case 'adjacent':
+      if (!adjacentFreeCells(state, player.value).some(c => sameCell(c, cell))) { actionNotice.value = '请选择相邻的空白地块，特殊地形不能被覆盖。'; return }
       clearSelection()
       playAdjacentTool(state, inst.uid, cell)
       return
     case 'storm':
+      if (!stormCells.value.some(c => sameCell(c, cell))) { actionNotice.value = '请选择3格范围内的高亮空地。'; return }
       clearSelection()
       playStormCard(state, cell)
       return
@@ -462,8 +463,9 @@ function onDirPick(dir: Dir) {
   if (!canInteract.value || !inst) return
   switch (targetMode.value) {
     case 'slide':
+      if (!slideTargets.value.some(target => target.dir === dir)) { actionNotice.value = '这个方向被阻挡，请选择其他方向。'; return }
       clearSelection()
-      if (inst.toolId === 'move') resolveMoveCard(state, dir)
+      if (inst.toolId === 'move') resolveMoveCard(state, dir, undefined, inst.uid)
       else playLeapTool(state, inst.uid, dir)
       if (isTutorial.value && tutorialStep.value === 3) tutorialStep.value = 4
       return
@@ -513,19 +515,36 @@ watch(
 
 // ====== AI 调度：每步一个动作，节奏化推进 ======
 let aiTimer: number | undefined
+let disposed = false
 
 function scheduleAI() {
   window.clearTimeout(aiTimer)
-  if (props.state.finished || presenting.value) return
+  if (disposed || props.state.finished || presenting.value || aiBusy.value) return
   const current = activePlayer(props.state)
   if (!current.isAI) return
-  aiTimer = window.setTimeout(() => {
-    if (presenting.value || props.state.finished || !activePlayer(props.state).isAI) return
+  aiTimer = window.setTimeout(async () => {
+    if (disposed || presenting.value || aiBusy.value || props.state.finished || !activePlayer(props.state).isAI) return
     const actingPlayer = activePlayer(props.state)
     const phaseBefore = props.state.phase
     const handBefore = actingPlayer.hand.map((card) => ({ ...card }))
-    const acted = aiStep(props.state)
-    if (!acted) return
+    const attempted = props.state.aiTelemetry?.lastAttempt
+    const shouldThink = props.state.aiMode === 'cloud' && phaseBefore === 'action' && !props.state.pendingReward
+      && !(attempted?.turnNumber === props.state.turnNumber && attempted.playerId === actingPlayer.id)
+      && listTacticalActions(props.state, actingPlayer.id).length >= 2
+    aiBusy.value = true
+    thinkingPlayerName.value = shouldThink ? actingPlayer.name : ''
+    let acted = false
+    try {
+      acted = (await opponentController.step(props.state)).acted
+    } catch {
+      // 意外的本地调度错误也不能卡住对局；正常模型失败由控制器统计并降级。
+      if (!disposed && !props.state.finished && activePlayer(props.state).id === actingPlayer.id) acted = aiStep(props.state)
+    } finally {
+      aiBusy.value = false
+      thinkingPlayerName.value = ''
+    }
+    if (disposed) return
+    if (!acted) { scheduleAI(); return }
 
     const removedCard = handBefore.find((before) => !actingPlayer.hand.some((after) => after.uid === before.uid))
     const addedCard = actingPlayer.hand.find((after) => !handBefore.some((before) => before.uid === after.uid))
@@ -577,12 +596,21 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  disposed = true
+  opponentController.dispose()
   window.clearTimeout(aiTimer)
   window.clearInterval(tickTimer)
   window.clearTimeout(aiCardTimer)
   window.clearTimeout(diceRevealTimer)
   window.clearTimeout(diceHideTimer)
 })
+
+function onGameKey(event: KeyboardEvent) {
+  if (event.key !== 'Escape' || (event.target instanceof Element && event.target.closest('input, textarea, select'))) return
+  clearSelection()
+}
+onMounted(() => window.addEventListener('keydown', onGameKey))
+onBeforeUnmount(() => window.removeEventListener('keydown', onGameKey))
 
 function pickReward(index: number) {
   chooseReward(props.state, index)
@@ -592,7 +620,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
 </script>
 
 <template>
-  <main class="game-shell">
+  <main class="game-shell" :class="{ 'cloud-match': state.aiMode === 'cloud' }">
     <p v-if="storageNotice" role="alert" class="app-notice">{{ storageNotice }} <button type="button" @click="storageNotice = ''">关闭提示</button></p>
     <div class="board-wrap" :class="{ 'tutorial-board': isTutorial }">
       <BoardView
@@ -608,7 +636,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
         <i :style="{ width: timerPercent }"></i>
       </div>
 
-      <div class="phase-banner">
+      <div class="phase-banner" role="status" aria-live="polite">
         <strong>{{ bannerText }}</strong>
         <template v-if="!state.finished"> · {{ phaseText }}<template v-if="state.mechanisms.turnTimer && canInteract"> · {{ timeLeft }}s</template></template>
       </div>
@@ -626,7 +654,8 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
       <p v-if="saveStatus" class="save-status" role="status" :class="{ 'save-failed': saveStatus !== '本局已自动保存' }">{{ saveStatus }}</p>
       <p class="camera-help">拖动平移棋盘 · 滚轮缩放 · 视角固定</p>
 
-      <TacticalAssistant :state="state" :my-id="myId" :can-interact="canInteract" @applied="onTacticalApplied" />
+      <TacticalAssistant v-show="targetMode === 'none'" :state="state" :my-id="myId" :can-interact="canInteract" @applied="onTacticalApplied" />
+      <OpponentInsight v-if="!isTutorial" :state="state" :thinking="thinkingPlayerName" />
 
       <aside v-if="isTutorial && tutorialStep >= 0" class="tutorial-panel" aria-live="polite">
         <span class="tutorial-progress">{{ Math.min(tutorialStep + 1, 8) }} / 8</span>
@@ -662,9 +691,13 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
         </ul>
       </div>
 
-      <p v-if="targetingHint" class="targeting-hint">{{ targetingHint }}</p>
+      <p v-if="actionNotice" class="action-notice" role="status">{{ actionNotice }}</p>
+      <p v-else-if="targetingHint && selectedInstance?.toolId !== 'move'" class="targeting-hint">{{ targetingHint }}</p>
 
-      <nav v-if="showDirPad" class="dir-pad" aria-label="方向选择">
+      <MovementChoices v-if="canInteract && targetMode === 'slide' && selectedInstance?.toolId === 'move'"
+        :state="state" :player-id="myId" :uid="selectedInstance.uid" @choose="onDirPick" @cancel="clearSelection" />
+
+      <nav v-if="showDirPad && selectedInstance?.toolId !== 'move'" class="dir-pad" aria-label="方向选择">
         <button type="button" style="grid-area: 1 / 2" title="上" @click="onDirPick('up')">↑</button>
         <button type="button" style="grid-area: 2 / 1" title="左" @click="onDirPick('left')">←</button>
         <button type="button" class="cancel" style="grid-area: 2 / 2" @click="clearSelection">取消</button>
@@ -746,7 +779,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
       <section class="modal-card settlement-card">
         <p class="crown">👑</p>
         <p class="eyebrow">对局完成</p>
-        <h2>{{ ranking[0]?.player.name }} 抵达终点</h2>
+        <h2 class="settlement-title"><span>{{ ranking[0]?.player.name }}</span> <span>抵达终点</span></h2>
         <p class="sub">第 {{ state.turnNumber }} 回合结束 · {{ state.mapLabel }}</p>
         <div class="settlement-rows">
           <div
@@ -762,6 +795,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
             <small>{{ row.note }}</small>
           </div>
         </div>
+        <OpponentInsight :state="state" settlement />
         <div class="settlement-actions">
           <button type="button" class="pill-button primary" @click="emit('restart')">再来一局</button>
           <button type="button" class="pill-button" @click="emit('exit')">返回首页</button>

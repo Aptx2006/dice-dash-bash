@@ -37,20 +37,21 @@ function eligible(state: GameState, playerId: string): boolean {
 }
 
 /** 第一版明确只覆盖移动、冲刺、瞬步、瞬移，不擅自结束回合或使用其他牌。 */
-export function listTacticalActions(state: GameState, playerId: string): TacticalAction[] {
+export function listTacticalActions(state: GameState, playerId: string, moveUid?: number): TacticalAction[] {
   if (!eligible(state, playerId)) return []
   const player = activePlayer(state)
   const actions: TacticalAction[] = []
-  const move = player.hand.find(card => card.toolId === 'move')
+  const move = player.hand.find(card => card.toolId === 'move' && (moveUid === undefined || card.uid === moveUid))
   if (move) {
     for (const path of computeMoveTargets(state, player)) {
       actions.push({ actionId: `move:${move.uid}:${path.dir}`, kind: 'move', uid: move.uid,
         dir: path.dir, label: `使用移动牌，向${DIR_LABEL[path.dir]}滑行` })
       // 引擎只允许罗素提前停止；全程滑行已由不带stopAfter的行动覆盖。
       if (player.characterId === 'russell') {
-        for (let stop = 1; stop < path.cells.length; stop++) {
+        const paidStops = [...new Set(path.stops ?? path.cells.map((_, index) => index + 1))]
+        for (const stop of paidStops.slice(0, -1)) {
           actions.push({ actionId: `move:${move.uid}:${path.dir}:${stop}`, kind: 'move', uid: move.uid,
-            dir: path.dir, stopAfter: stop, label: `向${DIR_LABEL[path.dir]}移动 ${stop} 格后制动` })
+            dir: path.dir, stopAfter: stop, label: `向${DIR_LABEL[path.dir]}第 ${stop} 步后制动` })
         }
       }
     }
@@ -77,7 +78,7 @@ export function listTacticalActions(state: GameState, playerId: string): Tactica
 
 function applyAction(state: GameState, action: TacticalAction): void {
   switch (action.kind) {
-    case 'move': resolveMoveCard(state, action.dir!, action.stopAfter); break
+    case 'move': resolveMoveCard(state, action.dir!, action.stopAfter, action.uid); break
     case 'sprint': playSimpleTool(state, action.uid); break
     case 'blink': playBlinkTool(state, action.uid, action.target!); break
     case 'teleport': playTeleportTool(state, action.uid, action.target!); break
@@ -85,8 +86,8 @@ function applyAction(state: GameState, action: TacticalAction): void {
 }
 
 /** 使用真实规则引擎推演位置和地形效果；随机奖励牌的抽取不作为预测内容。 */
-export function inspectTacticalAction(state: GameState, playerId: string, actionId: string): TacticalInspection | null {
-  const action = listTacticalActions(state, playerId).find(item => item.actionId === actionId)
+export function inspectTacticalAction(state: GameState, playerId: string, actionId: string, moveUid?: number): TacticalInspection | null {
+  const action = listTacticalActions(state, playerId, moveUid).find(item => item.actionId === actionId)
   if (!action) return null
   const before = activePlayer(state)
   const sim = JSON.parse(JSON.stringify(state)) as GameState

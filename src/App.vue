@@ -29,7 +29,7 @@ const pendingConfig = ref<GameConfig | null>(null)
 const exitWarning = ref(false)
 
 function copyConfig(config: GameConfig): GameConfig {
-  return { mapId: config.mapId, players: config.players.map(player => ({ ...player })), mechanisms: { ...config.mechanisms } }
+  return { mapId: config.mapId, players: config.players.map(player => ({ ...player })), mechanisms: { ...config.mechanisms }, aiMode: config.aiMode ?? 'rules' }
 }
 
 function persistCurrentMatch(): boolean {

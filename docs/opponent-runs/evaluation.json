@@ -1,0 +1,4369 @@
+{
+  "formatVersion": 1,
+  "runs": [
+    {
+      "createdAt": "2026-10-27T08:08:42.528Z",
+      "synthetic": true,
+      "mode": "cloud-with-rules-fallback",
+      "scope": "固定合成局面的单步合法性、危险地形、终点与时延检查，不证明全局最优、胜率或整局表现。",
+      "summary": {
+        "cases": 1,
+        "legal": 1,
+        "expectedPassed": 1,
+        "cloudRequested": 1,
+        "cloudReady": 1,
+        "cloudAccepted": 1,
+        "rulesFallbacks": 0
+      },
+      "cases": [
+        {
+          "id": "finish",
+          "title": "瞬移终点",
+          "description": "教学地图起点，3点移动及瞬移牌，终点(6,0)可合法瞬移抵达。",
+          "synthetic": true,
+          "snapshot": {
+            "mapId": "tutorial",
+            "mapLabel": "基础教学关",
+            "width": 7,
+            "height": 7,
+            "tiles": [
+              [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 0,
+                  "kind": "goal"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 1,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 2,
+                  "kind": "wall"
+                },
+                {
+                  "x": 4,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 2,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 3,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 4,
+                  "kind": "home"
+                },
+                {
+                  "x": 6,
+                  "y": 4,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 5,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 6,
+                  "kind": "start"
+                },
+                {
+                  "x": 1,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 6,
+                  "kind": "floor"
+                }
+              ]
+            ],
+            "players": [
+              {
+                "id": "human",
+                "name": "对手1",
+                "isAI": false,
+                "characterId": "villager",
+                "pieceColor": "#f2a75c",
+                "ready": true,
+                "isHost": true,
+                "cell": {
+                  "x": 3,
+                  "y": 4
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 6
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": []
+              },
+              {
+                "id": "ai-1",
+                "name": "当前玩家",
+                "isAI": true,
+                "characterId": "robot",
+                "pieceColor": "#5f8d95",
+                "ready": true,
+                "isHost": false,
+                "cell": {
+                  "x": 0,
+                  "y": 6
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 6
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": [
+                  {
+                    "uid": 91001,
+                    "toolId": "move",
+                    "points": 3
+                  },
+                  {
+                    "uid": 91003,
+                    "toolId": "teleport"
+                  }
+                ]
+              }
+            ],
+            "activeIndex": 1,
+            "turnNumber": 1,
+            "phase": "action",
+            "dice": {
+              "move": 3,
+              "toolName": null
+            },
+            "bombs": [],
+            "pigs": [],
+            "wallets": [],
+            "effects": [],
+            "logs": [],
+            "mechanisms": {
+              "airdrop": false,
+              "turnTimer": false
+            },
+            "finished": false
+          },
+          "expected": {
+            "legal": true,
+            "avoidDeathTerrain": true,
+            "winThisStep": true
+          },
+          "rulesBaseline": {
+            "decisionMs": 14.762,
+            "actionId": "teleport:91003:6:0",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": true,
+            "preview": {
+              "action": {
+                "actionId": "teleport:91003:6:0",
+                "kind": "teleport",
+                "uid": 91003,
+                "target": {
+                  "x": 6,
+                  "y": 0
+                },
+                "label": "使用瞬移到 (6, 0)"
+              },
+              "from": {
+                "x": 0,
+                "y": 6
+              },
+              "to": {
+                "x": 6,
+                "y": 0
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 0,
+              "finished": true,
+              "requiresReward": false,
+              "summary": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 6,
+                "y": 0
+              },
+              "phase": "finished",
+              "finished": true,
+              "remainingHand": [
+                {
+                  "uid": 91001,
+                  "toolId": "move",
+                  "points": 3
+                }
+              ],
+              "executionMs": 0.322
+            }
+          },
+          "cloud": {
+            "requested": true,
+            "modelReady": true,
+            "accepted": true,
+            "fallbackReason": null,
+            "decision": {
+              "runId": "dd928d6a-1d6d-4268-99ab-2f836e99ff77",
+              "status": "ready",
+              "reason": "使用瞬移牌直接抵达终点(6,0)，立即完成竞速并锁定胜局。",
+              "sourceIds": [
+                "tool.teleport",
+                "result.finish"
+              ],
+              "sources": [
+                {
+                  "id": "result.finish",
+                  "title": "终点、胜者与结束锁定",
+                  "text": "首位抵达终点的玩家立即完成竞速，引擎记录其到达回合，并把整局设为结束状态。普通移动经过终点，或瞬移、瞬步等位移落在终点，都可以触发完成，不要求把移动点数恰好用完。结算将完赛者排在前面；未完赛者显示距终点距离，不冒充已完赛。结束后不能继续投骰、移动或推进回合。\n源码: src/game/engine.ts#onEnterCell、onStopCell、finishPlayer、settlementRanking",
+                  "source": "knowledge/rules-v1.md",
+                  "sourceLines": [
+                    86,
+                    90
+                  ]
+                },
+                {
+                  "id": "tool.teleport",
+                  "title": "瞬移的合法落点",
+                  "text": "瞬移可选择全棋盘内的合法落点，不受附近3×3范围限制。落点不能阻挡地面移动，不能有其他玩家，也不能是坑洞；需要先选择瞬移牌，再点击可落脚格。执行后改变玩家位置、消耗瞬移牌，并触发落点结算。终点是可落脚且无人占据时，可以作为瞬移目标；落到终点会立即完成竞速，具体终点判定见result.finish。\n源码: src/game/engine.ts#teleportCells、playTeleportTool、onStopCell",
+                  "source": "knowledge/rules-v1.md",
+                  "sourceLines": [
+                    44,
+                    48
+                  ]
+                }
+              ],
+              "steps": 2,
+              "elapsedMs": 2513,
+              "model": "qwen3.8-flash",
+              "usage": {
+                "prompt_tokens": 2881,
+                "completion_tokens": 82,
+                "total_tokens": 2963
+              },
+              "events": [
+                {
+                  "id": 1,
+                  "time": "2026-10-27T08:08:40.035Z",
+                  "step": 0,
+                  "kind": "tool",
+                  "status": "ok",
+                  "title": "准备合法候选",
+                  "detail": "已取得当前局面的合法候选。",
+                  "toolName": "list_actions",
+                  "args": {
+                    "limit": 6
+                  },
+                  "result": {
+                    "total": 48,
+                    "offset": 0,
+                    "hasMore": true,
+                    "ordering": "先按本步是否完赛、再按规则引擎计算的剩余距离排序；不代表保证最优路线。",
+                    "actions": [
+                      {
+                        "actionId": "teleport:91003:6:0",
+                        "kind": "teleport",
+                        "uid": 91003,
+                        "target": {
+                          "x": 6,
+                          "y": 0
+                        },
+                        "label": "使用瞬移到 (6, 0)",
+                        "preview": {
+                          "to": {
+                            "x": 6,
+                            "y": 0
+                          },
+                          "distanceAfter": 0,
+                          "finished": true,
+                          "summary": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+                          "warnings": []
+                        }
+                      },
+                      {
+                        "actionId": "teleport:91003:5:0",
+                        "kind": "teleport",
+                        "uid": 91003,
+                        "target": {
+                          "x": 5,
+                          "y": 0
+                        },
+                        "label": "使用瞬移到 (5, 0)",
+                        "preview": {
+                          "to": {
+                            "x": 5,
+                            "y": 0
+                          },
+                          "distanceAfter": 1,
+                          "finished": false,
+                          "summary": "消耗瞬移牌，结算后位于 (5, 0)。到终点的静态最短路径估计为 1 格。",
+                          "warnings": []
+                        }
+                      },
+                      {
+                        "actionId": "teleport:91003:6:1",
+                        "kind": "teleport",
+                        "uid": 91003,
+                        "target": {
+                          "x": 6,
+                          "y": 1
+                        },
+                        "label": "使用瞬移到 (6, 1)",
+                        "preview": {
+                          "to": {
+                            "x": 6,
+                            "y": 1
+                          },
+                          "distanceAfter": 1,
+                          "finished": false,
+                          "summary": "消耗瞬移牌，结算后位于 (6, 1)。到终点的静态最短路径估计为 1 格。",
+                          "warnings": []
+                        }
+                      },
+                      {
+                        "actionId": "teleport:91003:4:0",
+                        "kind": "teleport",
+                        "uid": 91003,
+                        "target": {
+                          "x": 4,
+                          "y": 0
+                        },
+                        "label": "使用瞬移到 (4, 0)",
+                        "preview": {
+                          "to": {
+                            "x": 4,
+                            "y": 0
+                          },
+                          "distanceAfter": 2,
+                          "finished": false,
+                          "summary": "消耗瞬移牌，结算后位于 (4, 0)。到终点的静态最短路径估计为 2 格。",
+                          "warnings": []
+                        }
+                      },
+                      {
+                        "actionId": "teleport:91003:5:1",
+                        "kind": "teleport",
+                        "uid": 91003,
+                        "target": {
+                          "x": 5,
+                          "y": 1
+                        },
+                        "label": "使用瞬移到 (5, 1)",
+                        "preview": {
+                          "to": {
+                            "x": 5,
+                            "y": 1
+                          },
+                          "distanceAfter": 2,
+                          "finished": false,
+                          "summary": "消耗瞬移牌，结算后位于 (5, 1)。到终点的静态最短路径估计为 2 格。",
+                          "warnings": []
+                        }
+                      },
+                      {
+                        "actionId": "teleport:91003:6:2",
+                        "kind": "teleport",
+                        "uid": 91003,
+                        "target": {
+                          "x": 6,
+                          "y": 2
+                        },
+                        "label": "使用瞬移到 (6, 2)",
+                        "preview": {
+                          "to": {
+                            "x": 6,
+                            "y": 2
+                          },
+                          "distanceAfter": 2,
+                          "finished": false,
+                          "summary": "消耗瞬移牌，结算后位于 (6, 2)。到终点的静态最短路径估计为 2 格。",
+                          "warnings": []
+                        }
+                      }
+                    ]
+                  },
+                  "durationMs": 18
+                },
+                {
+                  "id": 2,
+                  "time": "2026-10-27T08:08:40.037Z",
+                  "step": 0,
+                  "kind": "tool",
+                  "status": "ok",
+                  "title": "准备行动规则",
+                  "detail": "已查阅版本化规则来源。",
+                  "toolName": "lookup_rules",
+                  "args": {
+                    "query": "瞬移终点"
+                  },
+                  "result": {
+                    "rulesVersion": "local-v1",
+                    "sources": [
+                      {
+                        "id": "result.finish",
+                        "title": "终点、胜者与结束锁定",
+                        "text": "首位抵达终点的玩家立即完成竞速，引擎记录其到达回合，并把整局设为结束状态。普通移动经过终点，或瞬移、瞬步等位移落在终点，都可以触发完成，不要求把移动点数恰好用完。结算将完赛者排在前面；未完赛者显示距终点距离，不冒充已完赛。结束后不能继续投骰、移动或推进回合。\n源码: src/game/engine.ts#onEnterCell、onStopCell、finishPlayer、settlementRanking",
+                        "source": "knowledge/rules-v1.md",
+                        "sourceLines": [
+                          86,
+                          90
+                        ]
+                      },
+                      {
+                        "id": "tool.teleport",
+                        "title": "瞬移的合法落点",
+                        "text": "瞬移可选择全棋盘内的合法落点，不受附近3×3范围限制。落点不能阻挡地面移动，不能有其他玩家，也不能是坑洞；需要先选择瞬移牌，再点击可落脚格。执行后改变玩家位置、消耗瞬移牌，并触发落点结算。终点是可落脚且无人占据时，可以作为瞬移目标；落到终点会立即完成竞速，具体终点判定见result.finish。\n源码: src/game/engine.ts#teleportCells、playTeleportTool、onStopCell",
+                        "source": "knowledge/rules-v1.md",
+                        "sourceLines": [
+                          44,
+                          48
+                        ]
+                      }
+                    ]
+                  },
+                  "durationMs": 1
+                },
+                {
+                  "id": 3,
+                  "time": "2026-10-27T08:08:41.592Z",
+                  "step": 1,
+                  "kind": "model",
+                  "status": "ok",
+                  "title": "模型选择下一步",
+                  "detail": "已收到结构化决定，正在校验。",
+                  "durationMs": 1555
+                },
+                {
+                  "id": 4,
+                  "time": "2026-10-27T08:08:41.592Z",
+                  "step": 1,
+                  "kind": "tool",
+                  "status": "ok",
+                  "title": "模型查询：inspect_action",
+                  "detail": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+                  "toolName": "inspect_action",
+                  "args": {
+                    "actionId": "teleport:91003:6:0"
+                  },
+                  "result": {
+                    "action": {
+                      "actionId": "teleport:91003:6:0",
+                      "kind": "teleport",
+                      "uid": 91003,
+                      "target": {
+                        "x": 6,
+                        "y": 0
+                      },
+                      "label": "使用瞬移到 (6, 0)"
+                    },
+                    "from": {
+                      "x": 0,
+                      "y": 6
+                    },
+                    "to": {
+                      "x": 6,
+                      "y": 0
+                    },
+                    "distanceBefore": 12,
+                    "distanceAfter": 0,
+                    "finished": true,
+                    "requiresReward": false,
+                    "summary": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+                    "warnings": []
+                  },
+                  "durationMs": 0
+                },
+                {
+                  "id": 5,
+                  "time": "2026-10-27T08:08:42.527Z",
+                  "step": 2,
+                  "kind": "model",
+                  "status": "ok",
+                  "title": "模型选择下一步",
+                  "detail": "已收到结构化决定，正在校验。",
+                  "durationMs": 935
+                },
+                {
+                  "id": 6,
+                  "time": "2026-10-27T08:08:42.527Z",
+                  "step": 2,
+                  "kind": "validation",
+                  "status": "ok",
+                  "title": "行动与来源检查通过",
+                  "detail": "此结果仍需对局控制器复核局面后执行一次。",
+                  "durationMs": 0
+                },
+                {
+                  "id": 7,
+                  "time": "2026-10-27T08:08:42.527Z",
+                  "step": 2,
+                  "kind": "stop",
+                  "status": "ok",
+                  "title": "云端决策已通过检查",
+                  "detail": "使用瞬移牌直接抵达终点(6,0)，立即完成竞速并锁定胜局。",
+                  "durationMs": 2513
+                }
+              ],
+              "actionId": "teleport:91003:6:0"
+            }
+          },
+          "final": {
+            "policy": "cloud",
+            "actionId": "teleport:91003:6:0",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": true,
+            "preview": {
+              "action": {
+                "actionId": "teleport:91003:6:0",
+                "kind": "teleport",
+                "uid": 91003,
+                "target": {
+                  "x": 6,
+                  "y": 0
+                },
+                "label": "使用瞬移到 (6, 0)"
+              },
+              "from": {
+                "x": 0,
+                "y": 6
+              },
+              "to": {
+                "x": 6,
+                "y": 0
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 0,
+              "finished": true,
+              "requiresReward": false,
+              "summary": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 6,
+                "y": 0
+              },
+              "phase": "finished",
+              "finished": true,
+              "remainingHand": [
+                {
+                  "uid": 91001,
+                  "toolId": "move",
+                  "points": 3
+                }
+              ],
+              "executionMs": 0.242
+            },
+            "matchesExpected": true
+          }
+        }
+      ]
+    },
+    {
+      "createdAt": "2026-10-27T08:09:13.884Z",
+      "synthetic": true,
+      "mode": "cloud-with-rules-fallback",
+      "scope": "固定合成局面的单步合法性、危险地形、终点与时延检查，不证明全局最优、胜率或整局表现。",
+      "summary": {
+        "cases": 1,
+        "legal": 1,
+        "expectedPassed": 1,
+        "cloudRequested": 1,
+        "cloudReady": 1,
+        "cloudAccepted": 1,
+        "rulesFallbacks": 0
+      },
+      "cases": [
+        {
+          "id": "safe",
+          "title": "安全移动",
+          "description": "教学地图起点，3点移动，可向上或向右前进，均无危险地形。",
+          "synthetic": true,
+          "snapshot": {
+            "mapId": "tutorial",
+            "mapLabel": "基础教学关",
+            "width": 7,
+            "height": 7,
+            "tiles": [
+              [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 0,
+                  "kind": "goal"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 1,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 2,
+                  "kind": "wall"
+                },
+                {
+                  "x": 4,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 2,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 3,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 4,
+                  "kind": "home"
+                },
+                {
+                  "x": 6,
+                  "y": 4,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 5,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 6,
+                  "kind": "start"
+                },
+                {
+                  "x": 1,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 6,
+                  "kind": "floor"
+                }
+              ]
+            ],
+            "players": [
+              {
+                "id": "human",
+                "name": "对手1",
+                "isAI": false,
+                "characterId": "villager",
+                "pieceColor": "#f2a75c",
+                "ready": true,
+                "isHost": true,
+                "cell": {
+                  "x": 3,
+                  "y": 4
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 6
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": []
+              },
+              {
+                "id": "ai-1",
+                "name": "当前玩家",
+                "isAI": true,
+                "characterId": "robot",
+                "pieceColor": "#5f8d95",
+                "ready": true,
+                "isHost": false,
+                "cell": {
+                  "x": 0,
+                  "y": 6
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 6
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": [
+                  {
+                    "uid": 91001,
+                    "toolId": "move",
+                    "points": 3
+                  }
+                ]
+              }
+            ],
+            "activeIndex": 1,
+            "turnNumber": 1,
+            "phase": "action",
+            "dice": {
+              "move": 3,
+              "toolName": null
+            },
+            "bombs": [],
+            "pigs": [],
+            "wallets": [],
+            "effects": [],
+            "logs": [],
+            "mechanisms": {
+              "airdrop": false,
+              "turnTimer": false
+            },
+            "finished": false
+          },
+          "expected": {
+            "legal": true,
+            "avoidDeathTerrain": true,
+            "winThisStep": false
+          },
+          "rulesBaseline": {
+            "decisionMs": 1.765,
+            "actionId": "move:91001:right",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": false,
+            "preview": {
+              "action": {
+                "actionId": "move:91001:right",
+                "kind": "move",
+                "uid": 91001,
+                "dir": "right",
+                "label": "使用移动牌，向右滑行"
+              },
+              "from": {
+                "x": 0,
+                "y": 6
+              },
+              "to": {
+                "x": 3,
+                "y": 6
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 9,
+              "finished": false,
+              "requiresReward": false,
+              "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 3,
+                "y": 6
+              },
+              "phase": "action",
+              "finished": false,
+              "remainingHand": [],
+              "executionMs": 0.336
+            }
+          },
+          "cloud": {
+            "requested": true,
+            "modelReady": true,
+            "accepted": true,
+            "fallbackReason": null,
+            "decision": {
+              "runId": "8d3f6524-0909-4025-b28d-88024257d552",
+              "status": "ready",
+              "reason": "向右滑行可移动3格，将剩余距离从12缩短至9，且无警告风险，是当前最优的移动选择。",
+              "sourceIds": [
+                "move.basic"
+              ],
+              "sources": [
+                {
+                  "id": "move.basic",
+                  "title": "方向移动与移动牌消耗",
+                  "text": "行动阶段选择一张移动牌，再选择上、右、下、左中的一个方向，棋子沿该方向移动，消耗这张移动牌。普通地板每前进一步消耗1点；途中遇到阻挡、棋盘边界或其他玩家会停下，特殊地形还可能改变路径结果。普通角色不能随意在中途选择停点；只有具有制动能力的罗素可以提前停止。移动牌使用后被消耗，不能用同一张牌再次移动。\n源码: src/game/engine.ts#resolveMoveCard、slidePlayer",
+                  "source": "knowledge/rules-v1.md",
+                  "sourceLines": [
+                    26,
+                    30
+                  ]
+                }
+              ],
+              "steps": 2,
+              "elapsedMs": 2226,
+              "model": "qwen3.8-flash",
+              "usage": {
+                "prompt_tokens": 1691,
+                "completion_tokens": 77,
+                "total_tokens": 1768
+              },
+              "events": [
+                {
+                  "id": 1,
+                  "time": "2026-10-27T08:09:11.668Z",
+                  "step": 0,
+                  "kind": "tool",
+                  "status": "ok",
+                  "title": "准备合法候选",
+                  "detail": "已取得当前局面的合法候选。",
+                  "toolName": "list_actions",
+                  "args": {
+                    "limit": 6
+                  },
+                  "result": {
+                    "total": 2,
+                    "offset": 0,
+                    "hasMore": false,
+                    "ordering": "先按本步是否完赛、再按规则引擎计算的剩余距离排序；不代表保证最优路线。",
+                    "actions": [
+                      {
+                        "actionId": "move:91001:right",
+                        "kind": "move",
+                        "uid": 91001,
+                        "dir": "right",
+                        "label": "使用移动牌，向右滑行",
+                        "preview": {
+                          "to": {
+                            "x": 3,
+                            "y": 6
+                          },
+                          "distanceAfter": 9,
+                          "finished": false,
+                          "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+                          "warnings": []
+                        }
+                      },
+                      {
+                        "actionId": "move:91001:up",
+                        "kind": "move",
+                        "uid": 91001,
+                        "dir": "up",
+                        "label": "使用移动牌，向上滑行",
+                        "preview": {
+                          "to": {
+                            "x": 0,
+                            "y": 3
+                          },
+                          "distanceAfter": 9,
+                          "finished": false,
+                          "summary": "消耗移动牌，结算后位于 (0, 3)。到终点的静态最短路径估计为 9 格。",
+                          "warnings": []
+                        }
+                      }
+                    ]
+                  },
+                  "durationMs": 8
+                },
+                {
+                  "id": 2,
+                  "time": "2026-10-27T08:09:11.669Z",
+                  "step": 0,
+                  "kind": "tool",
+                  "status": "ok",
+                  "title": "准备行动规则",
+                  "detail": "已查阅版本化规则来源。",
+                  "toolName": "lookup_rules",
+                  "args": {
+                    "query": "方向移动与移动牌"
+                  },
+                  "result": {
+                    "rulesVersion": "local-v1",
+                    "sources": [
+                      {
+                        "id": "move.basic",
+                        "title": "方向移动与移动牌消耗",
+                        "text": "行动阶段选择一张移动牌，再选择上、右、下、左中的一个方向，棋子沿该方向移动，消耗这张移动牌。普通地板每前进一步消耗1点；途中遇到阻挡、棋盘边界或其他玩家会停下，特殊地形还可能改变路径结果。普通角色不能随意在中途选择停点；只有具有制动能力的罗素可以提前停止。移动牌使用后被消耗，不能用同一张牌再次移动。\n源码: src/game/engine.ts#resolveMoveCard、slidePlayer",
+                        "source": "knowledge/rules-v1.md",
+                        "sourceLines": [
+                          26,
+                          30
+                        ]
+                      }
+                    ]
+                  },
+                  "durationMs": 0
+                },
+                {
+                  "id": 3,
+                  "time": "2026-10-27T08:09:12.414Z",
+                  "step": 1,
+                  "kind": "model",
+                  "status": "ok",
+                  "title": "模型选择下一步",
+                  "detail": "已收到结构化决定，正在校验。",
+                  "durationMs": 745
+                },
+                {
+                  "id": 4,
+                  "time": "2026-10-27T08:09:12.414Z",
+                  "step": 1,
+                  "kind": "tool",
+                  "status": "ok",
+                  "title": "模型查询：inspect_action",
+                  "detail": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+                  "toolName": "inspect_action",
+                  "args": {
+                    "actionId": "move:91001:right"
+                  },
+                  "result": {
+                    "action": {
+                      "actionId": "move:91001:right",
+                      "kind": "move",
+                      "uid": 91001,
+                      "dir": "right",
+                      "label": "使用移动牌，向右滑行"
+                    },
+                    "from": {
+                      "x": 0,
+                      "y": 6
+                    },
+                    "to": {
+                      "x": 3,
+                      "y": 6
+                    },
+                    "distanceBefore": 12,
+                    "distanceAfter": 9,
+                    "finished": false,
+                    "requiresReward": false,
+                    "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+                    "warnings": []
+                  },
+                  "durationMs": 0
+                },
+                {
+                  "id": 5,
+                  "time": "2026-10-27T08:09:13.882Z",
+                  "step": 2,
+                  "kind": "model",
+                  "status": "ok",
+                  "title": "模型选择下一步",
+                  "detail": "已收到结构化决定，正在校验。",
+                  "durationMs": 1468
+                },
+                {
+                  "id": 6,
+                  "time": "2026-10-27T08:09:13.883Z",
+                  "step": 2,
+                  "kind": "validation",
+                  "status": "ok",
+                  "title": "行动与来源检查通过",
+                  "detail": "此结果仍需对局控制器复核局面后执行一次。",
+                  "durationMs": 1
+                },
+                {
+                  "id": 7,
+                  "time": "2026-10-27T08:09:13.883Z",
+                  "step": 2,
+                  "kind": "stop",
+                  "status": "ok",
+                  "title": "云端决策已通过检查",
+                  "detail": "向右滑行可移动3格，将剩余距离从12缩短至9，且无警告风险，是当前最优的移动选择。",
+                  "durationMs": 2226
+                }
+              ],
+              "actionId": "move:91001:right"
+            }
+          },
+          "final": {
+            "policy": "cloud",
+            "actionId": "move:91001:right",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": false,
+            "preview": {
+              "action": {
+                "actionId": "move:91001:right",
+                "kind": "move",
+                "uid": 91001,
+                "dir": "right",
+                "label": "使用移动牌，向右滑行"
+              },
+              "from": {
+                "x": 0,
+                "y": 6
+              },
+              "to": {
+                "x": 3,
+                "y": 6
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 9,
+              "finished": false,
+              "requiresReward": false,
+              "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 3,
+                "y": 6
+              },
+              "phase": "action",
+              "finished": false,
+              "remainingHand": [],
+              "executionMs": 0.359
+            },
+            "matchesExpected": true
+          }
+        }
+      ]
+    },
+    {
+      "createdAt": "2026-10-27T08:15:28.576Z",
+      "synthetic": true,
+      "mode": "rules-only",
+      "scope": "固定合成局面的单步合法性、危险地形、终点与时延检查，不证明全局最优、胜率或整局表现。",
+      "summary": {
+        "cases": 5,
+        "legal": 5,
+        "expectedPassed": 5,
+        "cloudRequested": 0,
+        "cloudReady": 0,
+        "cloudAccepted": 0,
+        "rulesFallbacks": 0
+      },
+      "cases": [
+        {
+          "id": "safe",
+          "title": "安全移动",
+          "description": "教学地图起点，3点移动，可向上或向右前进，均无危险地形。",
+          "synthetic": true,
+          "snapshot": {
+            "mapId": "tutorial",
+            "mapLabel": "基础教学关",
+            "width": 7,
+            "height": 7,
+            "tiles": [
+              [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 0,
+                  "kind": "goal"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 1,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 2,
+                  "kind": "wall"
+                },
+                {
+                  "x": 4,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 2,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 3,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 4,
+                  "kind": "home"
+                },
+                {
+                  "x": 6,
+                  "y": 4,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 5,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 6,
+                  "kind": "start"
+                },
+                {
+                  "x": 1,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 6,
+                  "kind": "floor"
+                }
+              ]
+            ],
+            "players": [
+              {
+                "id": "human",
+                "name": "对手1",
+                "isAI": false,
+                "characterId": "villager",
+                "pieceColor": "#f2a75c",
+                "ready": true,
+                "isHost": true,
+                "cell": {
+                  "x": 3,
+                  "y": 4
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 6
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": []
+              },
+              {
+                "id": "ai-1",
+                "name": "当前玩家",
+                "isAI": true,
+                "characterId": "robot",
+                "pieceColor": "#5f8d95",
+                "ready": true,
+                "isHost": false,
+                "cell": {
+                  "x": 0,
+                  "y": 6
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 6
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": [
+                  {
+                    "uid": 91001,
+                    "toolId": "move",
+                    "points": 3
+                  }
+                ]
+              }
+            ],
+            "activeIndex": 1,
+            "turnNumber": 1,
+            "phase": "action",
+            "dice": {
+              "move": 3,
+              "toolName": null
+            },
+            "bombs": [],
+            "pigs": [],
+            "wallets": [],
+            "effects": [],
+            "logs": [],
+            "mechanisms": {
+              "airdrop": false,
+              "turnTimer": false
+            },
+            "finished": false
+          },
+          "expected": {
+            "legal": true,
+            "avoidDeathTerrain": true,
+            "winThisStep": false
+          },
+          "rulesBaseline": {
+            "decisionMs": 3.889,
+            "actionId": "move:91001:right",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": false,
+            "preview": {
+              "action": {
+                "actionId": "move:91001:right",
+                "kind": "move",
+                "uid": 91001,
+                "dir": "right",
+                "label": "使用移动牌，向右滑行"
+              },
+              "from": {
+                "x": 0,
+                "y": 6
+              },
+              "to": {
+                "x": 3,
+                "y": 6
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 9,
+              "finished": false,
+              "requiresReward": false,
+              "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 3,
+                "y": 6
+              },
+              "phase": "action",
+              "finished": false,
+              "remainingHand": [],
+              "executionMs": 4.265
+            }
+          },
+          "cloud": {
+            "requested": false,
+            "modelReady": false,
+            "accepted": false,
+            "fallbackReason": null,
+            "decision": null
+          },
+          "final": {
+            "policy": "rules",
+            "actionId": "move:91001:right",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": false,
+            "preview": {
+              "action": {
+                "actionId": "move:91001:right",
+                "kind": "move",
+                "uid": 91001,
+                "dir": "right",
+                "label": "使用移动牌，向右滑行"
+              },
+              "from": {
+                "x": 0,
+                "y": 6
+              },
+              "to": {
+                "x": 3,
+                "y": 6
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 9,
+              "finished": false,
+              "requiresReward": false,
+              "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 3,
+                "y": 6
+              },
+              "phase": "action",
+              "finished": false,
+              "remainingHand": [],
+              "executionMs": 1.034
+            },
+            "matchesExpected": true
+          }
+        },
+        {
+          "id": "pit",
+          "title": "坑洞旁选择",
+          "description": "图三(6,6)有1点移动，向左进入(5,6)坑洞；另有安全方向。",
+          "synthetic": true,
+          "snapshot": {
+            "mapId": "race3",
+            "mapLabel": "竞速模式 图三",
+            "width": 11,
+            "height": 11,
+            "tiles": [
+              [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 0,
+                  "kind": "goal"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 1,
+                  "kind": "poison"
+                },
+                {
+                  "x": 2,
+                  "y": 1,
+                  "kind": "poison"
+                },
+                {
+                  "x": 3,
+                  "y": 1,
+                  "kind": "poison"
+                },
+                {
+                  "x": 4,
+                  "y": 1,
+                  "kind": "poison"
+                },
+                {
+                  "x": 5,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 1,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 9,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 1,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 2,
+                  "kind": "poison"
+                },
+                {
+                  "x": 8,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 2,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 3,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 2,
+                  "y": 3,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 3,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 3,
+                  "kind": "earthwall",
+                  "durability": 2
+                },
+                {
+                  "x": 7,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 3,
+                  "kind": "lucky"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 4,
+                  "kind": "pit"
+                },
+                {
+                  "x": 5,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 4,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 5,
+                  "kind": "earthwall",
+                  "durability": 2
+                },
+                {
+                  "x": 2,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 5,
+                  "kind": "pit"
+                },
+                {
+                  "x": 5,
+                  "y": 5,
+                  "kind": "pit"
+                },
+                {
+                  "x": 6,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 5,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 9,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 5,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 6,
+                  "kind": "pit"
+                },
+                {
+                  "x": 6,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 6,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 7,
+                  "kind": "lucky"
+                },
+                {
+                  "x": 1,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 7,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 3,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 7,
+                  "kind": "earthwall",
+                  "durability": 2
+                },
+                {
+                  "x": 6,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 7,
+                  "kind": "poison"
+                },
+                {
+                  "x": 9,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 7,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 8,
+                  "kind": "earthwall",
+                  "durability": 2
+                },
+                {
+                  "x": 3,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 8,
+                  "kind": "poison"
+                },
+                {
+                  "x": 8,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 8,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 9,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 2,
+                  "y": 9,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 3,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 9,
+                  "kind": "home"
+                },
+                {
+                  "x": 10,
+                  "y": 9,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 10,
+                  "kind": "start"
+                },
+                {
+                  "x": 1,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 10,
+                  "kind": "lucky"
+                }
+              ]
+            ],
+            "players": [
+              {
+                "id": "human",
+                "name": "对手1",
+                "isAI": false,
+                "characterId": "villager",
+                "pieceColor": "#f2a75c",
+                "ready": true,
+                "isHost": true,
+                "cell": {
+                  "x": 0,
+                  "y": 10
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 10
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": []
+              },
+              {
+                "id": "ai-1",
+                "name": "当前玩家",
+                "isAI": true,
+                "characterId": "robot",
+                "pieceColor": "#5f8d95",
+                "ready": true,
+                "isHost": false,
+                "cell": {
+                  "x": 6,
+                  "y": 6
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 10
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": [
+                  {
+                    "uid": 91001,
+                    "toolId": "move",
+                    "points": 1
+                  }
+                ]
+              }
+            ],
+            "activeIndex": 1,
+            "turnNumber": 1,
+            "phase": "action",
+            "dice": {
+              "move": 1,
+              "toolName": null
+            },
+            "bombs": [],
+            "pigs": [],
+            "wallets": [],
+            "effects": [],
+            "logs": [],
+            "mechanisms": {
+              "airdrop": false,
+              "turnTimer": false
+            },
+            "finished": false
+          },
+          "expected": {
+            "legal": true,
+            "avoidDeathTerrain": true,
+            "winThisStep": false
+          },
+          "rulesBaseline": {
+            "decisionMs": 5.028,
+            "actionId": "move:91001:right",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": false,
+            "preview": {
+              "action": {
+                "actionId": "move:91001:right",
+                "kind": "move",
+                "uid": 91001,
+                "dir": "right",
+                "label": "使用移动牌，向右滑行"
+              },
+              "from": {
+                "x": 6,
+                "y": 6
+              },
+              "to": {
+                "x": 7,
+                "y": 6
+              },
+              "distanceBefore": 10,
+              "distanceAfter": 9,
+              "finished": false,
+              "requiresReward": false,
+              "summary": "消耗移动牌，结算后位于 (7, 6)。到终点的静态最短路径估计为 9 格。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 7,
+                "y": 6
+              },
+              "phase": "action",
+              "finished": false,
+              "remainingHand": [],
+              "executionMs": 0.714
+            }
+          },
+          "cloud": {
+            "requested": false,
+            "modelReady": false,
+            "accepted": false,
+            "fallbackReason": null,
+            "decision": null
+          },
+          "final": {
+            "policy": "rules",
+            "actionId": "move:91001:right",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": false,
+            "preview": {
+              "action": {
+                "actionId": "move:91001:right",
+                "kind": "move",
+                "uid": 91001,
+                "dir": "right",
+                "label": "使用移动牌，向右滑行"
+              },
+              "from": {
+                "x": 6,
+                "y": 6
+              },
+              "to": {
+                "x": 7,
+                "y": 6
+              },
+              "distanceBefore": 10,
+              "distanceAfter": 9,
+              "finished": false,
+              "requiresReward": false,
+              "summary": "消耗移动牌，结算后位于 (7, 6)。到终点的静态最短路径估计为 9 格。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 7,
+                "y": 6
+              },
+              "phase": "action",
+              "finished": false,
+              "remainingHand": [],
+              "executionMs": 0.726
+            },
+            "matchesExpected": true
+          }
+        },
+        {
+          "id": "poison",
+          "title": "毒气旁选择",
+          "description": "图三(6,8)有1点移动，向右停在(7,8)毒气格；另有安全方向。",
+          "synthetic": true,
+          "snapshot": {
+            "mapId": "race3",
+            "mapLabel": "竞速模式 图三",
+            "width": 11,
+            "height": 11,
+            "tiles": [
+              [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 0,
+                  "kind": "goal"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 1,
+                  "kind": "poison"
+                },
+                {
+                  "x": 2,
+                  "y": 1,
+                  "kind": "poison"
+                },
+                {
+                  "x": 3,
+                  "y": 1,
+                  "kind": "poison"
+                },
+                {
+                  "x": 4,
+                  "y": 1,
+                  "kind": "poison"
+                },
+                {
+                  "x": 5,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 1,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 9,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 1,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 2,
+                  "kind": "poison"
+                },
+                {
+                  "x": 8,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 2,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 3,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 2,
+                  "y": 3,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 3,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 3,
+                  "kind": "earthwall",
+                  "durability": 2
+                },
+                {
+                  "x": 7,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 3,
+                  "kind": "lucky"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 4,
+                  "kind": "pit"
+                },
+                {
+                  "x": 5,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 4,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 5,
+                  "kind": "earthwall",
+                  "durability": 2
+                },
+                {
+                  "x": 2,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 5,
+                  "kind": "pit"
+                },
+                {
+                  "x": 5,
+                  "y": 5,
+                  "kind": "pit"
+                },
+                {
+                  "x": 6,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 5,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 9,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 5,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 6,
+                  "kind": "pit"
+                },
+                {
+                  "x": 6,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 6,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 7,
+                  "kind": "lucky"
+                },
+                {
+                  "x": 1,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 7,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 3,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 7,
+                  "kind": "earthwall",
+                  "durability": 2
+                },
+                {
+                  "x": 6,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 7,
+                  "kind": "poison"
+                },
+                {
+                  "x": 9,
+                  "y": 7,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 7,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 8,
+                  "kind": "earthwall",
+                  "durability": 2
+                },
+                {
+                  "x": 3,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 8,
+                  "kind": "poison"
+                },
+                {
+                  "x": 8,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 8,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 8,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 9,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 2,
+                  "y": 9,
+                  "kind": "highwall"
+                },
+                {
+                  "x": 3,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 9,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 9,
+                  "kind": "home"
+                },
+                {
+                  "x": 10,
+                  "y": 9,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 10,
+                  "kind": "start"
+                },
+                {
+                  "x": 1,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 7,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 8,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 9,
+                  "y": 10,
+                  "kind": "floor"
+                },
+                {
+                  "x": 10,
+                  "y": 10,
+                  "kind": "lucky"
+                }
+              ]
+            ],
+            "players": [
+              {
+                "id": "human",
+                "name": "对手1",
+                "isAI": false,
+                "characterId": "villager",
+                "pieceColor": "#f2a75c",
+                "ready": true,
+                "isHost": true,
+                "cell": {
+                  "x": 0,
+                  "y": 10
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 10
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": []
+              },
+              {
+                "id": "ai-1",
+                "name": "当前玩家",
+                "isAI": true,
+                "characterId": "robot",
+                "pieceColor": "#5f8d95",
+                "ready": true,
+                "isHost": false,
+                "cell": {
+                  "x": 6,
+                  "y": 8
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 10
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": [
+                  {
+                    "uid": 91001,
+                    "toolId": "move",
+                    "points": 1
+                  }
+                ]
+              }
+            ],
+            "activeIndex": 1,
+            "turnNumber": 1,
+            "phase": "action",
+            "dice": {
+              "move": 1,
+              "toolName": null
+            },
+            "bombs": [],
+            "pigs": [],
+            "wallets": [],
+            "effects": [],
+            "logs": [],
+            "mechanisms": {
+              "airdrop": false,
+              "turnTimer": false
+            },
+            "finished": false
+          },
+          "expected": {
+            "legal": true,
+            "avoidDeathTerrain": true,
+            "winThisStep": false
+          },
+          "rulesBaseline": {
+            "decisionMs": 3.818,
+            "actionId": "move:91001:up",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": false,
+            "preview": {
+              "action": {
+                "actionId": "move:91001:up",
+                "kind": "move",
+                "uid": 91001,
+                "dir": "up",
+                "label": "使用移动牌，向上滑行"
+              },
+              "from": {
+                "x": 6,
+                "y": 8
+              },
+              "to": {
+                "x": 6,
+                "y": 7
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 11,
+              "finished": false,
+              "requiresReward": false,
+              "summary": "消耗移动牌，结算后位于 (6, 7)。到终点的静态最短路径估计为 11 格。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 6,
+                "y": 7
+              },
+              "phase": "action",
+              "finished": false,
+              "remainingHand": [],
+              "executionMs": 1.112
+            }
+          },
+          "cloud": {
+            "requested": false,
+            "modelReady": false,
+            "accepted": false,
+            "fallbackReason": null,
+            "decision": null
+          },
+          "final": {
+            "policy": "rules",
+            "actionId": "move:91001:up",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": false,
+            "preview": {
+              "action": {
+                "actionId": "move:91001:up",
+                "kind": "move",
+                "uid": 91001,
+                "dir": "up",
+                "label": "使用移动牌，向上滑行"
+              },
+              "from": {
+                "x": 6,
+                "y": 8
+              },
+              "to": {
+                "x": 6,
+                "y": 7
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 11,
+              "finished": false,
+              "requiresReward": false,
+              "summary": "消耗移动牌，结算后位于 (6, 7)。到终点的静态最短路径估计为 11 格。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 6,
+                "y": 7
+              },
+              "phase": "action",
+              "finished": false,
+              "remainingHand": [],
+              "executionMs": 3.091
+            },
+            "matchesExpected": true
+          }
+        },
+        {
+          "id": "sprint",
+          "title": "冲刺与移动比较",
+          "description": "教学地图起点，3点移动及冲刺牌；只检查本步结果，不把原地加点判断为劣解。",
+          "synthetic": true,
+          "snapshot": {
+            "mapId": "tutorial",
+            "mapLabel": "基础教学关",
+            "width": 7,
+            "height": 7,
+            "tiles": [
+              [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 0,
+                  "kind": "goal"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 1,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 2,
+                  "kind": "wall"
+                },
+                {
+                  "x": 4,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 2,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 3,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 4,
+                  "kind": "home"
+                },
+                {
+                  "x": 6,
+                  "y": 4,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 5,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 6,
+                  "kind": "start"
+                },
+                {
+                  "x": 1,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 6,
+                  "kind": "floor"
+                }
+              ]
+            ],
+            "players": [
+              {
+                "id": "human",
+                "name": "对手1",
+                "isAI": false,
+                "characterId": "villager",
+                "pieceColor": "#f2a75c",
+                "ready": true,
+                "isHost": true,
+                "cell": {
+                  "x": 3,
+                  "y": 4
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 6
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": []
+              },
+              {
+                "id": "ai-1",
+                "name": "当前玩家",
+                "isAI": true,
+                "characterId": "robot",
+                "pieceColor": "#5f8d95",
+                "ready": true,
+                "isHost": false,
+                "cell": {
+                  "x": 0,
+                  "y": 6
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 6
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": [
+                  {
+                    "uid": 91001,
+                    "toolId": "move",
+                    "points": 3
+                  },
+                  {
+                    "uid": 91002,
+                    "toolId": "sprint"
+                  }
+                ]
+              }
+            ],
+            "activeIndex": 1,
+            "turnNumber": 1,
+            "phase": "action",
+            "dice": {
+              "move": 3,
+              "toolName": null
+            },
+            "bombs": [],
+            "pigs": [],
+            "wallets": [],
+            "effects": [],
+            "logs": [],
+            "mechanisms": {
+              "airdrop": false,
+              "turnTimer": false
+            },
+            "finished": false
+          },
+          "expected": {
+            "legal": true,
+            "avoidDeathTerrain": true,
+            "winThisStep": false
+          },
+          "rulesBaseline": {
+            "decisionMs": 1.95,
+            "actionId": "move:91001:right",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": false,
+            "preview": {
+              "action": {
+                "actionId": "move:91001:right",
+                "kind": "move",
+                "uid": 91001,
+                "dir": "right",
+                "label": "使用移动牌，向右滑行"
+              },
+              "from": {
+                "x": 0,
+                "y": 6
+              },
+              "to": {
+                "x": 3,
+                "y": 6
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 9,
+              "finished": false,
+              "requiresReward": false,
+              "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 3,
+                "y": 6
+              },
+              "phase": "action",
+              "finished": false,
+              "remainingHand": [
+                {
+                  "uid": 91002,
+                  "toolId": "sprint"
+                }
+              ],
+              "executionMs": 0.423
+            }
+          },
+          "cloud": {
+            "requested": false,
+            "modelReady": false,
+            "accepted": false,
+            "fallbackReason": null,
+            "decision": null
+          },
+          "final": {
+            "policy": "rules",
+            "actionId": "move:91001:right",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": false,
+            "preview": {
+              "action": {
+                "actionId": "move:91001:right",
+                "kind": "move",
+                "uid": 91001,
+                "dir": "right",
+                "label": "使用移动牌，向右滑行"
+              },
+              "from": {
+                "x": 0,
+                "y": 6
+              },
+              "to": {
+                "x": 3,
+                "y": 6
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 9,
+              "finished": false,
+              "requiresReward": false,
+              "summary": "消耗移动牌，结算后位于 (3, 6)。到终点的静态最短路径估计为 9 格。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 3,
+                "y": 6
+              },
+              "phase": "action",
+              "finished": false,
+              "remainingHand": [
+                {
+                  "uid": 91002,
+                  "toolId": "sprint"
+                }
+              ],
+              "executionMs": 0.36
+            },
+            "matchesExpected": true
+          }
+        },
+        {
+          "id": "finish",
+          "title": "瞬移终点",
+          "description": "教学地图起点，3点移动及瞬移牌，终点(6,0)可合法瞬移抵达。",
+          "synthetic": true,
+          "snapshot": {
+            "mapId": "tutorial",
+            "mapLabel": "基础教学关",
+            "width": 7,
+            "height": 7,
+            "tiles": [
+              [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 0,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 0,
+                  "kind": "goal"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 1,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 1,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 2,
+                  "kind": "wall"
+                },
+                {
+                  "x": 4,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 2,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 2,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 3,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 3,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 4,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 4,
+                  "kind": "home"
+                },
+                {
+                  "x": 6,
+                  "y": 4,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 1,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 5,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 5,
+                  "kind": "floor"
+                }
+              ],
+              [
+                {
+                  "x": 0,
+                  "y": 6,
+                  "kind": "start"
+                },
+                {
+                  "x": 1,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 2,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 3,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 4,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 5,
+                  "y": 6,
+                  "kind": "floor"
+                },
+                {
+                  "x": 6,
+                  "y": 6,
+                  "kind": "floor"
+                }
+              ]
+            ],
+            "players": [
+              {
+                "id": "human",
+                "name": "对手1",
+                "isAI": false,
+                "characterId": "villager",
+                "pieceColor": "#f2a75c",
+                "ready": true,
+                "isHost": true,
+                "cell": {
+                  "x": 3,
+                  "y": 4
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 6
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": []
+              },
+              {
+                "id": "ai-1",
+                "name": "当前玩家",
+                "isAI": true,
+                "characterId": "robot",
+                "pieceColor": "#5f8d95",
+                "ready": true,
+                "isHost": false,
+                "cell": {
+                  "x": 0,
+                  "y": 6
+                },
+                "spawn": {
+                  "x": 0,
+                  "y": 6
+                },
+                "hookLevel": 4,
+                "savedMove": 0,
+                "hand": [
+                  {
+                    "uid": 91001,
+                    "toolId": "move",
+                    "points": 3
+                  },
+                  {
+                    "uid": 91003,
+                    "toolId": "teleport"
+                  }
+                ]
+              }
+            ],
+            "activeIndex": 1,
+            "turnNumber": 1,
+            "phase": "action",
+            "dice": {
+              "move": 3,
+              "toolName": null
+            },
+            "bombs": [],
+            "pigs": [],
+            "wallets": [],
+            "effects": [],
+            "logs": [],
+            "mechanisms": {
+              "airdrop": false,
+              "turnTimer": false
+            },
+            "finished": false
+          },
+          "expected": {
+            "legal": true,
+            "avoidDeathTerrain": true,
+            "winThisStep": true
+          },
+          "rulesBaseline": {
+            "decisionMs": 23.938,
+            "actionId": "teleport:91003:6:0",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": true,
+            "preview": {
+              "action": {
+                "actionId": "teleport:91003:6:0",
+                "kind": "teleport",
+                "uid": 91003,
+                "target": {
+                  "x": 6,
+                  "y": 0
+                },
+                "label": "使用瞬移到 (6, 0)"
+              },
+              "from": {
+                "x": 0,
+                "y": 6
+              },
+              "to": {
+                "x": 6,
+                "y": 0
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 0,
+              "finished": true,
+              "requiresReward": false,
+              "summary": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 6,
+                "y": 0
+              },
+              "phase": "finished",
+              "finished": true,
+              "remainingHand": [
+                {
+                  "uid": 91001,
+                  "toolId": "move",
+                  "points": 3
+                }
+              ],
+              "executionMs": 0.42
+            }
+          },
+          "cloud": {
+            "requested": false,
+            "modelReady": false,
+            "accepted": false,
+            "fallbackReason": null,
+            "decision": null
+          },
+          "final": {
+            "policy": "rules",
+            "actionId": "teleport:91003:6:0",
+            "legal": true,
+            "dangerous": false,
+            "winsThisStep": true,
+            "preview": {
+              "action": {
+                "actionId": "teleport:91003:6:0",
+                "kind": "teleport",
+                "uid": 91003,
+                "target": {
+                  "x": 6,
+                  "y": 0
+                },
+                "label": "使用瞬移到 (6, 0)"
+              },
+              "from": {
+                "x": 0,
+                "y": 6
+              },
+              "to": {
+                "x": 6,
+                "y": 0
+              },
+              "distanceBefore": 12,
+              "distanceAfter": 0,
+              "finished": true,
+              "requiresReward": false,
+              "summary": "消耗瞬移牌，结算后位于 (6, 0)。立即抵达终点。",
+              "warnings": []
+            },
+            "actual": {
+              "position": {
+                "x": 6,
+                "y": 0
+              },
+              "phase": "finished",
+              "finished": true,
+              "remainingHand": [
+                {
+                  "uid": 91001,
+                  "toolId": "move",
+                  "points": 3
+                }
+              ],
+              "executionMs": 0.359
+            },
+            "matchesExpected": true
+          }
+        }
+      ]
+    }
+  ]
+}

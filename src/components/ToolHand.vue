@@ -66,7 +66,7 @@ function cardEnabled(instance: ToolInstance) {
     return instance.toolId === 'end' || canUseTool(props.state, instance)
   }
   if (props.state.phase === 'turnEnd') {
-    return true
+    return instance.toolId === 'end' || canUseTool(props.state, instance)
   }
   return false
 }

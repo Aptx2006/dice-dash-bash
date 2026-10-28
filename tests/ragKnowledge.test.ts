@@ -10,7 +10,7 @@ test('知识库按完整标题切分，编号唯一，来源行号与正文对�
   assert.equal(chunks.length, 23)
   assert.equal(new Set(chunks.map(chunk => chunk.id)).size, chunks.length)
   for (const chunk of chunks) {
-    assert.equal(chunk.rulesVersion, 'game-v4')
+    assert.equal(chunk.rulesVersion, 'game-v5')
     assert.equal(chunk.source, 'knowledge/rules-v1.md')
     const [start, end] = chunk.sourceLines
     const raw = lines.slice(start - 1, end).join('\n')
@@ -31,6 +31,17 @@ test('房间问答区分服务重启恢复与数据丢失，保留跨设备条�
   assert.match(reconnect.chunk.text, /损坏或版本不兼容时不能恢复/)
   assert.match(reconnect.chunk.text, /20秒/)
   assert.equal(retrieve(chunks, '房间服务重启后还能恢复对局吗？')[0].chunk.id, 'room.reconnect')
+})
+
+test('教学/练习存档与记录查询的知识跟随当前行为', async () => {
+  const chunks = await loadKnowledge()
+  const hits = retrieve(chunks, '继续基础教学会覆盖练习存档吗？')
+  assert.ok(hits.some(hit => hit.chunk.id === 'tutorial.basic'))
+  assert.ok(hits.some(hit => hit.chunk.id === 'save.local'))
+  const tutorial = chunks.find(chunk => chunk.id === 'tutorial.basic')!
+  assert.ok(tutorial.text.includes('单独保存'))
+  assert.ok(tutorial.text.includes('取消方向选择不消耗移动牌'))
+  assert.ok(chunks.find(chunk => chunk.id === 'save.local')!.text.includes('最近40条'))
 })
 
 test('三条抽检规则保持完整条件和例外，没有被长度切断', async () => {

@@ -8,7 +8,7 @@ import { readPreference } from '../storage/preferences.ts'
 import type { SavedMatch } from '../storage/savedMatch.ts'
 import RulesCoach from './RulesCoach.vue'
 
-defineProps<{ savedMatch?: SavedMatch | null; busy?: boolean; onlineResume?: boolean }>()
+defineProps<{ savedMatch?: SavedMatch | null; busy?: boolean; onlineResume?: boolean; tutorialResume?: boolean }>()
 
 const emit = defineEmits<{
   create: [payload: { name: string; mapId: string }]
@@ -104,7 +104,7 @@ function startTutorial() {
       </nav>
       <button type="button" class="tutorial-entry" :disabled="busy" @click="startTutorial">
         <span>?</span>
-        <strong>第一次游玩？进入基础教学</strong>
+        <strong>{{ tutorialResume ? '继续基础教学' : '第一次游玩？进入基础教学' }}</strong>
       </button>
     </section>
 

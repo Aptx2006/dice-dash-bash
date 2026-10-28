@@ -1,6 +1,6 @@
 import { createApp, h, reactive } from 'vue'
 import GameScreen from '../../src/components/GameScreen.vue'
-import { createGame } from '../../src/game/engine.ts'
+import { createGame, findGoal, playTeleportTool } from '../../src/game/engine.ts'
 import type { ToolId } from '../../src/game/types.ts'
 import '../../src/style.css'
 
@@ -14,6 +14,10 @@ const cards: ToolId[] = ['hook', 'blink', 'bomb', 'basketball', 'sprint', 'walle
 state.players[0].hand = [{ uid: 99990, toolId: 'move', points: 3 }, ...Array.from({ length: 24 }, (_, i) => ({ uid: 100000 + i, toolId: cards[i % cards.length] })), { uid: 99991, toolId: 'end', system: true }]
 
 const params = new URLSearchParams(location.search)
+if (params.has('finish')) {
+  const teleport = state.players[0]!.hand.find(card => card.toolId === 'teleport')!
+  playTeleportTool(state, teleport.uid, findGoal(state))
+}
 if (params.has('frame')) {
   createApp({ render: () => h(GameScreen, { state, myId: 'human', saveStatus: '合成UI测试 · 不保存', onExit: () => location.reload(), onRestart: () => location.reload() }) }).mount('#app')
 } else {
@@ -26,7 +30,7 @@ if (params.has('frame')) {
   const metrics = document.createElement('p')
   metrics.style.cssText = 'margin:0;padding:4px 12px;font-size:12px;'
   metrics.setAttribute('role', 'status'); root.append(metrics)
-  frame.title = '游戏测试视口'; frame.src = '/tests/browser/hand.html?frame=1'
+  frame.title = '游戏测试视口'; frame.src = `/tests/browser/hand.html?frame=1${params.has('finish') ? '&finish=1' : ''}`
   frame.style.cssText = `display:block;width:${width}px;height:${height}px;max-width:none;border:1px solid #888;margin:0 auto;`
   frame.addEventListener('load', () => {
     const document = frame.contentDocument!, view = frame.contentWindow!

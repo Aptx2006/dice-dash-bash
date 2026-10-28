@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import RulesCoach from './RulesCoach.vue'
+import MatchHistory from './MatchHistory.vue'
 import { TOOLS } from '../game/tools.ts'
 import type { GameState, ToolId } from '../game/types.ts'
 
@@ -8,7 +9,7 @@ const props = defineProps<{ state: GameState; myId: string }>()
 const dialog = ref<HTMLDialogElement | null>(null)
 const coach = ref<{ setQuestion: (value: string) => void } | null>(null)
 const open = ref(false)
-const page = ref<'quick' | 'coach'>('quick')
+const page = ref<'quick' | 'coach' | 'journal'>('quick')
 const selected = ref<ToolId>('move')
 const self = computed(() => props.state.players.find(player => player.id === props.myId))
 // 只读取自己的手牌。快捷问题仅发送道具名称，不发送房间、姓名、手牌或局面。
@@ -27,9 +28,9 @@ const toolNotes: Partial<Record<ToolId, string>> = {
 }
 const question = computed(() => `${tool.value.name}怎么使用，有哪些限制？`)
 const suggestions = computed(() => [...new Set([question.value, '一回合为什么要结束两次？', '抵达终点后怎么排名？'])])
-async function show() {
+async function show(initial: 'quick' | 'journal' = 'quick') {
   selected.value = handKinds.value[0] ?? 'move'
-  page.value = 'quick'; open.value = true
+  page.value = initial; open.value = true
   await nextTick(); dialog.value?.showModal()
 }
 function close() { dialog.value?.close(); open.value = false }
@@ -38,16 +39,18 @@ async function askTool() {
   await nextTick(); coach.value?.setQuestion(question.value)
 }
 onBeforeUnmount(() => dialog.value?.close())
+defineExpose({ showJournal: () => show('journal') })
 </script>
 
 <template>
-  <button type="button" class="camera-fit rules-open" @click="show">规则速查</button>
+  <button type="button" class="camera-fit rules-open" @click="show()">规则速查</button>
   <dialog v-if="open" ref="dialog" class="match-rules" aria-label="对局规则手册" @cancel.prevent="close">
-    <header><div><small>随时查一查</small><h2>规则手册</h2></div><button type="button" aria-label="关闭规则手册" autofocus @click="close">×</button></header>
-    <p class="rules-timing">查阅时，对局和回合计时继续；关闭手册即可继续操作。</p>
+    <header><div><small>随时查一查</small><h2>{{ page === 'journal' ? '行动记录' : '规则手册' }}</h2></div><button type="button" aria-label="关闭规则手册" autofocus @click="close">×</button></header>
+    <p class="rules-timing">{{ state.finished ? '本局已结束，可以查阅规则和保留的行动记录。' : '查阅时，对局和回合计时继续；关闭手册即可继续操作。' }}</p>
     <nav class="rules-pages" aria-label="规则查询方式">
       <button type="button" :aria-pressed="page === 'quick'" @click="page = 'quick'">基础与手牌</button>
       <button type="button" :aria-pressed="page === 'coach'" @click="page = 'coach'">询问规则教练</button>
+      <button type="button" :aria-pressed="page === 'journal'" @click="page = 'journal'">行动记录</button>
     </nav>
     <section v-show="page === 'quick'" class="rules-quick" aria-label="基础与手牌速查">
       <ol class="rules-steps"><li><strong>投骰</strong><span>获得移动点数和本回合工具牌。</span></li><li><strong>使用手牌</strong><span>点击或向上拖出卡牌，再按高亮选择方向或目标；点取消可以重新选择。</span></li><li><strong>结束阶段</strong><span>行动后先结束行动阶段，再结束回合；只有“结束回合”后才轮到下一位。</span></li></ol>
@@ -62,6 +65,7 @@ onBeforeUnmount(() => dialog.value?.close())
       <p class="rules-footnote">基础与手牌速查可离线使用。规则教练通过资料检索回答一般规则；具体落点请看棋盘预览。</p>
     </section>
     <div v-show="page === 'coach'" class="rules-in-match"><RulesCoach ref="coach" expanded :suggestions="suggestions" /></div>
+    <MatchHistory v-if="page === 'journal'" :logs="state.logs" :finished="state.finished" />
   </dialog>
 </template>
 

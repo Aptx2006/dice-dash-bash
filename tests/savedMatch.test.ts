@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { createGame, playRollCard, playEndCard, playSimpleTool, pushEffect, restoreGame, chooseReward } from '../src/game/engine.ts'
-import { loadMatch, saveMatch, MATCH_STORAGE_KEY, type MatchInput } from '../src/storage/savedMatch.ts'
+import { loadMatch, saveMatch, loadTutorial, saveTutorial, MATCH_STORAGE_KEY, TUTORIAL_STORAGE_KEY, type MatchInput } from '../src/storage/savedMatch.ts'
 import { aiStep } from '../src/game/ai.ts'
 
 function fixture(): MatchInput {
@@ -15,6 +15,42 @@ function memory() {
   const values = new Map<string, string>()
   return { values, getStore: () => ({ getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => { values.set(key, value) } }) }
 }
+
+test('教学独立保存和恢复，练习存档与教学进度互不覆盖', () => {
+  const store = memory(), tutorial = fixture()
+  const config = { ...tutorial.config, mapId: 'race1' }
+  const practice: MatchInput = { config, state: createGame(config), roomCode: 'NORMAL', tutorialStep: -1, timeLeft: 75 }
+  saveMatch(practice, store.getStore, 1800000000000)
+  const original = store.values.get(MATCH_STORAGE_KEY)
+  playRollCard(tutorial.state); tutorial.tutorialStep = 2
+  assert.equal(saveTutorial(tutorial, store.getStore, 1800000000001).warning, '')
+  assert.equal(store.values.get(MATCH_STORAGE_KEY), original)
+  assert.equal(loadMatch(store.getStore).match?.config.mapId, 'race1')
+  assert.deepEqual(loadTutorial(store.getStore).match?.state.dice, tutorial.state.dice)
+  const teaching = store.values.get(TUTORIAL_STORAGE_KEY)
+  saveMatch(practice, store.getStore, 1800000000002)
+  assert.equal(store.values.get(TUTORIAL_STORAGE_KEY), teaching)
+  assert.equal(loadTutorial(store.getStore).match?.tutorialStep, 2)
+})
+
+test('错误地图、损坏内容和存储失败不能破坏独立教学或原练习存档', () => {
+  const store = memory(), input = fixture()
+  saveTutorial(input, store.getStore)
+  const before = store.values.get(TUTORIAL_STORAGE_KEY)
+  const config = { ...input.config, mapId: 'race1' }
+  const practice = { ...input, config, state: createGame(config), tutorialStep: -1 }
+  assert.ok(saveTutorial(practice, store.getStore).warning)
+  assert.equal(store.values.get(TUTORIAL_STORAGE_KEY), before)
+  saveMatch(practice, store.getStore)
+  store.values.set(TUTORIAL_STORAGE_KEY, store.values.get(MATCH_STORAGE_KEY)!)
+  assert.equal(loadTutorial(store.getStore).match, null)
+  assert.ok(loadTutorial(store.getStore).warning)
+  const original = store.values.get(MATCH_STORAGE_KEY)
+  store.values.set(TUTORIAL_STORAGE_KEY, '{broken')
+  assert.equal(loadTutorial(store.getStore).match, null)
+  assert.equal(store.values.get(MATCH_STORAGE_KEY), original)
+  assert.ok(saveTutorial(input, () => { throw new Error('禁止存储') }).warning)
+})
 
 test('没有存档时首页正常显示，不产生警告', () => {
   assert.deepEqual(loadMatch(memory().getStore), { match: null, warning: '' })

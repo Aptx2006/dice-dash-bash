@@ -12,8 +12,9 @@ const props = defineProps<{
   selectedUid: number | null
   tutorialToolId?: ToolId | null
   viewerId?: string
+  allowedToolIds?: ToolId[]
 }>()
-const emit = defineEmits<{ activate: [uid: number] }>()
+const emit = defineEmits<{ activate: [uid: number]; history: [] }>()
 
 const actor = computed<PlayerState>(() => activePlayer(props.state))
 const player = computed<PlayerState>(() => props.state.players.find(player => player.id === props.viewerId) ?? actor.value)
@@ -104,6 +105,7 @@ function cardName(instance: ToolInstance) {
 
 function cardEnabled(instance: ToolInstance) {
   if (!props.canInteract) return false
+  if (props.allowedToolIds && !props.allowedToolIds.includes(instance.toolId)) return false
   if (props.state.phase === 'turnStart') {
     return ['roll', 'copy', 'prepareTow', 'leap', 'storm'].includes(instance.toolId)
   }
@@ -180,10 +182,10 @@ onBeforeUnmount(() => { cancelDrag(); resizeObserver?.disconnect() })
         </div>
       </div>
       <span class="phase-ribbon" :class="{ quiet: phaseQuiet }" title="点击牌面或向上拖出使用；需要目标的牌再选择方向或格子。">{{ phaseLabel }}</span>
-      <div class="hand-dice" :aria-label="`${actor.name}最近的骰子结果`" :title="`${actor.name}最近的骰子结果`">
+      <button type="button" class="hand-dice" aria-label="查看行动记录" :title="`${actor.name}最近的骰子结果；点击查看行动记录`" @click="emit('history')">
         <span class="die" title="移动骰">{{ state.dice.move ?? '?' }}</span>
         <span class="die tool" title="工具骰">{{ state.dice.toolName ?? '—' }}</span>
-      </div>
+      </button>
     </div>
     <div v-if="inventory.length > pageSize || filter !== 'all'" class="hand-pagination" aria-label="手牌分页">
       <select v-model="filter" aria-label="筛选手牌" :disabled="draggingUid !== null">

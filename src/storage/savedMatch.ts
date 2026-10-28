@@ -5,6 +5,7 @@ import { TOOLS } from '../game/tools.ts'
 import { TERRAINS } from '../game/terrains.ts'
 
 export const MATCH_STORAGE_KEY = 'dice-saved-match'
+export const TUTORIAL_STORAGE_KEY = 'dice-saved-tutorial'
 const RULES_VERSION = 'local-v1'
 type GetStore = () => Pick<Storage, 'getItem' | 'setItem'>
 const browserStore: GetStore = () => window.localStorage
@@ -184,23 +185,37 @@ export function validateGameSnapshot(config: GameConfig, input: unknown, allowHu
   if (s.finished) ensure(players.some(p => object(p).finishedTurn !== undefined))
 }
 
-export function loadMatch(getStore: GetStore = browserStore): { match: SavedMatch | null; warning: string } {
+function loadSlot(key: string, getStore: GetStore): { match: SavedMatch | null; warning: string } {
   let raw: string | null
-  try { raw = getStore().getItem(MATCH_STORAGE_KEY) }
+  try { raw = getStore().getItem(key) }
   catch { return { match: null, warning: '浏览器无法读取对局存档，你仍可开始新对局。' } }
   if (raw === null) return { match: null, warning: '' }
   try { return { match: decodeMatch(raw), warning: '' } }
   catch (error) { return { match: null, warning: error instanceof SyntaxError ? '对局存档已损坏，无法继续；你仍可开始新对局。' : error instanceof Error ? error.message : '无法恢复对局。' } }
 }
 
-export function saveMatch(input: MatchInput, getStore: GetStore = browserStore, savedAt = Date.now()): { match: SavedMatch | null; warning: string } {
+function saveSlot(key: string, input: MatchInput, getStore: GetStore, savedAt: number): { match: SavedMatch | null; warning: string } {
   try {
     const raw = JSON.stringify({ ...input, formatVersion: 1, rulesVersion: RULES_VERSION, savedAt })
     const match = decodeMatch(raw)
     // 单次setItem为原子替换；校验或容量错误时不清除旧存档。
-    getStore().setItem(MATCH_STORAGE_KEY, raw)
+    getStore().setItem(key, raw)
     return { match, warning: '' }
   } catch {
     return { match: null, warning: '本局未能保存，当前游戏可继续；请勿刷新或关闭页面。' }
   }
+}
+
+export function loadMatch(getStore: GetStore = browserStore) { return loadSlot(MATCH_STORAGE_KEY, getStore) }
+export function saveMatch(input: MatchInput, getStore: GetStore = browserStore, savedAt = Date.now()) {
+  return saveSlot(MATCH_STORAGE_KEY, input, getStore, savedAt)
+}
+export function loadTutorial(getStore: GetStore = browserStore) {
+  const result = loadSlot(TUTORIAL_STORAGE_KEY, getStore)
+  if (result.match && result.match.config.mapId !== 'tutorial') return { match: null, warning: '教学存档内容不匹配，可以重新开始教学。' }
+  return { ...result, warning: result.warning ? '教学进度暂时无法恢复，可以重新开始教学。' : '' }
+}
+export function saveTutorial(input: MatchInput, getStore: GetStore = browserStore, savedAt = Date.now()) {
+  if (input.config.mapId !== 'tutorial') return { match: null, warning: '教学进度保存失败：地图不匹配。' }
+  return saveSlot(TUTORIAL_STORAGE_KEY, input, getStore, savedAt)
 }

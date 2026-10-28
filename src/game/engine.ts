@@ -8,7 +8,7 @@ import type {
   Tile,
   ToolInstance,
 } from './types.ts'
-import { DIRS, DIR_DELTA, cellKey, sameCell } from './types.ts'
+import { DIRS, DIR_DELTA, DIR_LABEL, cellKey, sameCell } from './types.ts'
 import { TERRAINS } from './terrains.ts'
 import { mapById, parseMap } from './maps.ts'
 import { characterById } from './characters.ts'
@@ -433,6 +433,7 @@ export function playEndCard(state: GameState) {
     }
     state.phase = 'turnEnd'
     setSystemCards(state, player, 'turnEnd')
+    log(state, `${player.name} 结束行动阶段，还可以使用工具；再次结束后交出回合。`)
     return
   }
   if (state.phase === 'turnEnd') {
@@ -478,8 +479,10 @@ export function resolveMoveCard(state: GameState, dir: Dir, stopAfter?: number, 
   if (!moveCard) return
   const canBrake = characterById(player.characterId).id === 'russell'
   const cap = canBrake && stopAfter && stopAfter > 0 ? stopAfter : Infinity
+  const from = { ...player.cell }
   player.hand = player.hand.filter((t) => t.uid !== moveCard.uid)
   slidePlayer(state, player, dir, moveCard.points ?? 0, cap, `${player.name} 的移动`)
+  log(state, `${player.name} 使用【移动】向${DIR_LABEL[dir]}滑行（${moveCard.points ?? 0}点），从(${from.x},${from.y})结算至(${player.cell.x},${player.cell.y})。`)
 }
 
 function slidePlayer(
@@ -868,6 +871,7 @@ export function playDirectionTool(state: GameState, uid: number, dir: Dir) {
   if (!instance || !canUseTool(state, instance) || !DIRS.includes(dir)
     || !['punch', 'basketball', 'hook', 'rocket'].includes(instance.toolId)) return
   const delta = DIR_DELTA[dir]
+  log(state, `${player.name} 使用【${TOOLS[instance.toolId].name}】向${DIR_LABEL[dir]}出手。`)
   switch (instance.toolId) {
     case 'punch': {
       let hit = false
@@ -1087,7 +1091,7 @@ export function playBlinkTool(state: GameState, uid: number, target: Cell) {
   pushEffect(state, 'swap', { cell: player.cell })
   player.cell = { ...target }
   pushEffect(state, 'spawn', { cell: player.cell })
-  log(state, `${player.name} 瞬步一闪。`)
+  log(state, `${player.name} 使用【瞬步】选择落点(${target.x},${target.y})。`)
   onStopCell(state, player, player.cell)
   consumeTool(state, player, uid, instance.toolId)
 }
@@ -1101,7 +1105,7 @@ export function playTeleportTool(state: GameState, uid: number, target: Cell) {
   pushEffect(state, 'swap', { cell: player.cell })
   player.cell = { ...target }
   pushEffect(state, 'spawn', { cell: player.cell })
-  log(state, `${player.name} 瞬移到了棋盘的另一角。`)
+  log(state, `${player.name} 使用【瞬移】选择落点(${target.x},${target.y})。`)
   onStopCell(state, player, player.cell)
   consumeTool(state, player, uid, instance.toolId)
 }

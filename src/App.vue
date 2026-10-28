@@ -7,7 +7,7 @@ import OnlineLobby from './components/OnlineLobby.vue'
 import { createGame, restoreGame } from './game/engine.ts'
 import type { GameConfig, GameState } from './game/types.ts'
 import { writePreference } from './storage/preferences.ts'
-import { loadMatch, saveMatch } from './storage/savedMatch.ts'
+import { loadMatch, saveMatch, loadTutorial, saveTutorial, type SavedMatch } from './storage/savedMatch.ts'
 import { loadRoomSession, saveRoomSession, roomApi, watchRoom, RoomRequestError } from './network/client.ts'
 import type { RemoteGameControls, RoomCommand, RoomSession, RoomView } from './network/types.ts'
 
@@ -24,6 +24,7 @@ const state = ref<GameState | null>(null)
 const tutorialMode = ref(false)
 const loadedMatch = loadMatch()
 const savedMatch = ref(loadedMatch.match)
+const savedTutorial = ref(loadTutorial().match)
 const appNotice = ref(loadedMatch.warning)
 const gameKey = ref(0)
 const progress = ref({ tutorialStep: -1, timeLeft: 75 })
@@ -137,9 +138,13 @@ function copyConfig(config: GameConfig): GameConfig {
 
 function persistCurrentMatch(): boolean {
   if (onlineSession.value || screen.value !== 'game' || !state.value || !lastConfig.value) return true
-  const result = saveMatch({ config: lastConfig.value, state: state.value, roomCode: roomCode.value, ...progress.value })
+  const input = { config: lastConfig.value, state: state.value, roomCode: roomCode.value, ...progress.value }
+  const result = tutorialMode.value ? saveTutorial(input) : saveMatch(input)
   saveStatus.value = result.warning || '本局已自动保存'
-  if (result.match) savedMatch.value = result.match
+  if (result.match) {
+    if (tutorialMode.value) savedTutorial.value = result.match
+    else savedMatch.value = result.match
+  }
   return !result.warning
 }
 
@@ -157,7 +162,11 @@ function onResume() {
     appNotice.value = result.warning || '没有找到可继续的对局。'
     return
   }
-  const saved = result.match
+  const saved = result.match.config.mapId === 'tutorial' ? loadTutorial().match ?? result.match : result.match
+  restoreMatch(saved)
+}
+
+function restoreMatch(saved: SavedMatch) {
   lastConfig.value = copyConfig(saved.config)
   state.value = restoreGame(saved.state)
   roomCode.value = saved.roomCode
@@ -191,6 +200,12 @@ function onCreate(payload: { name: string; mapId: string }) { void connectOnline
 function onJoin(payload: { name: string; code: string }) { void connectOnline('join', payload) }
 
 function onTutorial(payload: { name: string }) {
+  const result = loadTutorial()
+  if (result.match && !result.match.state.finished && result.match.tutorialStep < 7) {
+    savedTutorial.value = result.match
+    restoreMatch(result.match)
+    return
+  }
   const name = payload.name.trim() || '玩家'
   appNotice.value = writePreference('dice-player-name', name)
   playerName.value = name
@@ -218,10 +233,11 @@ function onTutorial(payload: { name: string }) {
     mechanisms: { airdrop: false, turnTimer: false },
   }
   onStart(config)
+  if (result.warning) appNotice.value = result.warning
 }
 
 function onStart(config: GameConfig) {
-  if (!state.value && savedMatch.value && !savedMatch.value.state.finished) {
+  if (config.mapId !== 'tutorial' && !state.value && savedMatch.value && !savedMatch.value.state.finished) {
     pendingConfig.value = copyConfig(config)
     return
   }
@@ -269,7 +285,7 @@ function leaveGame() {
 
 <template>
   <p v-if="appNotice" role="alert" class="app-notice">{{ appNotice }} <button type="button" @click="appNotice = ''">关闭提示</button></p>
-  <HomeScreen v-if="screen === 'home'" :saved-match="savedMatch" :busy="connecting" :online-resume="!!savedOnline"
+  <HomeScreen v-if="screen === 'home'" :saved-match="savedMatch" :tutorial-resume="!!savedTutorial && !savedTutorial.state.finished && savedTutorial.tutorialStep < 7" :busy="connecting" :online-resume="!!savedOnline"
     @resume="onResume" @create="onCreate" @join="onJoin" @tutorial="onTutorial" @practice="onPractice" @resume-online="connectOnline('resume')" />
   <OnlineLobby v-else-if="screen === 'online' && onlineRoom" :room="onlineRoom" :connected="roomConnected" :busy="commandBusy || !!onlineRoom.pauseReason"
     @command="sendRoomCommand" @leave="onlineLeaveQuestion = true" />

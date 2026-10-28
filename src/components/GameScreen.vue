@@ -7,7 +7,9 @@ import MovementChoices from './MovementChoices.vue'
 import OpponentInsight from './OpponentInsight.vue'
 import RoomStatus from './RoomStatus.vue'
 import MatchRules from './MatchRules.vue'
+import MatchHistory from './MatchHistory.vue'
 import { memberPresence } from '../network/presence.ts'
+import { reconcileTutorialStep, tutorialFocus } from '../game/tutorial.ts'
 import type { Cell, Dir, GameState, ToolId, ToolInstance } from '../game/types.ts'
 import { sameCell } from '../game/types.ts'
 import { TOOLS } from '../game/tools.ts'
@@ -75,13 +77,14 @@ const targetMode = ref<TargetMode>('none')
 const towTargetId = ref<string | null>(null)
 const timeLeft = ref(props.initialProgress?.timeLeft ?? 75)
 const boardView = ref<BoardViewApi | null>(null)
+const rulesPanel = ref<{ showJournal: () => void } | null>(null)
 const actionNotice = ref('')
 const aiBusy = ref(false)
 const thinkingPlayerName = ref('')
 const opponentController = createOpponentController()
 // 地图标识是教学模式的稳定判据，同时保留 prop 便于后续复用其他教学地图。
 const isTutorial = computed(() => props.tutorial === true || props.state.mapId === 'tutorial')
-const tutorialStep = ref(isTutorial.value ? props.initialProgress?.tutorialStep ?? 0 : -1)
+const tutorialStep = ref(isTutorial.value ? reconcileTutorialStep(props.initialProgress?.tutorialStep ?? 0, props.state) : -1)
 watch([tutorialStep, timeLeft], ([step, seconds]) => {
   emit('checkpoint', { tutorialStep: step, timeLeft: seconds })
 }, { immediate: true, flush: 'post' })
@@ -230,7 +233,7 @@ const tutorialCopy = computed(() => {
     },
     {
       title: '第三步：选择方向',
-      body: '点击方向按钮。建议选择向上或向右，棋子会沿直线前进。',
+      body: '先看移动预览，再点击向上或向右。想重选时点“取消”，卡牌不会消耗。普通角色会沿该方向滑行，不能任意停在中途。',
     },
     {
       title: '第四步：结束行动',
@@ -254,11 +257,7 @@ const tutorialCopy = computed(() => {
 })
 
 const tutorialFocusTool = computed<ToolId | null>(() => {
-  if (!isTutorial.value) return null
-  if (tutorialStep.value === 1) return 'roll'
-  if (tutorialStep.value === 2) return 'move'
-  if (tutorialStep.value === 4 || tutorialStep.value === 5) return 'end'
-  return null
+  return isTutorial.value ? tutorialFocus(tutorialStep.value) : null
 })
 
 const bannerText = computed(() => {
@@ -361,6 +360,11 @@ function clearSelection() {
   actionNotice.value = ''
 }
 
+function cancelTargeting() {
+  clearSelection()
+  if (isTutorial.value && tutorialStep.value === 3) tutorialStep.value = 2
+}
+
 function onTacticalApplied() {
   clearSelection()
   if (isTutorial.value && tutorialStep.value >= 2 && tutorialStep.value <= 3) {
@@ -388,6 +392,7 @@ function onCardActivate(uid: number) {
   const state = props.state
   const instance = player.value.hand.find((t) => t.uid === uid)
   if (!instance || !canInteract.value) return
+  if (isTutorial.value && instance.toolId !== tutorialFocusTool.value) return
   actionNotice.value = ''
 
   if (state.phase === 'turnStart') {
@@ -543,16 +548,11 @@ watch(
 )
 
 watch(
-  () => [props.state.activeIndex, props.state.phase, props.state.turnNumber] as const,
+  () => [props.state.activeIndex, props.state.phase, props.state.turnNumber, props.state.finished,
+    props.state.players[0]?.hand.some(card => card.toolId === 'move')] as const,
   () => {
     if (!isTutorial.value) return
-    const current = activePlayer(props.state)
-    // 机器人可能在教学首轮抵达终点；结算后不再等待一个不会到来的真人回合。
-    if (tutorialStep.value === 6 && props.state.finished) { tutorialStep.value = 7; return }
-    if (tutorialStep.value === 1 && props.state.phase === 'action') tutorialStep.value = 2
-    if (tutorialStep.value === 4 && props.state.phase === 'turnEnd') tutorialStep.value = 5
-    if (tutorialStep.value === 5 && current.isAI) tutorialStep.value = 6
-    if (tutorialStep.value === 6 && !current.isAI && props.state.turnNumber > 1) tutorialStep.value = 7
+    tutorialStep.value = reconcileTutorialStep(tutorialStep.value, props.state)
   },
 )
 
@@ -670,8 +670,8 @@ onBeforeUnmount(() => {
 })
 
 function onGameKey(event: KeyboardEvent) {
-  if (event.key !== 'Escape' || (event.target instanceof Element && event.target.closest('input, textarea, select'))) return
-  clearSelection()
+  if (event.defaultPrevented || event.key !== 'Escape' || (event.target instanceof Element && event.target.closest('input, textarea, select, dialog, [role="dialog"]'))) return
+  cancelTargeting()
 }
 onMounted(() => window.addEventListener('keydown', onGameKey))
 onBeforeUnmount(() => window.removeEventListener('keydown', onGameKey))
@@ -714,14 +714,14 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
           </select>
         </label>
         <button type="button" class="camera-fit" @click="boardView?.fitToView()">最佳屏幕大小</button>
-        <MatchRules :state="state" :my-id="myId" />
+        <MatchRules ref="rulesPanel" :state="state" :my-id="myId" />
         <button type="button" class="game-exit" @click="emit('exit')">{{ remote ? '离开房间' : '返回首页' }}</button>
       </div>
       <RoomStatus v-if="remote" :controls="remote" :my-id="myId" :active-id="player.id" />
       <p v-else-if="saveStatus" class="save-status" role="status" :class="{ 'save-failed': saveStatus !== '本局已自动保存' }">{{ saveStatus }}</p>
       <p class="camera-help">拖动平移棋盘 · 滚轮缩放 · 视角固定</p>
 
-      <TacticalAssistant v-show="targetMode === 'none'" :state="state" :my-id="myId" :can-interact="canInteract"
+      <TacticalAssistant v-if="!isTutorial" v-show="targetMode === 'none'" :state="state" :my-id="myId" :can-interact="canInteract"
         :remote="remote" @applied="onTacticalApplied" />
       <OpponentInsight v-if="!isTutorial" :state="state" :thinking="remote?.thinkingPlayerName ?? thinkingPlayerName" />
 
@@ -755,6 +755,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
       </div>
 
       <div class="log-panel" aria-label="行动记录">
+        <button type="button" class="log-more" @click="rulesPanel?.showJournal()">行动记录 · 查看更多</button>
         <ul>
           <li v-for="entry in state.logs.slice(0, 14)" :key="entry.id">{{ entry.text }}</li>
         </ul>
@@ -764,12 +765,12 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
       <p v-else-if="targetingHint && selectedInstance?.toolId !== 'move'" class="targeting-hint">{{ targetingHint }}</p>
 
       <MovementChoices v-if="canInteract && targetMode === 'slide' && selectedInstance?.toolId === 'move'"
-        :state="state" :player-id="myId" :uid="selectedInstance.uid" @choose="onDirPick" @cancel="clearSelection" />
+        :state="state" :player-id="myId" :uid="selectedInstance.uid" @choose="onDirPick" @cancel="cancelTargeting" />
 
       <nav v-if="showDirPad && selectedInstance?.toolId !== 'move'" class="dir-pad" aria-label="方向选择">
         <button type="button" style="grid-area: 1 / 2" title="上" @click="onDirPick('up')">↑</button>
         <button type="button" style="grid-area: 2 / 1" title="左" @click="onDirPick('left')">←</button>
-        <button type="button" class="cancel" style="grid-area: 2 / 2" @click="clearSelection">取消</button>
+        <button type="button" class="cancel" style="grid-area: 2 / 2" @click="cancelTargeting">取消</button>
         <button type="button" style="grid-area: 2 / 3" title="右" @click="onDirPick('right')">→</button>
         <button type="button" style="grid-area: 3 / 2" title="下" @click="onDirPick('down')">↓</button>
       </nav>
@@ -817,9 +818,11 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
       :state="state"
       :viewer-id="remote ? myId : undefined"
       :can-interact="canInteract"
+      :allowed-tool-ids="isTutorial ? (tutorialFocusTool ? [tutorialFocusTool] : []) : undefined"
       :selected-uid="selectedUid"
       :tutorial-tool-id="tutorialFocusTool"
       @activate="onCardActivate"
+      @history="rulesPanel?.showJournal()"
     />
 
     <div v-if="rewardVisible" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="选择奖励">
@@ -845,7 +848,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
       </section>
     </div>
 
-    <div v-if="state.finished && !presenting" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="对局结算">
+    <div v-if="state.finished && !presenting && !(isTutorial && tutorialStep === 7)" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="对局结算">
       <section class="modal-card settlement-card">
         <p class="crown">👑</p>
         <p class="eyebrow">对局完成</p>
@@ -866,6 +869,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
           </div>
         </div>
         <OpponentInsight :state="state" settlement />
+        <details class="settlement-history"><summary>查看行动记录 · {{ state.logs.length }}条</summary><MatchHistory :logs="state.logs" finished /></details>
         <div class="settlement-actions">
           <button v-if="!remote || remote.isHost" type="button" class="pill-button primary" @click="emit('restart')">{{ remote ? '回大厅再来一局' : '再来一局' }}</button>
           <button type="button" class="pill-button" @click="emit('exit')">{{ remote ? '离开房间' : '返回首页' }}</button>

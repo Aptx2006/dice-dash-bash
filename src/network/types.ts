@@ -55,6 +55,8 @@ export type RoomCommand =
 /** 界面仅发出命令，不在客户端结算联机规则。 */
 export interface RemoteGameControls {
   roomId: string
+  hostId: string
+  members: RoomMember[]
   isHost: boolean
   connected: boolean
   busy: boolean

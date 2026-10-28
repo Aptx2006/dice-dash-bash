@@ -67,6 +67,10 @@ export class RoomManager {
     } catch (error) { options.store?.close(); throw error }
   }
   private available() { if (this.storageFault) throw new RoomError('STORAGE_UNAVAILABLE', STORAGE_ERROR, 503) }
+  health() {
+    return { paused: this.storageFault, persistenceEnabled: !!this.options.store, roomCount: this.rooms.size,
+      recoveringCount: [...this.rooms.values()].filter(room => room.recoveryUntil !== null).length }
+  }
   private controller(room: Room) {
     return createOpponentController({
       request: (task, signal) => this.options.opponentRequest ? this.options.opponentRequest(task, signal) : runOpponentAgent(task, { signal }),

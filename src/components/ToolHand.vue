@@ -4,6 +4,7 @@ import type { GameState, PlayerState, ToolId, ToolInstance } from '../game/types
 import { TOOLS } from '../game/tools.ts'
 import { characterById } from '../game/characters.ts'
 import { activePlayer, canUseTool } from '../game/engine.ts'
+import { createCardGesture, CARD_DRAG_THRESHOLD } from '../input/cardGesture.ts'
 
 const props = defineProps<{
   state: GameState
@@ -19,10 +20,10 @@ const player = computed<PlayerState>(() => props.state.players.find(player => pl
 const character = computed(() => characterById(player.value.characterId))
 
 const draggingUid = ref<number | null>(null)
-let dragStartY = 0
-let dragged = false
 const dragOffset = ref(0)
-const DRAG_THRESHOLD = 46
+const gesture = createCardGesture()
+let captureTarget: HTMLElement | null = null
+let captureId: number | null = null
 const cardsRoot = ref<HTMLElement | null>(null)
 const columns = ref(4)
 const page = ref(0)
@@ -44,6 +45,7 @@ const visibleCards = computed(() => [...filteredCards.value.slice(page.value * p
   ...(primaryCard.value ? [primaryCard.value] : [])])
 watch([pageCount, pageSize], () => { page.value = Math.min(page.value, pageCount.value - 1) })
 watch(() => player.value.id, () => { page.value = 0; filter.value = 'all'; cancelDrag() })
+watch(() => props.canInteract, allowed => { if (!allowed) cancelDrag() })
 watch(() => props.state.phase, () => { page.value = 0; filter.value = 'all' })
 watch(filter, () => { page.value = 0 })
 watch(cardTypes, types => { if (filter.value !== 'all' && !types.some(type => type.id === filter.value)) filter.value = 'all' })
@@ -115,38 +117,49 @@ function cardEnabled(instance: ToolInstance) {
 }
 
 function onPointerDown(instance: ToolInstance, event: PointerEvent) {
-  if (!cardEnabled(instance)) return
-  event.preventDefault()
+  if (!cardEnabled(instance) || !gesture.start(instance.uid, event)) return
   draggingUid.value = instance.uid
-  dragStartY = event.clientY
-  dragged = false
   dragOffset.value = 0
+  captureTarget = event.currentTarget as HTMLElement; captureId = event.pointerId
+  try { captureTarget.setPointerCapture(event.pointerId) } catch { /* 窗口监听仍可处理当前指针。 */ }
   window.addEventListener('pointermove', onPointerMove)
-  window.addEventListener('pointerup', onPointerUp, { once: true })
-  window.addEventListener('pointercancel', cancelDrag, { once: true })
+  window.addEventListener('pointerup', onPointerUp)
+  window.addEventListener('pointercancel', onPointerCancel)
+  window.addEventListener('blur', cancelDrag)
+  window.addEventListener('keydown', onDragKey)
 }
 
 function onPointerMove(event: PointerEvent) {
-  if (draggingUid.value == null) return
-  dragOffset.value = Math.max(0, Math.min(90, dragStartY - event.clientY))
-  if (dragOffset.value >= DRAG_THRESHOLD) dragged = true
+  const offset = gesture.move(event)
+  if (offset !== null) dragOffset.value = offset
 }
 
-function onPointerUp() {
-  if (draggingUid.value == null) return
-  const uid = draggingUid.value
-  const shouldActivate = dragged
-  cancelDrag()
-  if (shouldActivate) emit('activate', uid)
+function onPointerUp(event: PointerEvent) {
+  const result = gesture.finish(event)
+  if (!result) return
+  clearDrag()
+  if (result.activate) emit('activate', result.uid)
 }
 
 function cancelDrag() {
+  gesture.cancel(); clearDrag()
+}
+function onPointerCancel(event: PointerEvent) { if (gesture.cancel(event.pointerId)) clearDrag() }
+function onDragKey(event: KeyboardEvent) { if (event.key === 'Escape') cancelDrag() }
+function onCardClick(instance: ToolInstance, event: MouseEvent) {
+  const pointerId = 'pointerId' in event && typeof event.pointerId === 'number' ? event.pointerId : undefined
+  if (gesture.acceptClick(event.detail, pointerId) && cardEnabled(instance)) emit('activate', instance.uid)
+}
+function clearDrag() {
+  try { if (captureId !== null && captureTarget?.hasPointerCapture(captureId)) captureTarget.releasePointerCapture(captureId) } catch { /* 元素可能已随阶段更新移除。 */ }
+  captureId = null; captureTarget = null
   draggingUid.value = null
   dragOffset.value = 0
-  dragged = false
   window.removeEventListener('pointermove', onPointerMove)
   window.removeEventListener('pointerup', onPointerUp)
-  window.removeEventListener('pointercancel', cancelDrag)
+  window.removeEventListener('pointercancel', onPointerCancel)
+  window.removeEventListener('blur', cancelDrag)
+  window.removeEventListener('keydown', onDragKey)
 }
 
 function cardStyle(instance: ToolInstance) {
@@ -166,7 +179,7 @@ onBeforeUnmount(() => { cancelDrag(); resizeObserver?.disconnect() })
           <small>{{ character.name }} · {{ character.title }}</small>
         </div>
       </div>
-      <span class="phase-ribbon" :class="{ quiet: phaseQuiet }">{{ phaseLabel }}</span>
+      <span class="phase-ribbon" :class="{ quiet: phaseQuiet }" title="点击牌面或向上拖出使用；需要目标的牌再选择方向或格子。">{{ phaseLabel }}</span>
       <div class="hand-dice" :aria-label="`${actor.name}最近的骰子结果`" :title="`${actor.name}最近的骰子结果`">
         <span class="die" title="移动骰">{{ state.dice.move ?? '?' }}</span>
         <span class="die tool" title="工具骰">{{ state.dice.toolName ?? '—' }}</span>
@@ -178,7 +191,7 @@ onBeforeUnmount(() => { cancelDrag(); resizeObserver?.disconnect() })
         <option v-for="type in cardTypes" :key="type.id" :value="type.id">{{ type.name }} ×{{ type.count }}</option>
       </select>
       <button type="button" aria-label="上一页手牌" :disabled="page === 0 || draggingUid !== null" @click="page--">‹</button>
-      <span role="status">{{ page + 1 }} / {{ pageCount }} 页 · 共{{ player.hand.length }}张 <small>向上拖出使用</small></span>
+      <span role="status">{{ page + 1 }} / {{ pageCount }} 页 · 共{{ player.hand.length }}张 <small>点击或拖出使用</small></span>
       <button type="button" aria-label="下一页手牌" :disabled="page >= pageCount - 1 || draggingUid !== null" @click="page++">›</button>
     </div>
     <div ref="cardsRoot" class="hand-cards">
@@ -190,12 +203,14 @@ onBeforeUnmount(() => { cancelDrag(); resizeObserver?.disconnect() })
           :class="cardClass(instance)"
           :style="cardStyle(instance)"
           :disabled="!cardEnabled(instance)"
-          :aria-label="`向上拖出${cardName(instance)}：${cardDesc(instance)}`"
-          :title="`${cardName(instance)}：${cardDesc(instance)}`"
+          :aria-label="`使用${cardName(instance)}：${cardDesc(instance)}`"
+          :title="`点击或向上拖出${cardName(instance)}：${cardDesc(instance)}`"
           @pointerdown="onPointerDown(instance, $event)"
+          @click="onCardClick(instance, $event)"
           @keydown.enter.prevent="emit('activate', instance.uid)"
           @keydown.space.prevent="emit('activate', instance.uid)"
         >
+          <span v-if="draggingUid === instance.uid" class="card-drag-hint">{{ dragOffset >= CARD_DRAG_THRESHOLD ? '松开使用' : '向上拖出，或放回取消' }}</span>
           <span class="tool-card__head">
             <span class="tool-card__icon">{{ cardIcon(instance) }}</span>
             <span class="tool-card__title">{{ cardName(instance) }}</span>
@@ -219,6 +234,8 @@ onBeforeUnmount(() => { cancelDrag(); resizeObserver?.disconnect() })
 .phase-ribbon { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 .hand-cards { flex-wrap: nowrap; }
 .hand-cards .tool-card { max-width: calc((100% - .55rem) / 2); min-height: 122px; }
+.tool-card { position: relative; }
+.card-drag-hint { position: absolute; left: 50%; bottom: calc(100% + .3rem); transform: translateX(-50%); white-space: nowrap; border-radius: 8px; background: var(--navy); color: #fffaf0; padding: .3rem .5rem; font-size: .65rem; pointer-events: none; }
 .hand-pagination { display: flex; justify-content: center; align-items: center; gap: .6rem; margin: -.1rem 0 .55rem; color: var(--ink-dim); font-size: .7rem; }
 .hand-pagination button { width: 30px; height: 25px; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--panel); color: var(--ink); font-size: 1.1rem; }
 .hand-pagination select { max-width: 100px; min-width: 0; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--panel); color: var(--ink); padding: .25rem; font-size: .7rem; }

@@ -5,6 +5,8 @@ import ToolHand from './ToolHand.vue'
 import TacticalAssistant from './TacticalAssistant.vue'
 import MovementChoices from './MovementChoices.vue'
 import OpponentInsight from './OpponentInsight.vue'
+import RoomStatus from './RoomStatus.vue'
+import { memberPresence } from '../network/presence.ts'
 import type { Cell, Dir, GameState, ToolId, ToolInstance } from '../game/types.ts'
 import { sameCell } from '../game/types.ts'
 import { TOOLS } from '../game/tools.ts'
@@ -219,11 +221,11 @@ const tutorialCopy = computed(() => {
     },
     {
       title: '第一步：投骰',
-      body: '把底部的“投骰”牌向上拖出。系统会生成一张移动牌。',
+      body: '把底部的“投骰”牌向上拖出，也可以直接点击牌面。系统会生成一张移动牌。',
     },
     {
       title: '第二步：选择移动',
-      body: '把底部的“移动”牌向上拖出，进入方向选择。',
+      body: '把底部的“移动”牌向上拖出或点击牌面，进入方向选择。',
     },
     {
       title: '第三步：选择方向',
@@ -231,11 +233,11 @@ const tutorialCopy = computed(() => {
     },
     {
       title: '第四步：结束行动',
-      body: '移动完成后，把“结束”牌向上拖出，进入回合结束阶段。',
+      body: '移动完成后，拖出或点击“结束”牌，进入回合结束阶段。',
     },
     {
       title: '第五步：交出回合',
-      body: '再次拖出“结束”牌，把行动权交给教学机器人。',
+      body: '再次使用“结束”牌，把行动权交给教学机器人。',
     },
     {
       title: '观察智能体行动',
@@ -260,7 +262,9 @@ const tutorialFocusTool = computed<ToolId | null>(() => {
 
 const bannerText = computed(() => {
   if (props.state.finished) return '比赛结束'
-  if (thinkingPlayerName.value) return `${thinkingPlayerName.value} 正在思考…`
+  if (props.remote?.pauseReason) return '对局暂停'
+  const thinking = props.remote?.thinkingPlayerName ?? thinkingPlayerName.value
+  if (thinking) return `${thinking} 正在思考…`
   if (player.value.isAI) return `${player.value.name} 正在行动…`
   return `第 ${props.state.turnNumber} 回合 · ${player.value.name}`
 })
@@ -711,7 +715,8 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
         <button type="button" class="camera-fit" @click="boardView?.fitToView()">最佳屏幕大小</button>
         <button type="button" class="game-exit" @click="emit('exit')">{{ remote ? '离开房间' : '返回首页' }}</button>
       </div>
-      <p v-if="saveStatus" class="save-status" role="status" :class="{ 'save-failed': remote ? !remote.connected || !!remote.pauseReason : saveStatus !== '本局已自动保存' }">{{ saveStatus }}</p>
+      <RoomStatus v-if="remote" :controls="remote" :my-id="myId" :active-id="player.id" />
+      <p v-else-if="saveStatus" class="save-status" role="status" :class="{ 'save-failed': saveStatus !== '本局已自动保存' }">{{ saveStatus }}</p>
       <p class="camera-help">拖动平移棋盘 · 滚轮缩放 · 视角固定</p>
 
       <TacticalAssistant v-show="targetMode === 'none'" :state="state" :my-id="myId" :can-interact="canInteract"
@@ -743,6 +748,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
           <span class="dot" :style="{ background: entry.pieceColor }"></span>
           {{ entry.name }}
           <small>{{ characterById(entry.characterId).name }}</small>
+          <small v-if="remote" class="presence-tag">{{ memberPresence(remote.members.find(member => member.gamePlayerId === entry.id), entry.id === myId, remote.connected) }}</small>
         </div>
       </div>
 

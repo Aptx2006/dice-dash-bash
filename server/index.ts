@@ -32,7 +32,11 @@ export function createCoachServer(options: { tacticalAgent?: typeof runTacticalA
     const send = (status: number, body: unknown) => { if (!res.destroyed) { res.statusCode = status;res.end(JSON.stringify(body)) } }
     const origin = req.headers.origin
     if (origin && !/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin) && !allowedOrigins.has(origin)) return send(403, { error: '不接受此来源的请求。' })
-    if (req.url === '/api/health' && req.method === 'GET') return send(200, { ok: true, service: 'game-ai', capabilities: ['rules-coach', 'tactical-agent', 'opponent-agent', 'online-rooms'] })
+    if (req.url === '/api/health' && req.method === 'GET') {
+      const roomHealth = rooms.health()
+      return send(roomHealth.paused ? 503 : 200, { ok: !roomHealth.paused, service: 'game-ai', rooms: roomHealth,
+        capabilities: ['rules-coach', 'tactical-agent', 'opponent-agent', 'online-rooms'] })
+    }
     if (await roomHandler(req, res)) return
     const tactical = req.url === '/api/agent/tactical'
     const opponent = req.url === '/api/agent/opponent'

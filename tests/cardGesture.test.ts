@@ -1,0 +1,63 @@
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { createCardGesture } from '../src/input/cardGesture.ts'
+
+const down = (pointerId = 1) => ({ pointerId, clientX: 100, clientY: 200, button: 0, isPrimary: true })
+const point = (clientY: number, pointerId = 1, clientX = 100) => ({ pointerId, clientX, clientY })
+
+test('普通点击只有click激活，pointerup不会同时出牌', () => {
+  const gesture = createCardGesture()
+  assert.ok(gesture.start(10, down()))
+  assert.deepEqual(gesture.finish(point(200)), { uid: 10, activate: false })
+  assert.ok(gesture.acceptClick(1, 1))
+})
+test('向上拖牌只激活一次，随后兼容click被消费，不会连跳两个结束阶段', () => {
+  const gesture = createCardGesture()
+  gesture.start(10, down()); gesture.move(point(140))
+  assert.deepEqual(gesture.finish(point(140)), { uid: 10, activate: true })
+  assert.equal(gesture.finish(point(140)), null)
+  assert.equal(gesture.acceptClick(1), false)
+  assert.ok(gesture.start(11, down()))
+  assert.deepEqual(gesture.finish(point(200)), { uid: 11, activate: false })
+  assert.ok(gesture.acceptClick(1))
+})
+test('拖过阈值再拖回取消出牌，后续click也不能把取消变成使用', () => {
+  const gesture = createCardGesture()
+  gesture.start(10, down()); gesture.move(point(120)); gesture.move(point(195))
+  assert.deepEqual(gesture.finish(point(195)), { uid: 10, activate: false })
+  assert.equal(gesture.acceptClick(1), false)
+})
+test('水平或向下拖动不出牌，小范围点击抖动仍可正常使用', () => {
+  const gesture = createCardGesture()
+  gesture.start(10, down()); gesture.move(point(200, 1, 180))
+  assert.deepEqual(gesture.finish(point(200, 1, 180)), { uid: 10, activate: false })
+  assert.equal(gesture.acceptClick(1), false)
+  gesture.start(10, down())
+  assert.deepEqual(gesture.finish(point(250)), { uid: 10, activate: false })
+  assert.equal(gesture.acceptClick(1), false)
+  gesture.start(10, down())
+  assert.deepEqual(gesture.finish(point(197, 1, 103)), { uid: 10, activate: false })
+  assert.ok(gesture.acceptClick(1))
+})
+test('多指移动与抬起不抢走当前拖牌，非主指针和右键不能开始', () => {
+  const gesture = createCardGesture()
+  assert.equal(gesture.start(10, { ...down(), button: 2 }), false)
+  assert.equal(gesture.start(10, { ...down(), isPrimary: false }), false)
+  gesture.start(10, down())
+  assert.equal(gesture.start(11, down(2)), false)
+  assert.equal(gesture.move(point(100, 2)), null)
+  assert.equal(gesture.finish(point(100, 2)), null)
+  assert.equal(gesture.cancel(2), false)
+  assert.equal(gesture.acceptClick(1), false)
+  assert.deepEqual(gesture.finish(point(140)), { uid: 10, activate: true })
+  assert.equal(gesture.acceptClick(1, 2), false)
+  assert.equal(gesture.acceptClick(1, 1), false)
+})
+test('Esc、指针取消或窗口失焦后松手不出牌，键盘和辅助点击仍可使用', () => {
+  const gesture = createCardGesture()
+  gesture.start(10, down()); gesture.move(point(100)); assert.ok(gesture.cancel())
+  assert.equal(gesture.finish(point(100)), null)
+  assert.equal(gesture.acceptClick(1), false)
+  gesture.start(10, down()); gesture.move(point(100)); gesture.finish(point(100))
+  assert.ok(gesture.acceptClick(0))
+})

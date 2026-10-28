@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import { once } from 'node:events'
 import { createCoachServer } from '../server/index.ts'
 import type { RoomView, RoomSession } from '../src/network/types.ts'
+import { RoomManager } from '../server/rooms/manager.ts'
+import type { RoomCheckpoint } from '../server/rooms/checkpoint.ts'
 
 test('HTTP双客户端：创建、加入、SSE同步、私有投影、出牌与重复提交形成闭环', { timeout: 15000 }, async () => {
   const server = createCoachServer()
@@ -92,5 +94,28 @@ test('仅显式配置的局域网来源可用，陌生网页来源无法访问�
       const response = await fetch(`${base}/api/health`, { headers: { Origin: origin } })
       assert.equal(response.status, status, origin)
     }
+  } finally { await new Promise<void>(resolve => server.close(() => resolve())) }
+})
+
+test('存储故障暂停房间时健康接口返回503，不再误报全部正常，也不暴露私有局面', async () => {
+  let fail = false
+  const values = new Map<string, RoomCheckpoint>()
+  const manager = new RoomManager({ store: { readAll: () => [], close: () => {}, remove: id => { values.delete(id) },
+    put: value => { if (fail) throw new Error('synthetic-full'); values.set(value.id, value) } } })
+  const { session, snapshot } = manager.create({ name: '故障合成玩家', mapId: 'race1' })
+  const server = createCoachServer({ rooms: manager })
+  server.listen(0, '127.0.0.1'); await once(server, 'listening')
+  const address = server.address(); assert.ok(address && typeof address !== 'string')
+  const url = `http://127.0.0.1:${address.port}/api/health`
+  try {
+    const normal = await fetch(url); assert.equal(normal.status, 200)
+    assert.equal((await normal.json()).rooms.persistenceEnabled, true)
+    fail = true
+    assert.throws(() => manager.command(session.roomId, session.token, { requestId: 'health-fault-0001', expectedRevision: snapshot.revision, command: { type: 'add_ai' } }), /保存失败/)
+    const degraded = await fetch(url), health = await degraded.json()
+    assert.equal(degraded.status, 503); assert.equal(health.ok, false)
+    assert.equal(health.rooms.paused, true)
+    assert.equal(JSON.stringify(health).includes(session.token), false)
+    assert.equal(Object.hasOwn(health, 'game'), false)
   } finally { await new Promise<void>(resolve => server.close(() => resolve())) }
 })

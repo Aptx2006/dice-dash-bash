@@ -9,6 +9,7 @@ const failureLabels: Record<string, string> = {
   TIMEOUT: '等待超时', TOTAL_TIMEOUT: '思考达到时限', MODEL_TIMEOUT: '模型响应超时',
   NOT_CONFIGURED: '模型未配置', RATE_LIMIT: '服务繁忙', Arrearage: '模型额度不可用',
   SERVICE_UNAVAILABLE: '暂时无法连接', INVALID_ACTION: '行动检查未通过', INVALID_RESPONSE: '响应检查未通过',
+  SERVER_RESTART: '服务重启中断分析',
 }
 const ruleLabels: Record<string, string> = {
   'move.basic': '方向移动与移动牌', 'move.blocked': '墙壁与阻挡', 'tool.sprint': '冲刺增加移动点数',
@@ -25,16 +26,16 @@ const ruleLabels: Record<string, string> = {
       <p role="status">比较行动并查阅规则，达到时限会自动继续。</p>
     </template>
     <template v-else-if="latest && !settlement">
-      <strong>{{ playerName(latest.playerId) }} · {{ latest.mode === 'cloud' ? '云端决策' : '本地策略接管' }}</strong>
+      <strong>{{ playerName(latest.playerId) }} · {{ latest.mode === 'cloud' ? '云端决策' : '规则策略接管' }}</strong>
       <p>{{ latest.reason }}</p>
     </template>
-    <template v-else><strong>{{ settlement ? '智能对手复盘' : '云端智能对手' }}</strong><p v-if="!settlement">每回合分析一次，剩余行动由本地策略完成。</p></template>
-    <div class="insight-metrics"><span>已分析 <b>{{ stats?.requests ?? 0 }}</b></span><span>云端执行 <b>{{ stats?.modelSuccess ?? 0 }}</b></span><span>本地接管 <b>{{ stats?.fallbacks ?? 0 }}</b></span></div>
+    <template v-else><strong>{{ settlement ? '智能对手复盘' : '云端智能对手' }}</strong><p v-if="!settlement">有可比较的行动时分析一次，其余由规则策略完成。</p></template>
+    <div class="insight-metrics"><span>分析尝试 <b>{{ stats?.requests ?? 0 }}</b></span><span>云端执行 <b>{{ stats?.modelSuccess ?? 0 }}</b></span><span>规则接管 <b>{{ stats?.fallbacks ?? 0 }}</b></span></div>
     <details v-if="stats?.recent.length">
       <summary>查看{{ settlement ? '关键决策' : '最近决策' }}</summary>
       <ol><li v-for="record in stats.recent" :key="record.runId">
         <strong>第{{ record.turnNumber }}回合 · {{ playerName(record.playerId) }}</strong>
-        <span class="insight-badge">{{ record.mode === 'cloud' ? '云端' : '本地接管' }} · {{ (record.elapsedMs / 1000).toFixed(1) }}秒</span>
+        <span class="insight-badge">{{ record.mode === 'cloud' ? '云端' : '规则接管' }} · {{ (record.elapsedMs / 1000).toFixed(1) }}秒</span>
         <p>{{ record.label }}</p><p>{{ record.reason }}</p>
         <small v-if="record.fallbackReason">{{ failureLabels[record.fallbackReason] ?? '云端决定未通过运行检查' }}</small>
         <small v-if="record.sourceIds.length" :title="record.sourceIds.join(' · ')">规则依据：{{ record.sourceIds.map(id => ruleLabels[id] ?? id).join('、') }}</small>

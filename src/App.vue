@@ -111,7 +111,7 @@ const remoteControls = computed<RemoteGameControls | undefined>(() => {
   const room = onlineRoom.value, session = onlineSession.value
   if (!room || !session) return undefined
   return {
-    roomId: room.id, isHost: room.hostId === room.selfId, revision: room.revision, connected: roomConnected.value, busy: commandBusy.value || !!room.pauseReason,
+    roomId: room.id, hostId: room.hostId, members: room.members, isHost: room.hostId === room.selfId, revision: room.revision, connected: roomConnected.value, busy: commandBusy.value || !!room.pauseReason,
     deadlineAt: room.deadlineAt, timerHoldUntil: room.timerHoldUntil, serverOffsetMs: serverOffset.value,
     thinkingPlayerName: room.thinkingPlayerName, pauseReason: room.pauseReason, presentation: room.presentation, submit: sendRoomCommand,
     suggest: async (goal, signal) => {

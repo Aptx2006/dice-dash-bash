@@ -410,6 +410,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .order-chip .dot { width: 9px; height: 9px; border-radius: 50%; }
 .order-chip small { color: var(--ink-faint); }
+.order-chip .presence-tag { color: var(--ink-dim); border-left: 1px solid var(--line-strong); padding-left: .4rem; font-size: .64rem; }
 .order-chip.active { border-color: var(--good); box-shadow: 0 0 0 2px rgba(63, 154, 98, 0.2); }
 .order-chip.done { opacity: 0.55; text-decoration: line-through; }
 .tutorial-board .order-chips {

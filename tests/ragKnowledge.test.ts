@@ -10,7 +10,7 @@ test('知识库按完整标题切分，编号唯一，来源行号与正文对�
   assert.equal(chunks.length, 23)
   assert.equal(new Set(chunks.map(chunk => chunk.id)).size, chunks.length)
   for (const chunk of chunks) {
-    assert.equal(chunk.rulesVersion, 'game-v3')
+    assert.equal(chunk.rulesVersion, 'game-v4')
     assert.equal(chunk.source, 'knowledge/rules-v1.md')
     const [start, end] = chunk.sourceLines
     const raw = lines.slice(start - 1, end).join('\n')

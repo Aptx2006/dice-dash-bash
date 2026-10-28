@@ -632,6 +632,10 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent-soft
   .mechanism-row { flex-wrap: wrap; }
 }
 @media (max-width: 600px) {
+  .game-actions { left: .6rem; right: .6rem; gap: .25rem; justify-content: flex-end; }
+  .game-actions > button { flex: none; white-space: nowrap; padding: .45rem .45rem; min-height: 36px; font-size: .7rem; }
+  .game-actions .speed-control { padding: .2rem; min-width: 0; min-height: 36px; }
+  .game-actions .speed-control select { min-width: 0; width: 79px; font-size: .68rem; }
   .settlement-title > span { display: block; }
   .settlement-title > span:first-child { font-size: 1.18rem; margin-bottom: .15rem; }
   .settlement-row { display: grid; grid-template-columns: 22px 12px minmax(0, 1fr); gap: .35rem .5rem; }
@@ -706,5 +710,5 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent-soft
   .game-shell .tutorial-panel { top: 3rem; max-height: calc(100% - 3.5rem); overflow-y: auto; }
 }
 @media (max-height: 500px) and (min-width: 700px) {
-  .game-shell .phase-banner { left: .75rem; top: .7rem; transform: none; max-width: calc(100% - 340px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .game-shell .phase-banner { left: .75rem; top: .7rem; transform: none; max-width: calc(100% - 460px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }

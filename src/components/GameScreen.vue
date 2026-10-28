@@ -6,6 +6,7 @@ import TacticalAssistant from './TacticalAssistant.vue'
 import MovementChoices from './MovementChoices.vue'
 import OpponentInsight from './OpponentInsight.vue'
 import RoomStatus from './RoomStatus.vue'
+import MatchRules from './MatchRules.vue'
 import { memberPresence } from '../network/presence.ts'
 import type { Cell, Dir, GameState, ToolId, ToolInstance } from '../game/types.ts'
 import { sameCell } from '../game/types.ts'
@@ -713,6 +714,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
           </select>
         </label>
         <button type="button" class="camera-fit" @click="boardView?.fitToView()">最佳屏幕大小</button>
+        <MatchRules :state="state" :my-id="myId" />
         <button type="button" class="game-exit" @click="emit('exit')">{{ remote ? '离开房间' : '返回首页' }}</button>
       </div>
       <RoomStatus v-if="remote" :controls="remote" :my-id="myId" :active-id="player.id" />

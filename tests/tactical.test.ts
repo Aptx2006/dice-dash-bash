@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { createGame, isolatedSimulation, log, playRollCard, pushEffect, teleportCells } from '../src/game/engine.ts'
 import {
-  createTacticalSnapshot, executeTacticalAction, inspectTacticalAction,
+  createTacticalAnalysis, createTacticalSnapshot, executeTacticalAction, inspectTacticalAction,
   listTacticalActions, parseTacticalSnapshot, tacticalSnapshotKey,
 } from '../src/game/tactical.ts'
 import type { GameState } from '../src/game/types.ts'
@@ -19,6 +19,58 @@ function fixture(characterId = 'villager', mapId = 'race1'): GameState {
   state.players[1].cell = { x: 5, y: 5 }
   return state
 }
+
+test('快照分析与逐次引擎推演在三张地图和不同角色上完全一致', () => {
+  for (const mapId of ['race1', 'race2', 'race3']) for (const characterId of ['villager', 'russell', 'robot']) {
+    const state = fixture(characterId, mapId)
+    state.players[0].hand.push({ uid: 90003, toolId: 'blink' }, { uid: 90004, toolId: 'teleport' }, { uid: 90005, toolId: 'sprint' })
+    const before = JSON.stringify(state)
+    const analysis = createTacticalAnalysis(state, 'human')
+    const actions = listTacticalActions(state, 'human')
+    assert.deepEqual(analysis.list(), actions)
+    const expected = actions.map(action => ({ action, preview: inspectTacticalAction(state, 'human', action.actionId) }))
+    assert.deepEqual(analysis.evaluations(), expected)
+    assert.deepEqual(analysis.evaluations(), expected, '分页重复读取不改变结果')
+    assert.equal(JSON.stringify(state), before)
+  }
+})
+
+test('分析隔离原局面和返回值，旧分析不能执行改变后的真实局面', () => {
+  const state = fixture(), key = tacticalSnapshotKey(state)
+  const analysis = createTacticalAnalysis(state, 'human', 90001)
+  const original = analysis.inspect('move:90001:right')!
+  const tampered = analysis.inspect('move:90001:right')!
+  tampered.to.x = 999; tampered.action.dir = 'left'; tampered.warnings.push('伪造提示')
+  analysis.list().length = 0
+  analysis.evaluations()[0]!.preview.summary = '污染结果'
+  assert.deepEqual(analysis.inspect('move:90001:right'), original)
+  state.players[0].hand = []
+  assert.deepEqual(analysis.inspect('move:90001:right'), original, '独享快照保留当次结果')
+  assert.deepEqual(createTacticalAnalysis(state, 'human').list(), [], '新分析读取新状态')
+  assert.equal(executeTacticalAction(state, 'human', original.action.actionId, key).ok, false)
+  assert.equal(analysis.inspect('__proto__'), null)
+  assert.deepEqual(createTacticalAnalysis(state, 'ai-1').evaluations(), [])
+})
+
+test('缓存分析奖励格仍隔离真实随机源和编号，不泄露另一运行的手牌', () => {
+  const state = fixture()
+  state.players[0].cell = { x: 0, y: 4 }
+  state.players[0].hand.push({ uid: 90003, toolId: 'blink' })
+  state.wallets = [{ id: 99001, cell: { x: 1, y: 4 } }]
+  const before = JSON.stringify(state), random = Math.random
+  let calls = 0
+  Math.random = () => { calls++; throw new Error('不得消费真实随机流') }
+  try {
+    const analysis = createTacticalAnalysis(state, 'human')
+    assert.ok(analysis.inspect('blink:90003:1:4')?.requiresReward)
+    assert.deepEqual(analysis.evaluations(), analysis.evaluations())
+    assert.equal(calls, 0)
+    assert.equal(JSON.stringify(state), before)
+  } finally { Math.random = random }
+  const other = fixture()
+  other.players[0].hand = [{ uid: 91000, toolId: 'move', points: 1 }]
+  assert.ok(createTacticalAnalysis(other, 'human').list().every(action => action.uid === 91000))
+})
 
 test('战术行动只开放当前玩家的未结束行动阶段，不自动投骰或结束回合', () => {
   const state = fixture()
@@ -163,6 +215,9 @@ test('多次预览不修改局面、不调用真实随机数，也不消耗真�
   try {
     const first = inspectTacticalAction(state, 'human', 'blink:90005:1:4')
     assert.deepEqual(inspectTacticalAction(state, 'human', 'blink:90005:1:4'), first)
+    const analysis = createTacticalAnalysis(state, 'human')
+    assert.deepEqual(analysis.inspect('blink:90005:1:4'), first)
+    assert.deepEqual(analysis.evaluations(), analysis.evaluations())
     assert.equal(JSON.stringify(state), stable)
     assert.equal(randomCalls, 0)
   } finally { Math.random = originalRandom }

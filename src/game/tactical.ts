@@ -89,6 +89,10 @@ function applyAction(state: GameState, action: TacticalAction): void {
 export function inspectTacticalAction(state: GameState, playerId: string, actionId: string, moveUid?: number): TacticalInspection | null {
   const action = listTacticalActions(state, playerId, moveUid).find(item => item.actionId === actionId)
   if (!action) return null
+  return inspectKnownAction(state, playerId, action)
+}
+
+function inspectKnownAction(state: GameState, playerId: string, action: TacticalAction, knownDistanceBefore?: number): TacticalInspection {
   const before = activePlayer(state)
   const sim = JSON.parse(JSON.stringify(state)) as GameState
   sim.logs = []
@@ -100,13 +104,42 @@ export function inspectTacticalAction(state: GameState, playerId: string, action
   if (sim.pendingReward && !sim.finished) warnings.push('该行动会触发奖励，仍需要玩家手动选牌。')
   if (state.wallets.length !== sim.wallets.length || sim.pendingReward) warnings.push('随机奖励的具体牌面不作预测，实际执行时才抽取。')
   if (sim.logs.some(entry => /大炮|火箭|爆炸/.test(entry.text))) warnings.push('该行动会触发大炮或击退，可能影响其他棋子。')
-  const distanceBefore = distanceToGoal(state, before.cell)
+  const distanceBefore = knownDistanceBefore ?? distanceToGoal(state, before.cell)
   const distanceAfter = distanceToGoal(sim, after.cell)
   const summary = action.kind === 'sprint'
     ? `消耗一张冲刺牌，现有移动牌增加 2 点；棋子仍在 (${after.cell.x}, ${after.cell.y})。`
     : `消耗${action.kind === 'move' ? '移动' : action.kind === 'blink' ? '瞬步' : '瞬移'}牌，结算后位于 (${after.cell.x}, ${after.cell.y})。${after.finishedTurn ? '立即抵达终点。' : `到终点的静态最短路径估计为 ${distanceAfter === 999 ? '不可达' : `${distanceAfter} 格`}。`}`
   return { action, from: { ...before.cell }, to: { ...after.cell }, distanceBefore, distanceAfter,
     finished: !!after.finishedTurn, requiresReward: !!sim.pendingReward && !sim.finished, summary, warnings }
+}
+
+/**
+ * 一次分析拥有独立快照；候选只展开一次，每项仅推演一次。
+ * 返回副本，调用方改写工具结果不会污染后续检查。真实执行仍需重新核对当前局面。
+ */
+export function createTacticalAnalysis(state: GameState, playerId: string, moveUid?: number) {
+  const snapshot = JSON.parse(JSON.stringify(state)) as GameState
+  const actions = listTacticalActions(snapshot, playerId, moveUid)
+  const byId = new Map(actions.map(action => [action.actionId, action]))
+  const previews = new Map<string, TacticalInspection>()
+  let distanceBefore: number | undefined
+  const copy = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T
+  function inspect(actionId: string): TacticalInspection | null {
+    const action = byId.get(actionId)
+    if (!action) return null
+    let preview = previews.get(actionId)
+    if (!preview) {
+      distanceBefore ??= distanceToGoal(snapshot, activePlayer(snapshot).cell)
+      preview = inspectKnownAction(snapshot, playerId, action, distanceBefore)
+      previews.set(actionId, preview)
+    }
+    return copy(preview)
+  }
+  return {
+    list: () => copy(actions),
+    inspect,
+    evaluations: () => actions.map(action => ({ action: copy(action), preview: inspect(action.actionId)! })),
+  }
 }
 
 /** 只保留当前玩家的手牌，姓名、历史文字和视觉特效均不进入云端上下文。 */

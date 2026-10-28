@@ -14,6 +14,8 @@
     "eval:rules": "node --env-file-if-exists=.env scripts/eval-rules.ts",
     "agent:demo": "node --env-file-if-exists=.env scripts/demo-tactics.ts",
     "eval:opponents": "node --env-file-if-exists=.env scripts/eval-opponents.ts",
+    "bench:tactics": "node scripts/bench-tactics.ts",
+    "bench:rooms": "node scripts/bench-rooms.ts",
     "preview": "vite preview"
   },
   "dependencies": {

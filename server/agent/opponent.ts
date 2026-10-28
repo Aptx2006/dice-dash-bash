@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto'
 import type { OpponentDecision } from '../../src/agent/opponentTypes.ts'
 import type { TacticalRunEvent, TacticalSource } from '../../src/agent/types.ts'
-import { inspectTacticalAction, parseTacticalSnapshot } from '../../src/game/tactical.ts'
+import { parseTacticalSnapshot } from '../../src/game/tactical.ts'
 import type { GameState } from '../../src/game/types.ts'
 import { callModel, modelConfig, ModelError, type ChatConfig, type ChatMessage, type TokenUsage } from '../providers/chat.ts'
 import { loadKnowledge, type KnowledgeChunk } from '../rag/knowledge.ts'
-import { executeTacticalTool, ToolError, validateToolRequest, type TacticalToolContext, type ToolRequest } from './tools.ts'
+import { executeTacticalTool, tacticalAnalysisFor, ToolError, validateToolRequest, type TacticalToolContext, type ToolRequest } from './tools.ts'
 
 export const OPPONENT_LIMITS = { maxSteps: 4, modelTimeoutMs: 3500, toolTimeoutMs: 500, totalTimeoutMs: 5000, maxCorrections: 1 } as const
 export interface OpponentAgentInput { snapshot: unknown; playerId: string }
@@ -205,7 +205,7 @@ export async function runOpponentAgent(input: OpponentAgentInput, options: Oppon
           typeof decision.reason !== 'string' || !decision.reason.trim() || decision.reason.length > 180 ||
           !Array.isArray(decision.sourceIds) || decision.sourceIds.length < 1 || decision.sourceIds.length > 3 ||
           decision.sourceIds.some(id => typeof id !== 'string') || new Set(decision.sourceIds).size !== decision.sourceIds.length) throw new ToolError('INVALID_FINAL', '最终行动、理由或引用格式不正确。')
-        const inspection = inspectTacticalAction(snapshot, input.playerId, decision.actionId)
+        const inspection = tacticalAnalysisFor(context).inspect(decision.actionId)
         if (!inspection || !listed.has(decision.actionId) || !inspected.has(decision.actionId)) throw new ToolError('UNVERIFIED_ACTION', '必须显式检查本次已查询到的合法行动后再提交。')
         const required = inspection.action.kind === 'move' ? 'move.basic' : `tool.${inspection.action.kind}`
         if (!decision.sourceIds.includes(required) || decision.sourceIds.some(id => !consulted.has(id))) throw new ToolError('UNVERIFIED_SOURCE', `引用需包含真实来源中的${required}。`)

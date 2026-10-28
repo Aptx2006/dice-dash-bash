@@ -1,5 +1,5 @@
 import { activePlayer, distanceToGoal, findGoal } from '../../src/game/engine.ts'
-import { inspectTacticalAction, listTacticalActions } from '../../src/game/tactical.ts'
+import { createTacticalAnalysis } from '../../src/game/tactical.ts'
 import type { GameState } from '../../src/game/types.ts'
 import { loadKnowledge, retrieve, type KnowledgeChunk } from '../rag/knowledge.ts'
 
@@ -7,6 +7,16 @@ export const TACTICAL_TOOL_NAMES = ['observe_board', 'list_actions', 'inspect_ac
 export type TacticalToolName = typeof TACTICAL_TOOL_NAMES[number]
 export interface ToolRequest { name: string; args: Record<string, unknown> }
 export interface TacticalToolContext { snapshot: GameState; playerId: string; chunks?: KnowledgeChunk[] }
+// 每个Harness运行创建自己的context；WeakMap随运行释放，绝不跨玩家或回合复用。
+const analyses = new WeakMap<TacticalToolContext, ReturnType<typeof createTacticalAnalysis>>()
+export function tacticalAnalysisFor(context: TacticalToolContext) {
+  let analysis = analyses.get(context)
+  if (!analysis) {
+    analysis = createTacticalAnalysis(context.snapshot, context.playerId)
+    analyses.set(context, analysis)
+  }
+  return analysis
+}
 export class ToolError extends Error {
   code: string
   constructor(code: string, message: string) { super(message); this.code = code }
@@ -72,9 +82,7 @@ export async function executeTacticalTool(request: ToolRequest, context: Tactica
       const offset = (args.offset as number | undefined) ?? 0
       const limit = (args.limit as number | undefined) ?? 12
       // 先给出更接近终点的候选，避免瞬移的长列表挤掉终点；模型仍决定选哪一个并必须显式复查。
-      const actions = listTacticalActions(state, playerId).map(action => ({
-        action, preview: inspectTacticalAction(state, playerId, action.actionId),
-      })).sort((a, b) => Number(b.preview?.finished) - Number(a.preview?.finished)
+      const actions = tacticalAnalysisFor(context).evaluations().sort((a, b) => Number(b.preview?.finished) - Number(a.preview?.finished)
         || (a.preview?.distanceAfter ?? 999) - (b.preview?.distanceAfter ?? 999)
         || a.action.actionId.localeCompare(b.action.actionId))
       return {
@@ -87,7 +95,7 @@ export async function executeTacticalTool(request: ToolRequest, context: Tactica
       }
     }
     case 'inspect_action': {
-      const inspected = inspectTacticalAction(state, playerId, args.actionId as string)
+      const inspected = tacticalAnalysisFor(context).inspect(args.actionId as string)
       if (!inspected) throw new ToolError('ILLEGAL_ACTION', '该编号不是当前局面的合法行动，请重新查询list_actions。')
       return inspected
     }

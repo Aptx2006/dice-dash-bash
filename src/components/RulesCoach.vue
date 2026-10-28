@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, onBeforeUnmount, ref, useId } from 'vue'
+
+const props = defineProps<{ expanded?: boolean; suggestions?: string[] }>()
+const questionId = useId()
+const limitId = useId()
 
 type CoachStatus = 'answered' | 'clarify' | 'insufficient' | 'out_of_scope' | 'unavailable'
 interface CoachSource {
@@ -22,7 +26,7 @@ const loading = ref(false)
 const feedback = ref('')
 const answer = ref<CoachAnswer | null>(null)
 const submittedQuestion = ref('')
-const suggestions = ['瞬移到终点会立刻结算吗？', '一回合为什么要结束两次？']
+const suggestions = computed(() => props.suggestions ?? ['瞬移到终点会立刻结算吗？', '一回合为什么要结束两次？'])
 const citedIds = computed(() => new Set(answer.value?.citations ?? []))
 const statusLabels: Record<CoachStatus, string> = {
   answered: '规则解答',
@@ -121,6 +125,7 @@ function pickSuggestion(value: string) {
   question.value = value
   feedback.value = ''
 }
+defineExpose({ setQuestion: pickSuggestion })
 
 onBeforeUnmount(() => {
   requestNumber++
@@ -130,7 +135,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <details class="rules-coach">
+  <details class="rules-coach" :open="expanded">
     <summary class="rules-coach__summary">
       <span class="rules-coach__badge" aria-hidden="true">?</span>
       <span><strong>规则教练</strong><small>不确定怎么出牌？问一问，再看看规则出处。</small></span>
@@ -138,14 +143,14 @@ onBeforeUnmount(() => {
     </summary>
     <div class="rules-coach__content">
       <form class="rules-coach__form" @submit.prevent="ask">
-        <label for="coach-question">想了解哪条规则？</label>
-        <textarea id="coach-question" v-model="question" rows="2" maxlength="300" :disabled="loading"
-          placeholder="例如：瞬移到终点会立刻结算吗？" aria-describedby="coach-question-limit" />
+        <label :for="questionId">想了解哪条规则？</label>
+        <textarea :id="questionId" v-model="question" rows="2" maxlength="300" :disabled="loading"
+          placeholder="例如：瞬移到终点会立刻结算吗？" :aria-describedby="limitId" />
         <div class="rules-coach__suggestions" aria-label="试试这些问题">
           <button v-for="item in suggestions" :key="item" type="button" :disabled="loading" @click="pickSuggestion(item)">{{ item }}</button>
         </div>
         <div class="rules-coach__actions">
-          <small id="coach-question-limit">{{ question.length }}/300字</small>
+          <small :id="limitId">{{ question.length }}/300字</small>
           <button v-if="loading" type="button" class="text-button" @click="cancel">取消等待</button>
           <button type="submit" class="pill-button primary" :disabled="loading">{{ loading ? '正在查阅规则…' : '询问教练' }}</button>
         </div>

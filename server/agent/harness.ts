@@ -1,10 +1,10 @@
 import { randomUUID } from 'node:crypto'
 import type { TacticalRunEvent, TacticalRunResult, TacticalRunStatus, TacticalSource } from '../../src/agent/types.ts'
-import { inspectTacticalAction, listTacticalActions, parseTacticalSnapshot } from '../../src/game/tactical.ts'
+import { listTacticalActions, parseTacticalSnapshot } from '../../src/game/tactical.ts'
 import type { GameState } from '../../src/game/types.ts'
 import { callModel, modelConfig, ModelError, type ChatConfig, type ChatMessage, type TokenUsage } from '../providers/chat.ts'
 import type { KnowledgeChunk } from '../rag/knowledge.ts'
-import { executeTacticalTool, ToolError, validateToolRequest, type TacticalToolContext, type ToolRequest } from './tools.ts'
+import { executeTacticalTool, tacticalAnalysisFor, ToolError, validateToolRequest, type TacticalToolContext, type ToolRequest } from './tools.ts'
 
 export const TACTICAL_LIMITS = { maxSteps: 8, modelTimeoutMs: 12000, toolTimeoutMs: 2000, totalTimeoutMs: 45000, maxCorrections: 2 } as const
 export interface TacticalAgentInput { snapshot: unknown; playerId: string; goal: string }
@@ -213,7 +213,7 @@ export async function runTacticalAgent(input: TacticalAgentInput, options: Tacti
           || decision.sourceIds.some(id => typeof id !== 'string') || new Set(decision.sourceIds).size !== decision.sourceIds.length) {
           throw new ToolError('INVALID_FINAL', '最终建议需要合法actionId、1至180字reason和1至3个不同的sourceIds。')
         }
-        const inspection = inspectTacticalAction(snapshot, input.playerId, decision.actionId)
+        const inspection = tacticalAnalysisFor(context).inspect(decision.actionId)
         if (!inspection || !listed.has(decision.actionId) || !inspected.has(decision.actionId)) {
           throw new ToolError('UNVERIFIED_ACTION', '最终行动必须来自已查询的list_actions，并已通过inspect_action检查。')
         }

@@ -1,6 +1,6 @@
 import { activePlayer } from '../game/engine.ts'
 import { aiStep } from '../game/ai.ts'
-import { createTacticalSnapshot, executeTacticalAction, inspectTacticalAction, listTacticalActions, tacticalSnapshotKey } from '../game/tactical.ts'
+import { createTacticalAnalysis, createTacticalSnapshot, executeTacticalAction, inspectTacticalAction, listTacticalActions, tacticalSnapshotKey } from '../game/tactical.ts'
 import type { AiDecisionRecord, AiTelemetry, GameState } from '../game/types.ts'
 import type { OpponentDecision } from './opponentTypes.ts'
 
@@ -55,10 +55,9 @@ function telemetry(state: GameState): AiTelemetry {
 
 /** 固定排序的降级策略：优先终点、避免死亡地形，然后缩短本步后的静态距离。 */
 export function chooseFallbackAction(state: GameState, playerId: string) {
-  return listTacticalActions(state, playerId).flatMap(action => {
-    const preview = inspectTacticalAction(state, playerId, action.actionId)
-    return preview ? [{ action, preview, dangerous: preview.warnings.some(warning => warning.includes('危险地形')) }] : []
-  }).sort((a, b) => Number(b.preview.finished) - Number(a.preview.finished)
+  return createTacticalAnalysis(state, playerId).evaluations().map(({ action, preview }) => ({
+    action, preview, dangerous: preview.warnings.some(warning => warning.includes('危险地形')),
+  })).sort((a, b) => Number(b.preview.finished) - Number(a.preview.finished)
     || Number(a.dangerous) - Number(b.dangerous)
     || a.preview.distanceAfter - b.preview.distanceAfter
     || (a.action.actionId < b.action.actionId ? -1 : a.action.actionId > b.action.actionId ? 1 : 0))[0]

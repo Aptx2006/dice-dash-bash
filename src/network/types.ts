@@ -36,6 +36,7 @@ export interface RoomView {
   serverNow: number
   presentation?: RoomPresentation
   thinkingPlayerName: string
+  pauseReason: string
 }
 export interface RoomSession { roomId: string; token: string }
 export type RoomCommand =
@@ -62,6 +63,7 @@ export interface RemoteGameControls {
   timerHoldUntil: number | null
   serverOffsetMs: number
   thinkingPlayerName: string
+  pauseReason: string
   presentation?: RoomPresentation
   submit: (command: RoomCommand) => Promise<boolean>
   suggest: (goal: string, signal: AbortSignal) => Promise<TacticalRunResult>

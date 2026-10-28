@@ -7,10 +7,10 @@ test('知识库按完整标题切分，编号唯一，来源行号与正文对�
   const chunks = await loadKnowledge()
   const source = await readFile(new URL('../knowledge/rules-v1.md', import.meta.url), 'utf8')
   const lines = source.split('\n')
-  assert.equal(chunks.length, 22)
+  assert.equal(chunks.length, 23)
   assert.equal(new Set(chunks.map(chunk => chunk.id)).size, chunks.length)
   for (const chunk of chunks) {
-    assert.equal(chunk.rulesVersion, 'game-v2')
+    assert.equal(chunk.rulesVersion, 'game-v3')
     assert.equal(chunk.source, 'knowledge/rules-v1.md')
     const [start, end] = chunk.sourceLines
     const raw = lines.slice(start - 1, end).join('\n')
@@ -21,14 +21,16 @@ test('知识库按完整标题切分，编号唯一，来源行号与正文对�
   }
 })
 
-test('房间问答只引用已实现联机范围，保留服务重启不可恢复与跨设备条件', async () => {
+test('房间问答区分服务重启恢复与数据丢失，保留跨设备条件', async () => {
   const chunks = await loadKnowledge()
   const lobby = retrieve(chunks, '联机房间怎么加入，需要几个人？').find(hit => hit.chunk.id === 'lobby.local')!
   assert.match(lobby.chunk.text, /6位房间码/)
   assert.doesNotMatch(lobby.chunk.text, /尚未开放|后续功能/)
   const reconnect = retrieve(chunks, '断线后怎么重连，房间关闭能恢复吗？').find(hit => hit.chunk.id === 'room.reconnect')!
-  assert.match(reconnect.chunk.text, /服务重启后不能恢复/)
+  assert.match(reconnect.chunk.text, /SQLite/)
+  assert.match(reconnect.chunk.text, /损坏或版本不兼容时不能恢复/)
   assert.match(reconnect.chunk.text, /20秒/)
+  assert.equal(retrieve(chunks, '房间服务重启后还能恢复对局吗？')[0].chunk.id, 'room.reconnect')
 })
 
 test('三条抽检规则保持完整条件和例外，没有被长度切断', async () => {

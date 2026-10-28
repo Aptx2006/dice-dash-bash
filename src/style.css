@@ -698,3 +698,12 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent-soft
   .rules-coach__source summary code { flex-basis: 100%; margin-left: 0; }
   .rules-coach__actions .pill-button { padding: 0.6rem 1rem; }
 }
+@media (max-height: 500px) {
+  .game-shell .order-chips { top: auto; bottom: .45rem; }
+  .game-shell .camera-help { display: none; }
+  .game-shell .save-status { top: 3.2rem; bottom: auto; max-width: min(360px, calc(100% - 1.5rem)); }
+  .game-shell .tutorial-panel { top: 3rem; max-height: calc(100% - 3.5rem); overflow-y: auto; }
+}
+@media (max-height: 500px) and (min-width: 700px) {
+  .game-shell .phase-banner { left: .75rem; top: .7rem; transform: none; max-width: calc(100% - 340px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}

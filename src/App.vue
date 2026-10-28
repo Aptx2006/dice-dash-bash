@@ -111,9 +111,9 @@ const remoteControls = computed<RemoteGameControls | undefined>(() => {
   const room = onlineRoom.value, session = onlineSession.value
   if (!room || !session) return undefined
   return {
-    roomId: room.id, isHost: room.hostId === room.selfId, revision: room.revision, connected: roomConnected.value, busy: commandBusy.value,
+    roomId: room.id, isHost: room.hostId === room.selfId, revision: room.revision, connected: roomConnected.value, busy: commandBusy.value || !!room.pauseReason,
     deadlineAt: room.deadlineAt, timerHoldUntil: room.timerHoldUntil, serverOffsetMs: serverOffset.value,
-    thinkingPlayerName: room.thinkingPlayerName, presentation: room.presentation, submit: sendRoomCommand,
+    thinkingPlayerName: room.thinkingPlayerName, pauseReason: room.pauseReason, presentation: room.presentation, submit: sendRoomCommand,
     suggest: async (goal, signal) => {
       const revision = onlineRoom.value!.revision, generation = networkGeneration
       const result = await roomApi.suggest(session, goal, signal)
@@ -271,7 +271,7 @@ function leaveGame() {
   <p v-if="appNotice" role="alert" class="app-notice">{{ appNotice }} <button type="button" @click="appNotice = ''">关闭提示</button></p>
   <HomeScreen v-if="screen === 'home'" :saved-match="savedMatch" :busy="connecting" :online-resume="!!savedOnline"
     @resume="onResume" @create="onCreate" @join="onJoin" @tutorial="onTutorial" @practice="onPractice" @resume-online="connectOnline('resume')" />
-  <OnlineLobby v-else-if="screen === 'online' && onlineRoom" :room="onlineRoom" :connected="roomConnected" :busy="commandBusy"
+  <OnlineLobby v-else-if="screen === 'online' && onlineRoom" :room="onlineRoom" :connected="roomConnected" :busy="commandBusy || !!onlineRoom.pauseReason"
     @command="sendRoomCommand" @leave="onlineLeaveQuestion = true" />
   <LobbyScreen
     v-else-if="screen === 'lobby'"
@@ -290,7 +290,7 @@ function leaveGame() {
     :my-id="onlineSession ? myGameId : 'human'"
     :tutorial="tutorialMode"
     :initial-progress="initialProgress"
-    :save-status="onlineSession ? roomConnected ? `房间 ${onlineSession.roomId} · 实时同步` : '连接中断，正在重新连接…' : saveStatus"
+    :save-status="onlineSession ? onlineRoom?.pauseReason || (roomConnected ? `房间 ${onlineSession.roomId} · 实时同步` : '连接中断，正在重新连接…') : saveStatus"
     :remote="remoteControls"
     @checkpoint="progress = $event"
     @exit="onExit"

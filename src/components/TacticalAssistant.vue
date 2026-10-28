@@ -38,6 +38,7 @@ const citedSources = computed(() => run.value?.sources.filter(source => run.valu
 const availability = computed(() => {
   if (props.state.finished) return '本局已经结束，开始新对局后再来分析。'
   if (props.remote && !props.remote.connected) return '房间连接中断，重新连接后再分析。'
+  if (props.remote?.pauseReason) return props.remote.pauseReason
   if (props.remote?.busy) return '正在等待服务端确认操作。'
   if (activePlayer(props.state).id !== props.myId) return '等待其他选手完成回合。'
   if (props.state.pendingReward) return '先选好奖励，再分析接下来的行动。'

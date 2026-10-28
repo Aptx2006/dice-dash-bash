@@ -55,7 +55,14 @@ function decodeMatch(raw: string): SavedMatch {
   ensure(config.mapId === 'tutorial' ? (saved.tutorialStep as number) >= 0 : saved.tutorialStep === -1)
   // 当前客户端只提供一个真人席位，其余席位由自动对手驱动。
   ensure(!config.players[0].isAI && config.players.slice(1).every(p => p.isAI))
-  const s = object(saved.state)
+  validateGameSnapshot(config, saved.state)
+  return saved as unknown as SavedMatch
+}
+
+/** 本地存档和服务端房间共用完整规则快照验证；联机的历史AI记录可属于已恢复真人控制的座位。 */
+export function validateGameSnapshot(config: GameConfig, input: unknown, allowHumanHistory = false): asserts input is GameState {
+  validateGameConfig(config)
+  const s = object(input)
   const map = mapById(config.mapId)
   const { width, height } = parseMap(map)
   ensure(s.mapId === config.mapId && s.mapLabel === map.label && s.width === width && s.height === height)
@@ -118,7 +125,7 @@ function decodeMatch(raw: string): SavedMatch {
     ensure(Object.keys(telemetry).every(key => ['requests', 'modelSuccess', 'fallbacks', 'lastAttempt', 'recent'].includes(key)))
     ensure(integer(telemetry.requests) && integer(telemetry.modelSuccess) && integer(telemetry.fallbacks))
     ensure((telemetry.modelSuccess as number) + (telemetry.fallbacks as number) <= (telemetry.requests as number))
-    const aiPlayer = (id: unknown) => players.some(value => { const p = object(value); return p.id === id && p.isAI === true })
+    const aiPlayer = (id: unknown) => players.some(value => { const p = object(value); return p.id === id && (allowHumanHistory || p.isAI === true) })
     if (telemetry.lastAttempt !== undefined) {
       const attempt = object(telemetry.lastAttempt)
       ensure(Object.keys(attempt).every(key => ['turnNumber', 'playerId'].includes(key)))
@@ -175,8 +182,6 @@ function decodeMatch(raw: string): SavedMatch {
     ensure(playerIds.has(last.playerId) && typeof last.toolId === 'string' && Object.hasOwn(TOOLS, last.toolId))
   }
   if (s.finished) ensure(players.some(p => object(p).finishedTurn !== undefined))
-  // JSON反序列化得到独立数据，调用者修改对局不会修改首页的存档摘要。
-  return saved as unknown as SavedMatch
 }
 
 export function loadMatch(getStore: GetStore = browserStore): { match: SavedMatch | null; warning: string } {

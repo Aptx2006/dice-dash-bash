@@ -31,7 +31,7 @@ async function copy(invite: boolean) {
       <div class="room-brand">
         <p class="eyebrow">当骰一棒 · 联机房间</p>
         <h2>{{ map.label }}</h2>
-        <p class="online-presence" role="status">{{ connected ? '已连接 · 状态实时同步' : '连接中断，正在重新连接…' }}</p>
+        <p class="online-presence" role="status">{{ room.pauseReason || (connected ? '已连接 · 状态实时同步' : '连接中断，正在重新连接…') }}</p>
         <div class="mechanism-row">
           <label class="opponent-mode-control">地图<select :value="room.config.mapId" :disabled="!isHost || busy || !connected" aria-label="联机地图" @change="setting($event, 'mapId')"><option v-for="map in MAPS" :key="map.id" :value="map.id">{{ map.label }}</option></select></label>
           <button type="button" class="mechanism-toggle" :class="{ on: room.config.mechanisms.airdrop }" :aria-pressed="room.config.mechanisms.airdrop" :disabled="!isHost || busy || !connected" @click="emit('command', { type: 'configure', airdrop: !room.config.mechanisms.airdrop })"><span class="box">✓</span>骰子猪空投</button>

@@ -19,6 +19,7 @@ export function readRoomView(value: unknown): RoomView {
   ensure(value.deadlineAt === null || (typeof value.deadlineAt === 'number' && Number.isFinite(value.deadlineAt)))
   ensure(value.timerHoldUntil === null || (typeof value.timerHoldUntil === 'number' && Number.isFinite(value.timerHoldUntil)))
   ensure(typeof value.thinkingPlayerName === 'string' && value.thinkingPlayerName.length <= 30)
+  ensure(typeof value.pauseReason === 'string' && value.pauseReason.length <= 160)
   ensure(Array.isArray(value.members) && value.members.length >= 1 && value.members.length <= 8)
   const ids = new Set<string>()
   for (const member of value.members) {
@@ -32,7 +33,7 @@ export function readRoomView(value: unknown): RoomView {
     ensure(record(event) && integer(event.id, 1) && typeof event.actorId === 'string' && typeof event.actorName === 'string')
     ensure(['turnStart', 'action', 'turnEnd', 'reward', 'finished'].includes(event.phaseBefore))
     if (event.card !== undefined) ensure(record(event.card) && integer(event.card.uid, 1) && Object.hasOwn(TOOLS, event.card.toolId))
-    if (event.dice !== undefined) ensure(record(event.dice) && integer(event.dice.move, 0, 1000) && typeof event.dice.toolName === 'string' && event.dice.toolName.length <= 80)
+    if (event.dice !== undefined) ensure(record(event.dice) && integer(event.dice.move) && typeof event.dice.toolName === 'string' && event.dice.toolName.length <= 80)
   }
   if (value.status !== 'lobby') {
     const game = value.game

@@ -711,7 +711,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
         <button type="button" class="camera-fit" @click="boardView?.fitToView()">最佳屏幕大小</button>
         <button type="button" class="game-exit" @click="emit('exit')">{{ remote ? '离开房间' : '返回首页' }}</button>
       </div>
-      <p v-if="saveStatus" class="save-status" role="status" :class="{ 'save-failed': remote ? !remote.connected : saveStatus !== '本局已自动保存' }">{{ saveStatus }}</p>
+      <p v-if="saveStatus" class="save-status" role="status" :class="{ 'save-failed': remote ? !remote.connected || !!remote.pauseReason : saveStatus !== '本局已自动保存' }">{{ saveStatus }}</p>
       <p class="camera-help">拖动平移棋盘 · 滚轮缩放 · 视角固定</p>
 
       <TacticalAssistant v-show="targetMode === 'none'" :state="state" :my-id="myId" :can-interact="canInteract"

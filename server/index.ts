@@ -1,5 +1,5 @@
 import { createServer } from 'node:http'
-import { pathToFileURL } from 'node:url'
+import { pathToFileURL, fileURLToPath } from 'node:url'
 import { randomUUID } from 'node:crypto'
 import { answerQuestion } from './rag/coach.ts'
 import { runTacticalAgent } from './agent/harness.ts'
@@ -7,8 +7,9 @@ import { parseTacticalSnapshot } from '../src/game/tactical.ts'
 import { runOpponentAgent } from './agent/opponent.ts'
 import { RoomManager } from './rooms/manager.ts'
 import { createRoomHandler } from './rooms/http.ts'
+import type { RoomStore } from './rooms/store.ts'
 
-export function createCoachServer(options: { tacticalAgent?: typeof runTacticalAgent; opponentAgent?: typeof runOpponentAgent; rooms?: RoomManager; allowedOrigins?: string[] } = {}) {
+export function createCoachServer(options: { tacticalAgent?: typeof runTacticalAgent; opponentAgent?: typeof runOpponentAgent; rooms?: RoomManager; roomStore?: RoomStore; allowedOrigins?: string[] } = {}) {
   const allowedOrigins = new Set(options.allowedOrigins ?? [])
   let active = 0
   let windowStart = Date.now(), requests = 0
@@ -17,7 +18,7 @@ export function createCoachServer(options: { tacticalAgent?: typeof runTacticalA
     if (active >= 2 || requests >= 30) return false
     active++; requests++; return true
   }
-  const rooms = options.rooms ?? new RoomManager({ opponentRequest: async (task, signal) => {
+  const rooms = options.rooms ?? new RoomManager({ store: options.roomStore, opponentRequest: async (task, signal) => {
     if (!reserveModel()) return { runId: randomUUID(), status: 'fallback', reason: 'AI服务繁忙，由本地策略接管。', sourceIds: [], sources: [],
       steps: 0, elapsedMs: 0, model: 'unavailable', usage: null, events: [], fallbackReason: 'RATE_LIMIT' }
     try { return await (options.opponentAgent ?? runOpponentAgent)(task, { signal }) } finally { active-- }
@@ -102,5 +103,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const allowedOrigins = (process.env.GAME_ALLOWED_ORIGINS ?? '').split(',').map(value => value.trim()).filter(value => {
     try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) && url.origin === value } catch { return false }
   })
-  createCoachServer({ allowedOrigins }).listen(port, '127.0.0.1', () => console.log(`游戏AI与房间服务已启动：http://127.0.0.1:${port}`))
+  const { SqliteRoomStore } = await import('./rooms/store.ts')
+  const roomStore = new SqliteRoomStore(process.env.GAME_ROOM_DB || fileURLToPath(new URL('../data/rooms.sqlite', import.meta.url)))
+  const server = createCoachServer({ allowedOrigins, roomStore })
+  const shutdown = () => server.close(() => { process.exitCode = 0 })
+  process.once('SIGINT', shutdown); process.once('SIGTERM', shutdown)
+  server.listen(port, '127.0.0.1', () => console.log(`游戏AI与房间服务已启动：http://127.0.0.1:${port}（SQLite自动保存）`))
 }

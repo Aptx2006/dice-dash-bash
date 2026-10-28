@@ -9,3 +9,7 @@ dist/
 .vscode/
 .idea/
 *.ldb
+data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm

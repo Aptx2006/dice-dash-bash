@@ -10,6 +10,9 @@ export interface OpponentControllerOptions {
   request?: (input: OpponentRequest, signal: AbortSignal) => Promise<OpponentDecision>
   /** 只允许缩小默认6秒网络等待上限，HTTP调用方不能设置此项。 */
   timeoutMs?: number
+  /** 服务端通过同步入口注入房间随机流；浏览器默认沿用本地引擎。 */
+  rulesStep?: typeof aiStep
+  executeAction?: typeof executeTacticalAction
 }
 
 function object(value: unknown): value is Record<string, unknown> { return value !== null && typeof value === 'object' && !Array.isArray(value) }
@@ -63,6 +66,8 @@ export function chooseFallbackAction(state: GameState, playerId: string) {
 
 export function createOpponentController(options: OpponentControllerOptions = {}) {
   const request = options.request ?? requestOpponent
+  const rulesStep = options.rulesStep ?? aiStep
+  const executeAction = options.executeAction ?? executeTacticalAction
   const timeoutMs = Number.isSafeInteger(options.timeoutMs) ? Math.max(1, Math.min(6000, options.timeoutMs!)) : 6000
   let disposed = false
   let sequence = 0
@@ -80,7 +85,7 @@ export function createOpponentController(options: OpponentControllerOptions = {}
     const stats = state.aiTelemetry
     const attempted = stats?.lastAttempt?.turnNumber === state.turnNumber && stats.lastAttempt.playerId === actor.id
     if (state.aiMode !== 'cloud' || state.phase !== 'action' || state.pendingReward || attempted
-      || listTacticalActions(state, actor.id).length < 2) return { acted: aiStep(state) }
+      || listTacticalActions(state, actor.id).length < 2) return { acted: rulesStep(state) }
 
     const expectedKey = tacticalSnapshotKey(state)
     const turnNumber = state.turnNumber, playerId = actor.id
@@ -127,7 +132,7 @@ export function createOpponentController(options: OpponentControllerOptions = {}
         const action = inspectTacticalAction(state, playerId, result.actionId!)
         const requiredSource = action?.action.kind === 'move' ? 'move.basic' : `tool.${action?.action.kind}`
         if (action && result.sourceIds.includes(requiredSource)
-          && executeTacticalAction(state, playerId, result.actionId!, expectedKey).ok) {
+          && executeAction(state, playerId, result.actionId!, expectedKey).ok) {
           counters.modelSuccess++
           record = { runId: result.runId, turnNumber, playerId, mode: 'cloud', actionId: result.actionId,
             label: action.action.label, reason: result.reason.slice(0, 240), sourceIds: [...result.sourceIds], elapsedMs: Date.now() - started }
@@ -137,7 +142,7 @@ export function createOpponentController(options: OpponentControllerOptions = {}
         failure = 'INVALID_ACTION'
       } else if (result?.status === 'fallback') failure = result.fallbackReason ?? 'MODEL_UNAVAILABLE'
       const fallback = chooseFallbackAction(state, playerId)
-      const acted = fallback ? executeTacticalAction(state, playerId, fallback.action.actionId, expectedKey).ok : aiStep(state)
+      const acted = fallback ? executeAction(state, playerId, fallback.action.actionId, expectedKey).ok : rulesStep(state)
       counters.fallbacks++
       record = { runId: result?.runId ?? `local-${started}-${current.id}`, turnNumber, playerId, mode: 'fallback',
         ...(fallback ? { actionId: fallback.action.actionId } : {}), label: fallback?.action.label ?? '规则策略继续行动',

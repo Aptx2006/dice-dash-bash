@@ -10,10 +10,12 @@ const props = defineProps<{
   canInteract: boolean
   selectedUid: number | null
   tutorialToolId?: ToolId | null
+  viewerId?: string
 }>()
 const emit = defineEmits<{ activate: [uid: number] }>()
 
-const player = computed<PlayerState>(() => activePlayer(props.state))
+const actor = computed<PlayerState>(() => activePlayer(props.state))
+const player = computed<PlayerState>(() => props.state.players.find(player => player.id === props.viewerId) ?? actor.value)
 const character = computed(() => characterById(player.value.characterId))
 
 const draggingUid = ref<number | null>(null)
@@ -29,7 +31,8 @@ const phaseLabels: Record<string, string> = {
   reward: '选择奖励',
   finished: '对局结束',
 }
-const phaseLabel = computed(() => phaseLabels[props.state.phase] ?? props.state.phase)
+const phaseLabel = computed(() => props.viewerId && actor.value.id !== props.viewerId && !props.state.finished
+  ? `等待${actor.value.name}` : phaseLabels[props.state.phase] ?? props.state.phase)
 const phaseQuiet = computed(() => !props.canInteract || player.value.isAI)
 
 function cardClass(instance: ToolInstance) {
@@ -114,7 +117,7 @@ onBeforeUnmount(cancelDrag)
 </script>
 
 <template>
-  <div class="tool-hand" :class="{ inactive: !canInteract }">
+  <div class="tool-hand" :class="{ inactive: !canInteract, 'private-hand': !!viewerId }">
     <div class="tool-hand-head">
       <div class="hand-player">
         <span class="swatch" :style="{ background: player.pieceColor }">{{ player.name.slice(0, 2) }}</span>
@@ -124,7 +127,7 @@ onBeforeUnmount(cancelDrag)
         </div>
       </div>
       <span class="phase-ribbon" :class="{ quiet: phaseQuiet }">{{ phaseLabel }}</span>
-      <div class="hand-dice">
+      <div class="hand-dice" :aria-label="`${actor.name}最近的骰子结果`" :title="`${actor.name}最近的骰子结果`">
         <span class="die" title="移动骰">{{ state.dice.move ?? '?' }}</span>
         <span class="die tool" title="工具骰">{{ state.dice.toolName ?? '—' }}</span>
       </div>
@@ -159,4 +162,9 @@ onBeforeUnmount(cancelDrag)
 .inactive .tool-card {
   filter: saturate(0.7);
 }
+.private-hand.inactive .tool-card:disabled { opacity: .8; }
+.tool-hand-head { flex-wrap: wrap; }
+.hand-player > div { min-width: 0; }
+.hand-player strong { max-width: 12em; overflow: hidden; text-overflow: ellipsis; }
+.phase-ribbon { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 </style>

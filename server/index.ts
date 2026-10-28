@@ -1,20 +1,38 @@
 import { createServer } from 'node:http'
 import { pathToFileURL } from 'node:url'
+import { randomUUID } from 'node:crypto'
 import { answerQuestion } from './rag/coach.ts'
 import { runTacticalAgent } from './agent/harness.ts'
 import { parseTacticalSnapshot } from '../src/game/tactical.ts'
 import { runOpponentAgent } from './agent/opponent.ts'
+import { RoomManager } from './rooms/manager.ts'
+import { createRoomHandler } from './rooms/http.ts'
 
-export function createCoachServer(options: { tacticalAgent?: typeof runTacticalAgent; opponentAgent?: typeof runOpponentAgent } = {}) {
+export function createCoachServer(options: { tacticalAgent?: typeof runTacticalAgent; opponentAgent?: typeof runOpponentAgent; rooms?: RoomManager; allowedOrigins?: string[] } = {}) {
+  const allowedOrigins = new Set(options.allowedOrigins ?? [])
   let active = 0
   let windowStart = Date.now(), requests = 0
-  return createServer(async (req, res) => {
+  const reserveModel = () => {
+    if (Date.now() - windowStart > 600000) { windowStart = Date.now(); requests = 0 }
+    if (active >= 2 || requests >= 30) return false
+    active++; requests++; return true
+  }
+  const rooms = options.rooms ?? new RoomManager({ opponentRequest: async (task, signal) => {
+    if (!reserveModel()) return { runId: randomUUID(), status: 'fallback', reason: 'AI服务繁忙，由本地策略接管。', sourceIds: [], sources: [],
+      steps: 0, elapsedMs: 0, model: 'unavailable', usage: null, events: [], fallbackReason: 'RATE_LIMIT' }
+    try { return await (options.opponentAgent ?? runOpponentAgent)(task, { signal }) } finally { active-- }
+  } })
+  const roomHandler = createRoomHandler(rooms, reserveModel, () => { active-- })
+  const ticker = setInterval(() => { void rooms.tick().catch(() => { /* 单房间异常不会结束HTTP服务。 */ }) }, 150)
+  ticker.unref()
+  const server = createServer(async (req, res) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8')
     res.setHeader('Cache-Control', 'no-store')
     const send = (status: number, body: unknown) => { if (!res.destroyed) { res.statusCode = status;res.end(JSON.stringify(body)) } }
     const origin = req.headers.origin
-    if (origin && !/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin)) return send(403, { error: '不接受此来源的请求。' })
-    if (req.url === '/api/health' && req.method === 'GET') return send(200, { ok: true, service: 'game-ai', capabilities: ['rules-coach', 'tactical-agent', 'opponent-agent'] })
+    if (origin && !/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin) && !allowedOrigins.has(origin)) return send(403, { error: '不接受此来源的请求。' })
+    if (req.url === '/api/health' && req.method === 'GET') return send(200, { ok: true, service: 'game-ai', capabilities: ['rules-coach', 'tactical-agent', 'opponent-agent', 'online-rooms'] })
+    if (await roomHandler(req, res)) return
     const tactical = req.url === '/api/agent/tactical'
     const opponent = req.url === '/api/agent/opponent'
     const agentRequest = tactical || opponent
@@ -71,9 +89,18 @@ export function createCoachServer(options: { tacticalAgent?: typeof runTacticalA
       } finally { active-- }
     } catch { send(400, { error: '请求格式错误。' }) }
   })
+  const close = server.close.bind(server)
+  server.close = callback => {
+    clearInterval(ticker); rooms.close(); server.closeAllConnections()
+    return close(callback)
+  }
+  return server
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const port = Number(process.env.COACH_PORT || 3001)
-  createCoachServer().listen(port, '127.0.0.1', () => console.log(`游戏AI服务已启动：http://127.0.0.1:${port}`))
+  const allowedOrigins = (process.env.GAME_ALLOWED_ORIGINS ?? '').split(',').map(value => value.trim()).filter(value => {
+    try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) && url.origin === value } catch { return false }
+  })
+  createCoachServer({ allowedOrigins }).listen(port, '127.0.0.1', () => console.log(`游戏AI与房间服务已启动：http://127.0.0.1:${port}`))
 }

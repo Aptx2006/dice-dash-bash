@@ -159,7 +159,7 @@ function tryPlayTow(state: GameState, instance: ToolInstance): boolean {
   return false
 }
 
-function tryPlayBombOrWall(state: GameState, instance: ToolInstance): boolean {
+function tryPlayBombOrWall(state: GameState, instance: ToolInstance, random = Math.random): boolean {
   const player = activePlayer(state)
   if (instance.toolId === 'bomb') {
     const nearOpponent = state.players.some(
@@ -174,14 +174,14 @@ function tryPlayBombOrWall(state: GameState, instance: ToolInstance): boolean {
   if (instance.toolId === 'buildwall' || instance.toolId === 'wallet') {
     const cells = adjacentFreeCells(state, player)
     if (cells.length) {
-      playAdjacentTool(state, instance.uid, cells[Math.floor(Math.random() * cells.length)])
+      playAdjacentTool(state, instance.uid, cells[Math.floor(random() * cells.length)])
       return true
     }
   }
   return false
 }
 
-export function aiStep(state: GameState): boolean {
+export function aiStep(state: GameState, random = Math.random): boolean {
   if (state.finished) return false
   const player = activePlayer(state)
   if (!player.isAI) return false
@@ -265,7 +265,7 @@ export function aiStep(state: GameState): boolean {
           break
         case 'bomb':
         case 'buildwall':
-          if (tryPlayBombOrWall(state, instance)) return true
+          if (tryPlayBombOrWall(state, instance, random)) return true
           break
         case 'balance': {
           const mc = player.hand.find((t) => t.toolId === 'move')
@@ -303,10 +303,10 @@ export function aiStep(state: GameState): boolean {
     for (const instance of player.hand.filter((t) => t.toolId !== 'end')) {
       if (!canUseTool(state, instance)) continue
       if (instance.toolId === 'wallet' || instance.toolId === 'buildwall') {
-        if (tryPlayBombOrWall(state, instance)) return true
+        if (tryPlayBombOrWall(state, instance, random)) return true
       }
       if (instance.toolId === 'bomb') {
-        if (tryPlayBombOrWall(state, instance)) return true
+        if (tryPlayBombOrWall(state, instance, random)) return true
       }
     }
     playEndCard(state)

@@ -148,7 +148,7 @@ const emptySlots = computed(() => Math.max(0, 8 - slotsView.value.length))
   <main class="lobby-shell">
     <header class="lobby-header">
       <div class="room-brand">
-        <p class="eyebrow">当骰一棒 · 竞速模式</p>
+        <p class="eyebrow">当骰一棒 · 本地练习</p>
         <h2>{{ mapDef.label }}</h2>
         <div class="meta">
           <span>地图：{{ mapDef.desc }}</span>
@@ -172,10 +172,10 @@ const emptySlots = computed(() => Math.max(0, 8 - slotsView.value.length))
       </div>
       <div class="room-code-panel">
         <div>
-          <span class="label">房间码</span>
+          <span class="label">练习编号</span>
           <span class="code">{{ roomCode }}</span>
         </div>
-        <button type="button" title="复制房间码" @click="copyCode">⧉</button>
+        <button type="button" title="复制练习编号" @click="copyCode">⧉</button>
       </div>
     </header>
 

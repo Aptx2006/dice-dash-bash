@@ -25,7 +25,7 @@ export function createTacticalConfirmation(
   return { actionId, playerId, expectedSnapshotKey, expiresAt: Math.min(expiresAt, now + 60_000), status: 'pending' }
 }
 
-export function resolveTacticalConfirmation(
+export function authorizeTacticalConfirmation(
   confirmation: TacticalConfirmation,
   decision: 'accept' | 'reject',
   state: GameState,
@@ -48,6 +48,19 @@ export function resolveTacticalConfirmation(
   }
   // 先消费确认，避免重复点击或回调导致同一建议执行两次。
   confirmation.status = 'stale'
+  return { ok: true, status: 'stale', message: '已确认，等待执行。' }
+}
+
+export function resolveTacticalConfirmation(
+  confirmation: TacticalConfirmation,
+  decision: 'accept' | 'reject',
+  state: GameState,
+  playerId: string,
+  canInteract: boolean,
+  now = Date.now(),
+): { ok: boolean; status: ConfirmationState; message: string } {
+  const authorization = authorizeTacticalConfirmation(confirmation, decision, state, playerId, canInteract, now)
+  if (!authorization.ok) return authorization
   const result = executeTacticalAction(state, playerId, confirmation.actionId, confirmation.expectedSnapshotKey)
   if (!result.ok) return { ok: false, status: 'stale', message: result.error || '这一步目前无法执行，请重新分析。' }
   confirmation.status = 'applied'

@@ -107,7 +107,7 @@ export async function runOpponentAgent(input: OpponentAgentInput, options: Oppon
   let snapshot: GameState
   try {
     checkStop()
-    if (!input || typeof input.playerId !== 'string' || !/^ai-[1-7]$/.test(input.playerId)) throw new ToolError('INVALID_INPUT', '只能为当前AI席位进行云端决策。')
+    if (!input || typeof input.playerId !== 'string' || !/^(human|ai-[1-7])$/.test(input.playerId)) throw new ToolError('INVALID_INPUT', '只能为当前AI席位进行云端决策。')
     try { snapshot = parseTacticalSnapshot(input.snapshot) }
     catch { throw new ToolError('INVALID_INPUT', '云端对手收到的局面无效，改用规则策略。') }
     const current = snapshot.players[snapshot.activeIndex]

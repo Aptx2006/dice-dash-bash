@@ -8,18 +8,21 @@ import { readPreference } from '../storage/preferences.ts'
 import type { SavedMatch } from '../storage/savedMatch.ts'
 import RulesCoach from './RulesCoach.vue'
 
-defineProps<{ savedMatch?: SavedMatch | null }>()
+defineProps<{ savedMatch?: SavedMatch | null; busy?: boolean; onlineResume?: boolean }>()
 
 const emit = defineEmits<{
   create: [payload: { name: string; mapId: string }]
   join: [payload: { name: string; code: string }]
   tutorial: [payload: { name: string }]
   resume: []
+  practice: [payload: { name: string; mapId: string }]
+  resumeOnline: []
 }>()
 
 const savedName = readPreference('dice-player-name', '')
 const playerName = ref(savedName.value.slice(0, 12))
-const joinCode = ref('')
+const invitedRoom = new URLSearchParams(window.location.search).get('room') ?? ''
+const joinCode = ref(/^\d{6}$/.test(invitedRoom) ? invitedRoom : '')
 const mode = ref<'race' | 'battle' | 'prank'>('race')
 const mapIndex = ref(0)
 const joinHint = ref(savedName.warning)
@@ -71,7 +74,15 @@ function submitCreate() {
 }
 
 function submitJoin() {
-  joinHint.value = '联机房间尚未开放，请创建本地房间或体验教学。'
+  try {
+    const name = validateNickname(playerName.value), code = joinCode.value.trim()
+    if (!/^\d{6}$/.test(code)) throw new Error('请输入6位数字房间号。')
+    joinHint.value = ''; emit('join', { name, code })
+  } catch (error) { joinHint.value = error instanceof Error ? error.message : '请检查昵称与房间号。' }
+}
+function startPractice() {
+  try { emit('practice', { name: validateNickname(playerName.value), mapId: map.value.id }); joinHint.value = '' }
+  catch (error) { joinHint.value = error instanceof Error ? error.message : '请输入昵称。' }
 }
 
 function startTutorial() {
@@ -91,7 +102,7 @@ function startTutorial() {
         <button type="button" :class="{ active: mode === 'battle' }" disabled title="开发中">对战模式</button>
         <button type="button" :class="{ active: mode === 'prank' }" disabled title="开发中">整蛊模式</button>
       </nav>
-      <button type="button" class="tutorial-entry" @click="startTutorial">
+      <button type="button" class="tutorial-entry" :disabled="busy" @click="startTutorial">
         <span>?</span>
         <strong>第一次游玩？进入基础教学</strong>
       </button>
@@ -99,13 +110,15 @@ function startTutorial() {
 
     <RulesCoach />
 
+    <section v-if="onlineResume" class="resume-match" aria-label="上次联机房间"><div><strong>回到联机房间</strong><p>重新连接到服务端保存的最新局面。</p></div><button type="button" class="pill-button mint" :disabled="busy" @click="emit('resumeOnline')">重新连接</button></section>
+
     <section v-if="savedMatch" class="resume-match" aria-label="最近对局">
       <div>
         <strong>{{ savedMatch.state.finished ? '上局已结束' : '你的冒险还在继续' }}</strong>
         <p>{{ savedMatch.state.mapLabel }} · {{ savedMatch.state.players.length }}人 · 第{{ savedMatch.state.turnNumber }}回合</p>
         <small>保存于 {{ new Date(savedMatch.savedAt).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) }} · 仅保存在此浏览器</small>
       </div>
-      <button type="button" class="pill-button mint" @click="emit('resume')">{{ savedMatch.state.finished ? '查看上局结果' : '继续对局' }}</button>
+      <button type="button" class="pill-button mint" :disabled="busy" @click="emit('resume')">{{ savedMatch.state.finished ? '查看上局结果' : '继续对局' }}</button>
     </section>
 
     <section class="map-stage" aria-label="地图预览">
@@ -129,13 +142,14 @@ function startTutorial() {
         <label for="home-name">你的昵称</label>
         <input id="home-name" v-model="playerName" maxlength="12" autocomplete="nickname" placeholder="输个响亮的名字" />
       </div>
-      <button type="button" class="pill-button primary" @click="submitCreate">创建房间</button>
+      <button type="button" class="pill-button primary" :disabled="busy" @click="submitCreate">{{ busy ? '连接中…' : '创建联机房间' }}</button>
       <div class="home-field">
         <label for="home-join">加入房间</label>
-        <input id="home-join" v-model="joinCode" class="join-code" maxlength="6" placeholder="联机功能尚未开放" disabled />
+        <input id="home-join" v-model="joinCode" class="join-code" maxlength="6" inputmode="numeric" placeholder="6位数字房间号" :disabled="busy" @keydown.enter.prevent="submitJoin" />
       </div>
-      <button type="button" class="pill-button" @click="submitJoin">联机说明</button>
+      <button type="button" class="pill-button" :disabled="busy" @click="submitJoin">加入房间</button>
     </form>
+    <button type="button" class="text-button" :disabled="busy" @click="startPractice">本地练习 · 无需连接房间服务</button>
     <p v-if="joinHint" class="home-note" role="alert">{{ joinHint }}</p>
   </main>
 </template>

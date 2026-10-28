@@ -4,17 +4,20 @@ import type { GameState } from '../game/types.ts'
 import type { TacticalRunEvent, TacticalRunResult, TacticalRunStatus } from '../agent/types.ts'
 import { activePlayer } from '../game/engine.ts'
 import { createTacticalSnapshot, inspectTacticalAction, listTacticalActions, tacticalSnapshotKey } from '../game/tactical.ts'
-import { createTacticalConfirmation, resolveTacticalConfirmation, type TacticalConfirmation } from '../game/tacticalConfirmation.ts'
+import { createTacticalConfirmation, resolveTacticalConfirmation, authorizeTacticalConfirmation, type TacticalConfirmation } from '../game/tacticalConfirmation.ts'
+import type { RemoteGameControls } from '../network/types.ts'
 
-const props = defineProps<{ state: GameState; myId: string; canInteract: boolean }>()
+const props = defineProps<{ state: GameState; myId: string; canInteract: boolean; remote?: RemoteGameControls }>()
 const emit = defineEmits<{ applied: [] }>()
 const open = ref(false)
 const goal = ref('尽快接近终点')
 const loading = ref(false)
+const applying = ref(false)
 const feedback = ref('')
 const run = shallowRef<TacticalRunResult | null>(null)
 const confirmation = ref<TacticalConfirmation | null>(null)
-const now = ref(Date.now())
+const currentTime = () => Date.now() + (props.remote?.serverOffsetMs ?? 0)
+const now = ref(currentTime())
 const goals = ['尽快接近终点', '优先避开危险', '比较可用移动方案']
 const labels: Record<TacticalRunStatus, string> = {
   awaiting_confirmation: '有一个行动建议', no_actions: '暂无可分析行动', unavailable: '助手暂时不可用',
@@ -34,6 +37,8 @@ const secondsLeft = computed(() => Math.max(0, Math.ceil(((confirmation.value?.e
 const citedSources = computed(() => run.value?.sources.filter(source => run.value?.proposal?.sourceIds.includes(source.id)) ?? [])
 const availability = computed(() => {
   if (props.state.finished) return '本局已经结束，开始新对局后再来分析。'
+  if (props.remote && !props.remote.connected) return '房间连接中断，重新连接后再分析。'
+  if (props.remote?.busy) return '正在等待服务端确认操作。'
   if (activePlayer(props.state).id !== props.myId) return '等待其他选手完成回合。'
   if (props.state.pendingReward) return '先选好奖励，再分析接下来的行动。'
   if (props.state.phase !== 'action') return '投骰进入行动阶段后，可以请助手比较下一步。'
@@ -105,7 +110,7 @@ function close() {
 }
 
 async function analyze() {
-  if (loading.value || !eligible.value) return
+  if (loading.value || applying.value || !eligible.value) return
   const input = goal.value.trim()
   if (!input || input.length > 120) { feedback.value = '请用1至120字描述你的目标。'; return }
   if (!listTacticalActions(props.state, props.myId).length) { feedback.value = '当前没有可分析的移动类行动，可以继续手动使用其他牌。'; return }
@@ -122,22 +127,25 @@ async function analyze() {
   let timedOut = false
   requestTimer = setTimeout(() => { timedOut = true; activeController.abort() }, 50_000)
   try {
-    const response = await fetch('/api/agent/tactical', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ snapshot, playerId: props.myId, goal: input }), signal: activeController.signal,
-    })
-    const body: unknown = await response.json()
-    if (id !== sequence) return
-    if (!response.ok) {
-      if (response.status === 429) throw new Error('rate-limit')
-      // 后端可用非2xx返回完整、已清理的Agent失败结果。
-      if (!body || typeof body !== 'object' || !Object.hasOwn(body, 'runId')) throw new Error('service-unavailable')
+    let body: unknown
+    if (props.remote) body = await props.remote.suggest(input, activeController.signal)
+    else {
+      const response = await fetch('/api/agent/tactical', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ snapshot, playerId: props.myId, goal: input }), signal: activeController.signal,
+      })
+      body = await response.json()
+      if (!response.ok) {
+        if (response.status === 429) throw new Error('rate-limit')
+        if (!body || typeof body !== 'object' || !Object.hasOwn(body, 'runId')) throw new Error('service-unavailable')
+      }
     }
+    if (id !== sequence) return
     const result = readRun(body)
     if (requestedKey !== currentKey.value || !eligible.value) { feedback.value = '局面已经改变，请重新分析。'; return }
     run.value = result
     if (result.proposal && result.status === 'awaiting_confirmation') {
-      confirmation.value = createTacticalConfirmation(props.state, props.myId, result.proposal.actionId, requestedKey, result.proposal.expiresAt)
+      confirmation.value = createTacticalConfirmation(props.state, props.myId, result.proposal.actionId, requestedKey, result.proposal.expiresAt, currentTime())
       if (!confirmation.value) feedback.value = '建议已过期或当前无法执行，请重新分析。'
     }
   } catch (error) {
@@ -150,8 +158,21 @@ async function analyze() {
   }
 }
 
-function accept() {
-  if (!confirmation.value) return
+async function accept() {
+  if (!confirmation.value || applying.value) return
+  if (props.remote) {
+    const authorized = authorizeTacticalConfirmation(confirmation.value, 'accept', props.state, props.myId, props.canInteract, currentTime())
+    feedback.value = authorized.message
+    if (!authorized.ok) return
+    applying.value = true
+    try {
+      const ok = await props.remote.applySuggestion(confirmation.value.actionId)
+      confirmation.value.status = ok ? 'applied' : 'stale'
+      feedback.value = ok ? '服务端已执行确认的行动。' : '行动未执行，请按最新局面重新选择。'
+      if (ok) emit('applied')
+    } finally { applying.value = false }
+    return
+  }
   const result = resolveTacticalConfirmation(confirmation.value, 'accept', props.state, props.myId, props.canInteract)
   feedback.value = result.message
   if (result.ok) emit('applied')
@@ -173,7 +194,7 @@ watch([currentKey, () => props.canInteract], () => {
 
 onMounted(() => {
   clockTimer = setInterval(() => {
-    now.value = Date.now()
+    now.value = currentTime()
     if (confirmation.value?.status === 'pending' && now.value >= confirmation.value.expiresAt) {
       confirmation.value.status = 'expired'
       feedback.value = '建议已过期，请按当前局面重新分析。'
@@ -208,7 +229,7 @@ onBeforeUnmount(() => {
         <input id="tactical-goal" v-model="goal" maxlength="120" :disabled="loading" placeholder="例如：优先避开危险" />
         <div class="tactical-buttons">
           <button v-if="loading" type="button" @click="stopWaiting('已取消分析，你可以继续出牌。')">取消分析</button>
-          <button class="tactical-primary" type="submit" :disabled="loading || !eligible">{{ loading ? '正在比较行动…' : run ? '重新分析' : '分析当前局面' }}</button>
+          <button class="tactical-primary" type="submit" :disabled="loading || applying || !eligible">{{ loading ? '正在比较行动…' : applying ? '正在执行…' : run ? '重新分析' : '分析当前局面' }}</button>
         </div>
       </form>
       <p v-if="loading" class="tactical-feedback" role="status">正在读取局面并查阅规则，最多等待45秒。你可以取消或直接继续出牌。</p>

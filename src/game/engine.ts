@@ -22,6 +22,13 @@ let effectSerial = 1
 let simulationRandom: (() => number) | undefined
 const random = () => simulationRandom ? simulationRandom() : Math.random()
 
+/** 为服务端单个同步命令注入房间独立随机流；禁止跨await持有。 */
+export function withGameRandom<T>(source: () => number, run: () => T): T {
+  const previous = simulationRandom
+  simulationRandom = source
+  try { return run() } finally { simulationRandom = previous }
+}
+
 /** 同步隔离推演：调用者只修改副本；随机流和全局编号不影响真实对局。 */
 export function isolatedSimulation<T>(run: () => T, seed = 1): T {
   const previous = { toolSerial, entitySerial, logSerial, effectSerial, simulationRandom }

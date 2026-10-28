@@ -44,6 +44,7 @@ import { listTacticalActions } from '../game/tactical.ts'
 import { isDiceReveal } from '../rendering/presentation.ts'
 import { characterById } from '../game/characters.ts'
 import { readPreference, writePreference } from '../storage/preferences.ts'
+import type { RemoteGameControls, RoomCommand, RoomPresentation } from '../network/types.ts'
 
 interface BoardViewApi {
   fitToView: () => void
@@ -55,6 +56,7 @@ const props = defineProps<{
   tutorial?: boolean
   initialProgress?: { tutorialStep: number; timeLeft: number }
   saveStatus?: string
+  remote?: RemoteGameControls
 }>()
 
 const emit = defineEmits<{
@@ -118,6 +120,14 @@ let presentationNonce = 0
 let aiCardTimer: number | undefined
 let diceRevealTimer: number | undefined
 let diceHideTimer: number | undefined
+const remotePresentations: RoomPresentation[] = []
+function advanceRemotePresentation() {
+  if (!props.remote || presenting.value) return
+  const next = remotePresentations.shift()
+  if (!next) return
+  if (next.dice) showDice(next.actorName, next.dice.move, next.dice.toolName)
+  else showAiCard(next.actorName, next.card, '交出回合')
+}
 
 function scaledDelay(ms: number): number {
   return Math.max(120, Math.round(ms / animationSpeed.value))
@@ -136,6 +146,7 @@ function showAiCard(playerName: string, card?: ToolInstance, fallback = '继续�
   aiCardTimer = window.setTimeout(() => {
     aiCardPresentation.value = null
     scheduleAI()
+    advanceRemotePresentation()
   }, scaledDelay(1400))
 }
 
@@ -150,12 +161,14 @@ function showDice(playerName: string, move: number, toolName: string) {
   diceHideTimer = window.setTimeout(() => {
     if (dicePresentation.value?.nonce === nonce) dicePresentation.value = null
     scheduleAI()
+    advanceRemotePresentation()
   }, scaledDelay(2300))
 }
 
 watch(
   () => props.state.phase,
   (phase, previous) => {
+    if (props.remote) return
     const { move, toolName } = props.state.dice
     if (!isDiceReveal(previous, phase, move, toolName)) return
     showDice(activePlayer(props.state).name, move!, toolName!)
@@ -166,7 +179,21 @@ const TURN_SECONDS = 75
 
 const player = computed(() => activePlayer(props.state))
 const presenting = computed(() => !!dicePresentation.value || !!aiCardPresentation.value)
-const canInteract = computed(() => !presenting.value && !props.state.finished && !player.value.isAI && player.value.id === props.myId)
+const canInteract = computed(() => !presenting.value && !props.state.finished && !player.value.isAI && player.value.id === props.myId
+  && (!props.remote || (props.remote.connected && !props.remote.busy)))
+
+watch(() => props.remote?.presentation?.id, () => {
+  const current = props.remote?.presentation
+  const event = current ? { ...current } : undefined
+  if (event && !event.dice && event.phaseBefore === 'turnStart' && props.state.phase === 'action'
+    && props.state.dice.move !== null && props.state.dice.toolName !== null) {
+    event.dice = { move: props.state.dice.move, toolName: props.state.dice.toolName }
+  }
+  if (!event || (!event.dice && (event.actorId === props.myId || event.phaseBefore === 'turnStart'))) return
+  remotePresentations.push({ ...event })
+  if (remotePresentations.length > 24) remotePresentations.shift()
+  advanceRemotePresentation()
+})
 
 const selectedInstance = computed<ToolInstance | null>(() => {
   if (selectedUid.value == null) return null
@@ -345,6 +372,13 @@ function beginTargeting(instance: ToolInstance, mode: TargetMode) {
   }
 }
 
+function remoteCard(uid: number, params: { dir?: Dir; target?: Cell; targetId?: string; stopAfter?: number } = {}): boolean {
+  if (!props.remote) return false
+  const command: RoomCommand = { type: 'card', uid, ...params }
+  void props.remote.submit(command)
+  return true
+}
+
 function onCardActivate(uid: number) {
   const state = props.state
   const instance = player.value.hand.find((t) => t.uid === uid)
@@ -354,15 +388,19 @@ function onCardActivate(uid: number) {
   if (state.phase === 'turnStart') {
     switch (instance.toolId) {
       case 'roll':
+        if (remoteCard(uid)) return
         playRollCard(state)
         return
       case 'copy':
+        if (remoteCard(uid)) return
         playCopyCard(state)
         return
       case 'prepareTow':
+        if (remoteCard(uid)) return
         playPrepareTowCard(state)
         return
       case 'leap':
+        if (remoteCard(uid)) return
         playLeapCard(state)
         return
       case 'storm':
@@ -380,6 +418,7 @@ function onCardActivate(uid: number) {
         beginTargeting(instance, 'slide')
         return
       case 'end':
+        if (remoteCard(uid)) return
         playEndCard(state)
         return
       case 'blink':
@@ -402,6 +441,7 @@ function onCardActivate(uid: number) {
         beginTargeting(instance, 'direction')
         return
       default:
+        if (remoteCard(uid)) return
         playSimpleTool(state, uid)
         return
     }
@@ -420,6 +460,7 @@ function onCellSelect(cell: Cell) {
       const stopIndex = target.cells.findIndex((c) => sameCell(c, cell))
       const canBrake = player.value.characterId === 'russell'
       clearSelection()
+      if (remoteCard(inst.uid, { dir: target.dir, ...(canBrake && inst.toolId === 'move' ? { stopAfter: target.stops?.[stopIndex] ?? stopIndex + 1 } : {}) })) return
       if (inst.toolId === 'move') resolveMoveCard(state, target.dir, canBrake ? target.stops?.[stopIndex] ?? stopIndex + 1 : undefined, inst.uid)
       else playLeapTool(state, inst.uid, target.dir)
       if (isTutorial.value && tutorialStep.value === 3) tutorialStep.value = 4
@@ -428,21 +469,25 @@ function onCellSelect(cell: Cell) {
     case 'cell':
       if (!blinkCells(state, player.value).some(c => sameCell(c, cell))) { actionNotice.value = '瞬步需要选择附近的高亮落点。'; return }
       clearSelection()
+      if (remoteCard(inst.uid, { target: cell })) return
       playBlinkTool(state, inst.uid, cell)
       return
     case 'anywhere':
       if (!teleportCells(state).some(c => sameCell(c, cell))) { actionNotice.value = '该格不能作为瞬移落点，请选择高亮地块。'; return }
       clearSelection()
+      if (remoteCard(inst.uid, { target: cell })) return
       playTeleportTool(state, inst.uid, cell)
       return
     case 'adjacent':
       if (!adjacentFreeCells(state, player.value).some(c => sameCell(c, cell))) { actionNotice.value = '请选择相邻的空白地块，特殊地形不能被覆盖。'; return }
       clearSelection()
+      if (remoteCard(inst.uid, { target: cell })) return
       playAdjacentTool(state, inst.uid, cell)
       return
     case 'storm':
       if (!stormCells.value.some(c => sameCell(c, cell))) { actionNotice.value = '请选择3格范围内的高亮空地。'; return }
       clearSelection()
+      if (remoteCard(inst.uid, { target: cell })) return
       playStormCard(state, cell)
       return
     case 'player-pick': {
@@ -465,17 +510,20 @@ function onDirPick(dir: Dir) {
     case 'slide':
       if (!slideTargets.value.some(target => target.dir === dir)) { actionNotice.value = '这个方向被阻挡，请选择其他方向。'; return }
       clearSelection()
+      if (remoteCard(inst.uid, { dir })) return
       if (inst.toolId === 'move') resolveMoveCard(state, dir, undefined, inst.uid)
       else playLeapTool(state, inst.uid, dir)
       if (isTutorial.value && tutorialStep.value === 3) tutorialStep.value = 4
       return
     case 'direction':
       clearSelection()
+      if (remoteCard(inst.uid, { dir })) return
       playDirectionTool(state, inst.uid, dir)
       return
     case 'player-dir': {
       const targetId = towTargetId.value
       clearSelection()
+      if (targetId && remoteCard(inst.uid, { targetId, dir })) return
       if (targetId) playTow(state, inst.uid, targetId, dir)
       return
     }
@@ -519,7 +567,7 @@ let disposed = false
 
 function scheduleAI() {
   window.clearTimeout(aiTimer)
-  if (disposed || props.state.finished || presenting.value || aiBusy.value) return
+  if (disposed || props.remote || props.state.finished || presenting.value || aiBusy.value) return
   const current = activePlayer(props.state)
   if (!current.isAI) return
   aiTimer = window.setTimeout(async () => {
@@ -565,6 +613,15 @@ let tickTimer: number | undefined
 
 function armTimer(remaining = TURN_SECONDS) {
   window.clearInterval(tickTimer)
+  if (props.remote) {
+    const update = () => {
+      const controls = props.remote!
+      const clock = Math.max(Date.now() + controls.serverOffsetMs, controls.timerHoldUntil ?? 0)
+      timeLeft.value = controls.deadlineAt === null ? TURN_SECONDS : Math.max(0, Math.ceil((controls.deadlineAt - clock) / 1000))
+    }
+    update(); tickTimer = window.setInterval(update, 250)
+    return
+  }
   timeLeft.value = remaining
   if (!props.state.mechanisms.turnTimer || props.state.finished) return
   const current = activePlayer(props.state)
@@ -580,7 +637,7 @@ function armTimer(remaining = TURN_SECONDS) {
 }
 
 function timeoutNow() {
-  if (props.state.finished) return
+  if (props.remote || props.state.finished) return
   clearSelection()
   timeoutTurn(props.state)
 }
@@ -589,6 +646,7 @@ watch(
   () => [props.state, props.state.activeIndex, props.state.finished],
   () => armTimer(),
 )
+watch(() => props.remote?.deadlineAt, () => armTimer())
 
 onMounted(() => {
   scheduleAI()
@@ -598,6 +656,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   disposed = true
   opponentController.dispose()
+  remotePresentations.length = 0
   window.clearTimeout(aiTimer)
   window.clearInterval(tickTimer)
   window.clearTimeout(aiCardTimer)
@@ -613,6 +672,7 @@ onMounted(() => window.addEventListener('keydown', onGameKey))
 onBeforeUnmount(() => window.removeEventListener('keydown', onGameKey))
 
 function pickReward(index: number) {
+  if (props.remote) { void props.remote.submit({ type: 'reward', index }); return }
   chooseReward(props.state, index)
 }
 
@@ -638,7 +698,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
 
       <div class="phase-banner" role="status" aria-live="polite">
         <strong>{{ bannerText }}</strong>
-        <template v-if="!state.finished"> · {{ phaseText }}<template v-if="state.mechanisms.turnTimer && canInteract"> · {{ timeLeft }}s</template></template>
+        <template v-if="!state.finished"> · {{ phaseText }}<template v-if="state.mechanisms.turnTimer && (canInteract || (remote && !player.isAI))"> · {{ timeLeft }}s</template></template>
       </div>
 
       <div class="game-actions">
@@ -649,13 +709,14 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
           </select>
         </label>
         <button type="button" class="camera-fit" @click="boardView?.fitToView()">最佳屏幕大小</button>
-        <button type="button" class="game-exit" @click="emit('exit')">返回首页</button>
+        <button type="button" class="game-exit" @click="emit('exit')">{{ remote ? '离开房间' : '返回首页' }}</button>
       </div>
-      <p v-if="saveStatus" class="save-status" role="status" :class="{ 'save-failed': saveStatus !== '本局已自动保存' }">{{ saveStatus }}</p>
+      <p v-if="saveStatus" class="save-status" role="status" :class="{ 'save-failed': remote ? !remote.connected : saveStatus !== '本局已自动保存' }">{{ saveStatus }}</p>
       <p class="camera-help">拖动平移棋盘 · 滚轮缩放 · 视角固定</p>
 
-      <TacticalAssistant v-show="targetMode === 'none'" :state="state" :my-id="myId" :can-interact="canInteract" @applied="onTacticalApplied" />
-      <OpponentInsight v-if="!isTutorial" :state="state" :thinking="thinkingPlayerName" />
+      <TacticalAssistant v-show="targetMode === 'none'" :state="state" :my-id="myId" :can-interact="canInteract"
+        :remote="remote" @applied="onTacticalApplied" />
+      <OpponentInsight v-if="!isTutorial" :state="state" :thinking="remote?.thinkingPlayerName ?? thinkingPlayerName" />
 
       <aside v-if="isTutorial && tutorialStep >= 0" class="tutorial-panel" aria-live="polite">
         <span class="tutorial-progress">{{ Math.min(tutorialStep + 1, 8) }} / 8</span>
@@ -746,6 +807,7 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
 
     <ToolHand
       :state="state"
+      :viewer-id="remote ? myId : undefined"
       :can-interact="canInteract"
       :selected-uid="selectedUid"
       :tutorial-tool-id="tutorialFocusTool"
@@ -797,8 +859,8 @@ const timerPercent = computed(() => `${Math.max(0, (timeLeft.value / TURN_SECOND
         </div>
         <OpponentInsight :state="state" settlement />
         <div class="settlement-actions">
-          <button type="button" class="pill-button primary" @click="emit('restart')">再来一局</button>
-          <button type="button" class="pill-button" @click="emit('exit')">返回首页</button>
+          <button v-if="!remote || remote.isHost" type="button" class="pill-button primary" @click="emit('restart')">{{ remote ? '回大厅再来一局' : '再来一局' }}</button>
+          <button type="button" class="pill-button" @click="emit('exit')">{{ remote ? '离开房间' : '返回首页' }}</button>
         </div>
       </section>
     </div>
